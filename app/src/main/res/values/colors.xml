@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Brand -->
+    <color name="brand_primary">#4F46E5</color>
+    <color name="brand_primary_dark">#4338CA</color>
+    <color name="brand_primary_light">#6366F1</color>
+
+    <!-- AI accent -->
+    <color name="ai_accent">#8B5CF6</color>
+
+    <!-- Finance colors -->
+    <color name="finance_income">#22C55E</color>
+    <color name="finance_expense">#EF4444</color>
+
+    <!-- Neutral -->
+    <color name="background">#F8FAFC</color>
+    <color name="card">#FFFFFF</color>
+    <color name="border">#E5E7EB</color>
+
+    <!-- Text -->
+    <color name="text_primary">#0F172A</color>
+    <color name="text_secondary">#64748B</color>
+
+    <!-- Base -->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+
+</resources>
