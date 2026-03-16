@@ -69,6 +69,7 @@
                 android:layout_marginTop="20dp">
 
                 <com.google.android.material.button.MaterialButton
+                    android:id="@+id/add_expence_button"
                     android:layout_width="0dp"
                     android:layout_height="48dp"
                     android:layout_weight="1"
@@ -81,6 +82,7 @@
                     android:layout_height="1dp"/>
 
                 <com.google.android.material.button.MaterialButton
+                    android:id="@+id/add_income_button"
                     android:layout_width="0dp"
                     app:cornerRadius="20dp"
                     android:layout_height="48dp"

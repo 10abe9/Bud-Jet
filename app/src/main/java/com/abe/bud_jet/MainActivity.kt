@@ -20,6 +20,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        registerVibrationManager()   // ← ПЕРЕНЕСТИ СЮДА
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -31,11 +33,18 @@ class MainActivity : AppCompatActivity() {
 
         setIconScalingAnimation(navView, navController)
 
-        registerVibrationManager()
+        setupAddButton()
+    }
+
+    private fun setupAddButton(){
+        val vibrator = VibrationManager.get()
+        binding.fabAdd.setOnClickListener {
+            vibrator.vibrate()
+        }
     }
 
     private fun registerVibrationManager(){
-        val VibrationManager = VibrationManager.get()
+        VibrationManager.init(applicationContext)
     }
 
     private fun setIconScalingAnimation(
