@@ -54,7 +54,7 @@ class DashboardFragment : Fragment() {
 
     private fun setupButtons() {
         binding.addIncomeButton.setOnClickListener {
-            vibrator.vibrate()
+            vibrator.error()
         }
     }
 

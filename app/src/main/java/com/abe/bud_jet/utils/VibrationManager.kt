@@ -17,7 +17,19 @@ class VibrationManager private constructor(context: Context) {
             context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         }
 
-    fun vibrate(duration: Long = 50) {
+    fun tap() {
+        vibrate(15)
+    }
+
+    fun success() {
+        vibratePattern(longArrayOf(0, 30, 40, 30))
+    }
+
+    fun error() {
+        vibratePattern(longArrayOf(0, 60, 40, 60))
+    }
+
+    private fun vibrate(duration: Long) {
         if (!vibrator.hasVibrator()) return
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -30,6 +42,19 @@ class VibrationManager private constructor(context: Context) {
         } else {
             @Suppress("DEPRECATION")
             vibrator.vibrate(duration)
+        }
+    }
+
+    private fun vibratePattern(pattern: LongArray) {
+        if (!vibrator.hasVibrator()) return
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            vibrator.vibrate(
+                VibrationEffect.createWaveform(pattern, -1)
+            )
+        } else {
+            @Suppress("DEPRECATION")
+            vibrator.vibrate(pattern, -1)
         }
     }
 

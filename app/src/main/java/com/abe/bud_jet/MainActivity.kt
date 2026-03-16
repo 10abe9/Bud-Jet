@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupAddButton(){
         val vibrator = VibrationManager.get()
         binding.fabAdd.setOnClickListener {
-            vibrator.vibrate()
+            vibrator.success()
         }
     }
 
