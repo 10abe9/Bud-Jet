@@ -1,13 +1,13 @@
-package com.abe.bud_jet.ui.dashboard
+package com.abe.bud_jet.ui.profile
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class DashboardViewModel : ViewModel() {
+class ProfileViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
-        value = "\$4,250.80"
+        value = "This is Profile Fragment"
     }
     val text: LiveData<String> = _text
 }

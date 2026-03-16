@@ -26,4 +26,38 @@
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
 
+    <!-- UI -->
+    <color name="divider">#F1F5F9</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="surface_variant">#F1F5F9</color>
+
+    <!-- states -->
+    <color name="primary_pressed">#4338CA</color>
+    <color name="primary_container">#EEF2FF</color>
+
+    <!-- navigation -->
+    <color name="nav_inactive">#94A3B8</color>
+    <color name="nav_active">@color/brand_primary</color>
+
+    <!-- analytics -->
+    <color name="chart_blue">#4F46E5</color>
+    <color name="chart_green">#22C55E</color>
+    <color name="chart_red">#EF4444</color>
+    <color name="chart_purple">#8B5CF6</color>
+    <color name="chart_gray">#CBD5F5</color>
+
+    <!-- bottom nav -->
+    <color name="bottom_nav_bg">#FFFFFF</color>
+    <color name="bottom_nav_active">#4F46E5</color>
+    <color name="bottom_nav_inactive">#94A3B8</color>
+
+    <!--  Top bar colors  -->
+
+    <color name="profile_icon_background">#4F46E5</color>
+    <color name="profile_icon_tint_color">#FFFFFF</color>
+
+    <!--  Card colors  -->
+
+    <color name="card_highlight">#EEF2FF</color>
+
 </resources>

@@ -11,6 +11,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.abe.bud_jet.databinding.ActivityMainBinding
+import com.abe.bud_jet.utils.VibrationManager
 
 class MainActivity : AppCompatActivity() {
 
@@ -25,24 +26,24 @@ class MainActivity : AppCompatActivity() {
         val navView: BottomNavigationView = binding.navView
 
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        val appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.navigation_dashboard,
-                R.id.navigation_operations,
-                R.id.navigation_analytics,
-                R.id.navigation_goals
-            )
-        )
+
         navView.setupWithNavController(navController)
 
-        setIconScalingAnimation(navView)
+        setIconScalingAnimation(navView, navController)
+
+        registerVibrationManager()
     }
 
-    private fun setIconScalingAnimation(navView: BottomNavigationView) {
+    private fun registerVibrationManager(){
+        val VibrationManager = VibrationManager.get()
+    }
 
-        navView.setOnItemSelectedListener { item ->
+    private fun setIconScalingAnimation(
+        navView: BottomNavigationView,
+        navController: androidx.navigation.NavController
+    ) {
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
 
             val menuView = navView.getChildAt(0) as ViewGroup
 
@@ -50,7 +51,9 @@ class MainActivity : AppCompatActivity() {
 
                 val itemView = menuView.getChildAt(i)
 
-                if (itemView.id == item.itemId) {
+                val itemId = navView.menu.getItem(i).itemId
+
+                if (itemId == destination.id) {
 
                     itemView.animate()
                         .scaleX(1.15f)
@@ -67,8 +70,6 @@ class MainActivity : AppCompatActivity() {
                         .start()
                 }
             }
-
-            true
         }
     }
 }
