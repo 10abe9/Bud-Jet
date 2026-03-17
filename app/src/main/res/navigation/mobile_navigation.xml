@@ -36,15 +36,21 @@
         android:id="@+id/hello1Fragment"
         android:name="com.abe.bud_jet.ui.hello.Hello1Fragment"
         android:label="fragment_hello1"
-        tools:layout="@layout/fragment_hello1" />
+        tools:layout="@layout/fragment_hello1" >
+        <action
+            android:id="@+id/action_hello1Fragment_to_hello2Fragment"
+            app:destination="@id/hello2Fragment" />
+        <action
+            android:id="@+id/action_hello1Fragment_to_navigation_dashboard"
+            app:destination="@id/navigation_dashboard" />
+    </fragment>
     <fragment
         android:id="@+id/hello2Fragment"
         android:name="com.abe.bud_jet.ui.hello.Hello2Fragment"
         android:label="fragment_hello2"
-        tools:layout="@layout/fragment_hello2" />
-    <fragment
-        android:id="@+id/hello3Fragment"
-        android:name="com.abe.bud_jet.ui.hello.Hello3Fragment"
-        android:label="fragment_hello3"
-        tools:layout="@layout/fragment_hello3" />
+        tools:layout="@layout/fragment_hello2" >
+        <action
+            android:id="@+id/action_hello2Fragment_to_navigation_dashboard"
+            app:destination="@id/navigation_dashboard" />
+    </fragment>
 </navigation>

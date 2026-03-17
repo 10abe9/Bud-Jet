@@ -56,6 +56,9 @@ class DashboardFragment : Fragment() {
         binding.addIncomeButton.setOnClickListener {
             vibrator.error()
         }
+        binding.addExpenceButton.setOnClickListener {
+            vibrator.tap()
+        }
     }
 
     override fun onDestroyView() {

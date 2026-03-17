@@ -35,27 +35,72 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp">
+                    android:orientation="horizontal">
 
-                    <TextView
-                        android:text="Total balance"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="14sp"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"/>
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:padding="20dp">
 
-                    <TextView
-                        android:id="@+id/text_balance"
-                        android:text="$4,250.80"
-                        android:textColor="@color/text_primary"
-                        android:textSize="32sp"
-                        android:textStyle="bold"
+                        <TextView
+                            android:text="Total balance"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="14sp"
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:id="@+id/text_balance"
+                                android:text="$4,250.80"
+                                android:textColor="@color/text_primary"
+                                android:textSize="32sp"
+                                android:layout_weight="1"
+                                android:textStyle="bold"
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content"
+                                android:layout_marginTop="6dp"/>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:layout_marginTop="6dp"/>
+                        android:orientation="vertical"
+                        android:padding="20dp">
+
+                        <TextView
+                            android:text="This month"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="14sp"
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:id="@+id/text_balance_status"
+                                android:text="+ $280.40"
+                                android:textColor="@color/finance_income"
+                                android:textSize="32sp"
+                                android:layout_weight="1"
+                                android:textStyle="bold"
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content"
+                                android:layout_marginTop="6dp"/>
+                        </LinearLayout>
+                    </LinearLayout>
 
                 </LinearLayout>
+
 
             </com.google.android.material.card.MaterialCardView>
 

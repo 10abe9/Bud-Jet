@@ -4,8 +4,10 @@ import android.graphics.drawable.Icon
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -34,12 +36,42 @@ class MainActivity : AppCompatActivity() {
         setIconScalingAnimation(navView, navController)
 
         setupAddButton()
+
+        hideUiForHelloFragments(navController)
+
+        if (true){ // TODO: is first init
+            navController.navigate(R.id.hello1Fragment)
+        }
+    }
+
+    private fun hideUiForHelloFragments(navController: NavController){
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+
+            if (destination.id == R.id.hello1Fragment || destination.id == R.id.hello2Fragment) {
+
+                binding.navView.visibility = View.GONE
+                binding.topBar.root.visibility = View.GONE
+                binding.fabAdd.visibility = View.GONE
+
+            } else {
+
+                binding.navView.visibility = View.VISIBLE
+                binding.topBar.root.visibility = View.VISIBLE
+                binding.fabAdd.visibility = View.VISIBLE
+
+            }
+        }
     }
 
     private fun setupAddButton(){
         val vibrator = VibrationManager.get()
         binding.fabAdd.setOnClickListener {
             vibrator.success()
+            Toast.makeText(this, "Add transaction", Toast.LENGTH_SHORT).show()
+        }
+        binding.topBar.profileAvatar.setOnClickListener {
+            vibrator.success()
+            Toast.makeText(this, "Open profile", Toast.LENGTH_SHORT).show()
         }
     }
 
