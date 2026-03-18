@@ -7,32 +7,60 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.abe.bud_jet.adapters.TransactionsAdapter
+import com.abe.bud_jet.database.models.Transaction
 import com.abe.bud_jet.databinding.FragmentOperationsBinding
 
 class OperationsFragment : Fragment() {
 
     private var _binding: FragmentOperationsBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
+
+    private lateinit var adapter: TransactionsAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val OperationsViewModel =
-            ViewModelProvider(this).get(OperationsViewModel::class.java)
-
         _binding = FragmentOperationsBinding.inflate(inflater, container, false)
-        val root: View = binding.root
+        return binding.root
+    }
 
-        val textView: TextView = binding.textOperations
-        OperationsViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        setupRecycler()
+        setupClicks()
+        loadMockData()
+    }
+
+    private fun setupRecycler() {
+        adapter = TransactionsAdapter()
+
+        binding.rvTransactions.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvTransactions.adapter = adapter
+    }
+
+    private fun loadMockData() {
+        val list = listOf(
+            Transaction("Salary", 1200.0, true, "Today, 09:00"),
+            Transaction("Groceries", 54.2, false, "Today, 14:20"),
+            Transaction("Taxi", 12.5, false, "Yesterday"),
+            Transaction("Freelance", 300.0, true, "Mar 12")
+        )
+
+        adapter.submitList(list)
+    }
+
+    private fun setupClicks() {
+
+        binding.btnSearch.setOnClickListener {
+            // TODO
         }
-        return root
+
+        binding.btnFilter.setOnClickListener {
+            // TODO
+        }
     }
 
     override fun onDestroyView() {

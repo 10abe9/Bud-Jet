@@ -1,42 +1,81 @@
 package com.abe.bud_jet.ui.profile
 
+import android.app.AlertDialog
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
+import com.abe.bud_jet.R
 import com.abe.bud_jet.databinding.FragmentProfileBinding
 
-class ProfileFragment : Fragment() {
+class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
-    private var _binding: FragmentProfileBinding? = null
+    private lateinit var binding: FragmentProfileBinding
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
+    private var currentCurrency = "USD"
+    private var notificationsEnabled = true
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val ProfileViewModel =
-            ViewModelProvider(this).get(ProfileViewModel::class.java)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        _binding = FragmentProfileBinding.inflate(inflater, container, false)
-        val root: View = binding.root
+        binding = FragmentProfileBinding.bind(view)
 
-        val textView: TextView = binding.textProfile
-        ProfileViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
-        }
-        return root
+        setupUI()
+        setupClicks()
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    private fun setupUI() {
+        binding.tvSummary.text = "$2450 this month"
+        binding.tvGoalSummary.text = "Saving $320 / $500"
+
+        // 💱 Currency
+        binding.tvCurrency.text = currentCurrency
+
+        // 🔔 Notifications
+        binding.switchNotifications.isChecked = notificationsEnabled
+    }
+
+    private fun setupClicks() {
+
+        // 💱 Currency click (row)
+        binding.rowCurrency.setOnClickListener {
+            val currencies = arrayOf("USD", "EUR", "RUB", "KZT")
+
+            AlertDialog.Builder(requireContext())
+                .setTitle("Select currency")
+                .setItems(currencies) { _, which ->
+                    currentCurrency = currencies[which]
+                    binding.tvCurrency.text = currentCurrency
+                }
+                .show()
+        }
+
+        // 🔔 Notifications switch
+        binding.switchNotifications.setOnCheckedChangeListener { _, isChecked ->
+            notificationsEnabled = isChecked
+
+            Toast.makeText(
+                requireContext(),
+                if (isChecked) "Notifications ON" else "Notifications OFF",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
+        binding.btnExport.setOnClickListener {
+            Toast.makeText(requireContext(), "Export coming soon", Toast.LENGTH_SHORT).show()
+        }
+
+        binding.btnReset.setOnClickListener {
+            Toast.makeText(requireContext(), "Reset coming soon", Toast.LENGTH_SHORT).show()
+        }
+
+        binding.cardPremium.setOnClickListener {
+            Toast.makeText(requireContext(), "Premium coming soon 💸", Toast.LENGTH_SHORT).show()
+        }
+
+        binding.buttonBack.setOnClickListener {
+            findNavController().popBackStack()
+        }
     }
 }

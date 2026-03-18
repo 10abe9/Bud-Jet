@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity() {
     private fun hideUiForHelloFragments(navController: NavController){
         navController.addOnDestinationChangedListener { _, destination, _ ->
 
-            if (destination.id == R.id.hello1Fragment || destination.id == R.id.hello2Fragment) {
+            if (destination.id == R.id.hello1Fragment || destination.id == R.id.hello2Fragment || destination.id == R.id.navigation_profile) {
 
                 binding.navView.visibility = View.GONE
                 binding.topBar.root.visibility = View.GONE
@@ -66,12 +66,16 @@ class MainActivity : AppCompatActivity() {
     private fun setupAddButton(){
         val vibrator = VibrationManager.get()
         binding.fabAdd.setOnClickListener {
+            it.animate().scaleX(0.9f).scaleY(0.9f).setDuration(80)
+                .withEndAction {
+                    it.animate().scaleX(1f).scaleY(1f).duration = 80
+                }
             vibrator.success()
             Toast.makeText(this, "Add transaction", Toast.LENGTH_SHORT).show()
         }
         binding.topBar.profileAvatar.setOnClickListener {
             vibrator.success()
-            Toast.makeText(this, "Open profile", Toast.LENGTH_SHORT).show()
+            findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.navigation_profile)
         }
     }
 

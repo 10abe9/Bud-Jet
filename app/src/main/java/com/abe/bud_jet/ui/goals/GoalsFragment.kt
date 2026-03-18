@@ -1,42 +1,42 @@
 package com.abe.bud_jet.ui.goals
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.abe.bud_jet.R
 import com.abe.bud_jet.databinding.FragmentGoalsBinding
 
-class GoalsFragment : Fragment() {
+class GoalsFragment : Fragment(R.layout.fragment_goals) {
 
-    private var _binding: FragmentGoalsBinding? = null
+    private lateinit var binding: FragmentGoalsBinding
+    private val adapter = LimitAdapter()
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val GoalsViewModel =
-            ViewModelProvider(this).get(GoalsViewModel::class.java)
+        binding = FragmentGoalsBinding.bind(view)
 
-        _binding = FragmentGoalsBinding.inflate(inflater, container, false)
-        val root: View = binding.root
+        binding.rvLimits.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvLimits.adapter = adapter
 
-        val textView: TextView = binding.textGoals
-        GoalsViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
-        }
-        return root
+        setupUI()
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    private fun setupUI() {
+        val saved = 320f
+        val target = 500f
+        val percent = ((saved / target) * 100).toInt()
+
+        binding.tvSavingAmount.text = "$${saved.toInt()} / $${target.toInt()}"
+        binding.progressSaving.progress = percent
+
+        val limits = listOf(
+            Limit("Food", 250f, 300f),
+            Limit("Transport", 180f, 200f),
+            Limit("Shopping", 220f, 250f)
+        )
+
+        adapter.submit(limits)
     }
 }

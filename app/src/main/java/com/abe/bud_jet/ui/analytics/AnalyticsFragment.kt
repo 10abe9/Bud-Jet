@@ -1,42 +1,42 @@
 package com.abe.bud_jet.ui.analytics
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.abe.bud_jet.R
+import com.abe.bud_jet.database.models.CategoryStat
 import com.abe.bud_jet.databinding.FragmentAnalyticsBinding
 
-class AnalyticsFragment : Fragment() {
+class AnalyticsFragment : Fragment(R.layout.fragment_analytics) {
 
-    private var _binding: FragmentAnalyticsBinding? = null
+    private lateinit var binding: FragmentAnalyticsBinding
+    private val adapter = CategoryStatsAdapter()
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val AnalyticsViewModel =
-            ViewModelProvider(this).get(AnalyticsViewModel::class.java)
+        binding = FragmentAnalyticsBinding.bind(view)
 
-        _binding = FragmentAnalyticsBinding.inflate(inflater, container, false)
-        val root: View = binding.root
+        binding.rvStats.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvStats.adapter = adapter
 
-        val textView: TextView = binding.textAnalytics
-        AnalyticsViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
-        }
-        return root
+        val stats = listOf(
+            CategoryStat("Food", 400f),
+            CategoryStat("Transport", 250f),
+            CategoryStat("Shopping", 200f),
+            CategoryStat("Other", 150f)
+        )
+
+        setupUI(stats)
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    private fun setupUI(stats: List<CategoryStat>) {
+        val total = stats.sumOf { it.total.toDouble() }.toFloat()
+
+        binding.tvTotal.text = "$${total.toInt()}"
+        binding.donutChart.setData(stats)
+
+        adapter.submit(stats)
     }
 }

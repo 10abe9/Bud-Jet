@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Widget.App.Chip.Filter" parent="Widget.MaterialComponents.Chip.Choice">
+
+        <!-- форма -->
+        <item name="chipCornerRadius">16dp</item>
+
+        <!-- фон -->
+        <item name="chipBackgroundColor">@color/chip_background</item>
+
+        <!-- текст -->
+        <item name="android:textColor">@color/chip_text</item>
+
+        <!-- выбранный -->
+        <item name="checkedIconVisible">false</item>
+        <item name="chipStrokeWidth">0dp</item>
+
+    </style>
+
+</resources>

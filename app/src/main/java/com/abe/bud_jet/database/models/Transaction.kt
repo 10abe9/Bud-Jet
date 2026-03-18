@@ -1,4 +1,8 @@
 package com.abe.bud_jet.database.models
 
-class Transaction {
-}
+data class Transaction(
+    val title: String,
+    val amount: Double,
+    val isIncome: Boolean,
+    val date: String
+)

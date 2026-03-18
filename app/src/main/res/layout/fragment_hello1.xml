@@ -92,7 +92,7 @@ and get smart financial insights."
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/button_get_started"
+        android:layout_marginTop="32dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView2">
@@ -197,10 +197,10 @@ and get smart financial insights."
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:textSize="12sp"
-                    android:elevation="0dp"
                     android:backgroundTint="@color/finance_expense"
+                    android:elevation="0dp"
                     android:text="Add expense"
+                    android:textSize="12sp"
                     app:cornerRadius="20dp" />
 
                 <Space
@@ -210,12 +210,12 @@ and get smart financial insights."
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/add_income_button"
                     android:layout_width="wrap_content"
-                    android:elevation="0dp"
                     android:layout_height="wrap_content"
-                    android:textSize="12sp"
                     android:layout_weight="1"
                     android:backgroundTint="@color/finance_income"
+                    android:elevation="0dp"
                     android:text="Add income"
+                    android:textSize="12sp"
                     app:cornerRadius="20dp" />
             </LinearLayout>
         </LinearLayout>

@@ -60,4 +60,7 @@
 
     <color name="card_highlight">#EEF2FF</color>
 
+    <color name="chip_background">@color/brand_primary_dark</color>
+    <color name="chip_text">@color/text_primary</color>
+
 </resources>
