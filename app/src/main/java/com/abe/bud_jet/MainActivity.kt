@@ -1,10 +1,8 @@
 package com.abe.bud_jet
 
-import android.graphics.drawable.Icon
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
@@ -13,6 +11,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.abe.bud_jet.databinding.ActivityMainBinding
+import com.abe.bud_jet.ui.operations.AddTransactionBottomSheet
 import com.abe.bud_jet.utils.VibrationManager
 
 class MainActivity : AppCompatActivity() {
@@ -71,7 +70,8 @@ class MainActivity : AppCompatActivity() {
                     it.animate().scaleX(1f).scaleY(1f).duration = 80
                 }
             vibrator.success()
-            Toast.makeText(this, "Add transaction", Toast.LENGTH_SHORT).show()
+            AddTransactionBottomSheet.newInstance(isIncomeDefault = false)
+                .show(supportFragmentManager, "add_transaction")
         }
         binding.topBar.profileAvatar.setOnClickListener {
             vibrator.success()

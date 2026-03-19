@@ -4,13 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.abe.bud_jet.database.FinanceRepositoryProvider
 import com.abe.bud_jet.adapters.TransactionsAdapter
 import com.abe.bud_jet.database.models.Transaction
 import com.abe.bud_jet.databinding.FragmentOperationsBinding
+import com.abe.bud_jet.utils.collectWithLifecycle
 
 class OperationsFragment : Fragment() {
 
@@ -18,6 +19,12 @@ class OperationsFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var adapter: TransactionsAdapter
+
+    private val viewModel: OperationsViewModel by viewModels {
+        OperationsViewModelFactory(
+            FinanceRepositoryProvider.get(requireContext())
+        )
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,7 +38,7 @@ class OperationsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setupRecycler()
         setupClicks()
-        loadMockData()
+        observeData()
     }
 
     private fun setupRecycler() {
@@ -41,21 +48,17 @@ class OperationsFragment : Fragment() {
         binding.rvTransactions.adapter = adapter
     }
 
-    private fun loadMockData() {
-        val list = listOf(
-            Transaction("Salary", 1200.0, true, "Today, 09:00"),
-            Transaction("Groceries", 54.2, false, "Today, 14:20"),
-            Transaction("Taxi", 12.5, false, "Yesterday"),
-            Transaction("Freelance", 300.0, true, "Mar 12")
-        )
-
-        adapter.submitList(list)
+    private fun observeData() {
+        viewModel.transactions
+            .collectWithLifecycle(viewLifecycleOwner) { list ->
+                adapter.submitList(list)
+            }
     }
 
     private fun setupClicks() {
 
         binding.btnSearch.setOnClickListener {
-            // TODO
+            // TODO: добавить UI поиска (диалог/поисковую строку)
         }
 
         binding.btnFilter.setOnClickListener {
