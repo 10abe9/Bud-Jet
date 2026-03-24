@@ -9,25 +9,38 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.FrameLayout
 import com.abe.bud_jet.R
+import com.abe.bud_jet.database.FinanceRepository
 import com.abe.bud_jet.database.FinanceRepositoryProvider
 import com.abe.bud_jet.database.entities.CategoryEntity
 import com.abe.bud_jet.database.entities.TransactionType
 import com.abe.bud_jet.databinding.BottomSheetAddTransactionBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class AddTransactionBottomSheet : BottomSheetDialogFragment() {
+    private val fixedCategoryPalette = listOf(
+        "#F59E0B",
+        "#3B82F6",
+        "#10B981",
+        "#8B5CF6",
+        "#EF4444",
+        "#06B6D4",
+        "#F97316",
+        "#84CC16",
+        "#EC4899",
+        "#6366F1"
+    )
 
     private var _binding: BottomSheetAddTransactionBinding? = null
     private val binding get() = _binding!!
 
     private val job = Job()
     private val scope = CoroutineScope(Dispatchers.Main + job)
+    private var categoriesJob: Job? = null
 
     private val repository by lazy {
         FinanceRepositoryProvider.get(requireContext())
@@ -87,7 +100,8 @@ class AddTransactionBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun observeCategories() {
-        scope.launch {
+        categoriesJob?.cancel()
+        categoriesJob = scope.launch {
             repository.observeCategoriesByType(isIncomeCurrent).collect { list ->
                 renderCategoryChips(list)
             }
@@ -98,41 +112,28 @@ class AddTransactionBottomSheet : BottomSheetDialogFragment() {
         binding.chipGroupCategories.removeAllViews()
         selectedCategoryId = null
 
-        categories.forEach { category ->
+        categories
+            .sortedBy { it.id }
+            .forEachIndexed { index, category ->
+            val colorHex = category.color
+                ?.takeIf { it.startsWith("#") }
+                ?: fixedCategoryPalette[index % fixedCategoryPalette.size]
             val chip = Chip(requireContext()).apply {
                 text = category.name
                 isCheckable = true
                 tag = category.id
+                chipBackgroundColor = android.content.res.ColorStateList.valueOf(
+                    requireContext().getColor(com.abe.bud_jet.R.color.card)
+                )
+                runCatching {
+                    val parsed = Color.parseColor(colorHex)
+                    chipStrokeWidth = 1.5f
+                    chipStrokeColor = android.content.res.ColorStateList.valueOf(parsed)
+                    setTextColor(requireContext().getColor(com.abe.bud_jet.R.color.text_primary))
+                }
             }
             binding.chipGroupCategories.addView(chip)
         }
-
-        // Chip for adding new category
-        val addChip = Chip(requireContext()).apply {
-            text = "+ New"
-            isCheckable = false
-        }
-        addChip.setOnClickListener {
-            showAddCategoryDialog()
-        }
-        binding.chipGroupCategories.addView(addChip)
-    }
-
-    private fun showAddCategoryDialog() {
-        val input = com.google.android.material.textfield.TextInputEditText(requireContext())
-        input.hint = "Category name"
-
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle(if (isIncomeCurrent) "New income category" else "New expense category")
-            .setView(input)
-            .setPositiveButton("Save") { _, _ ->
-                val name = input.text?.toString().orEmpty()
-                scope.launch {
-                    repository.addCustomCategory(name, isIncomeCurrent)
-                }
-            }
-            .setNegativeButton("Cancel", null)
-            .show()
     }
 
     private fun setupSaveButton() {

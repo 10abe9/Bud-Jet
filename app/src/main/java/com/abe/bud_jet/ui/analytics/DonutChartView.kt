@@ -4,6 +4,8 @@ import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
+import androidx.core.content.ContextCompat
+import com.abe.bud_jet.R
 import com.abe.bud_jet.database.models.CategoryStat
 
 class DonutChartView @JvmOverloads constructor(
@@ -32,14 +34,10 @@ class DonutChartView @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        if (data.isEmpty()) return
-
-        val total = data.sumOf { it.total.toDouble() }.toFloat()
-
         val strokeWidth = width * 0.18f
         paint.style = Paint.Style.STROKE
         paint.strokeWidth = strokeWidth
-        paint.strokeCap = Paint.Cap.ROUND
+        paint.strokeCap = Paint.Cap.BUTT
 
         val padding = strokeWidth
         rect.set(
@@ -49,14 +47,26 @@ class DonutChartView @JvmOverloads constructor(
             height - padding
         )
 
+        // Subtle base ring keeps the chart informative in empty states.
+        paint.color = ContextCompat.getColor(context, R.color.border)
+        canvas.drawArc(rect, -90f, 360f, false, paint)
+
+        if (data.isEmpty()) return
+
+        val total = data.sumOf { it.total.toDouble() }.toFloat()
+        if (total <= 0f) return
+
         var startAngle = -90f
+        val gap = 2.5f
 
         data.forEachIndexed { index, item ->
             val sweep = (item.total / total) * 360f
+            val drawSweep = (sweep - gap).coerceAtLeast(0f)
 
             paint.color = colors[index % colors.size]
+            paint.strokeCap = Paint.Cap.ROUND
 
-            canvas.drawArc(rect, startAngle, sweep, false, paint)
+            canvas.drawArc(rect, startAngle + (gap / 2f), drawSweep, false, paint)
 
             startAngle += sweep
         }

@@ -1,13 +1,17 @@
 package com.abe.bud_jet.ui.goals
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class GoalsViewModel : ViewModel() {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is Goals Fragment"
-    }
-    val text: LiveData<String> = _text
+    private val _uiState = MutableStateFlow(GoalsUiState())
+    val uiState: StateFlow<GoalsUiState> = _uiState.asStateFlow()
 }
+
+data class GoalsUiState(
+    val isLoading: Boolean = false,
+    val errorMessage: String? = null
+)

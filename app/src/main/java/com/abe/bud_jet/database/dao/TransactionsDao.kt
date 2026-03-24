@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.abe.bud_jet.database.entities.TransactionEntity
 import com.abe.bud_jet.database.entities.TransactionType
 import kotlinx.coroutines.flow.Flow
@@ -13,6 +14,12 @@ interface TransactionsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(transaction: TransactionEntity)
+
+    @Update
+    suspend fun update(transaction: TransactionEntity)
+
+    @Query("DELETE FROM transactions WHERE id = :id")
+    suspend fun deleteById(id: Long): Int
 
     @Query("SELECT * FROM transactions ORDER BY timestamp DESC LIMIT :limit")
     fun observeRecent(limit: Int): Flow<List<TransactionEntity>>
@@ -29,5 +36,8 @@ interface TransactionsDao {
                 "WHERE type = :type"
     )
     fun observeTotalByType(type: TransactionType): Flow<Double>
+
+    @Query("UPDATE transactions SET category_id = NULL WHERE category_id = :categoryId")
+    suspend fun clearCategoryReferences(categoryId: Long)
 }
 

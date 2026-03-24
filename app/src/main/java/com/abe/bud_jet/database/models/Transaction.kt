@@ -8,6 +8,9 @@ import java.util.Locale
 
 data class Transaction(
     val id: Long,
+    val timestamp: Long,
+    val categoryId: Long?,
+    val note: String?,
     val title: String,
     val amount: Double,
     val isIncome: Boolean,
@@ -20,17 +23,25 @@ fun TransactionEntity.toUiModel(): Transaction {
     val formattedDate = SimpleDateFormat(pattern, Locale.getDefault())
         .format(Date(timestamp))
 
-    val displayTitle = when {
-        !note.isNullOrBlank() -> note
-        isIncome -> "Income"
-        else -> "Expense"
-    }
-
     return Transaction(
         id = id,
-        title = displayTitle,
+        timestamp = timestamp,
+        categoryId = categoryId,
+        note = note,
+        title = if (isIncome) "Income" else "Expense",
         amount = amount,
         isIncome = isIncome,
         date = formattedDate
     )
+}
+
+fun Transaction.withCategoryName(
+    categoryName: String?
+): Transaction {
+    val displayTitle = when {
+        !categoryName.isNullOrBlank() -> categoryName
+        !note.isNullOrBlank() -> note
+        else -> title
+    }
+    return copy(title = displayTitle)
 }

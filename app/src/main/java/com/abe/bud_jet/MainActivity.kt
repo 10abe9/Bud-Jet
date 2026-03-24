@@ -5,14 +5,18 @@ import android.view.View
 import android.view.ViewGroup
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.abe.bud_jet.database.FinanceRepositoryProvider
+import com.abe.bud_jet.database.preferences.PreferenceManager
 import com.abe.bud_jet.databinding.ActivityMainBinding
 import com.abe.bud_jet.ui.operations.AddTransactionBottomSheet
 import com.abe.bud_jet.utils.VibrationManager
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -37,8 +41,11 @@ class MainActivity : AppCompatActivity() {
         setupAddButton()
 
         hideUiForHelloFragments(navController)
+        seedDefaultCategories()
 
-        if (true){ // TODO: is first init
+        val preferenceManager = PreferenceManager.getInstance(applicationContext)
+        if (preferenceManager.getIsFirstInit()) {
+            preferenceManager.setIsFirstInit(false)
             navController.navigate(R.id.hello1Fragment)
         }
     }
@@ -81,6 +88,15 @@ class MainActivity : AppCompatActivity() {
 
     private fun registerVibrationManager(){
         VibrationManager.init(applicationContext)
+    }
+
+    private fun seedDefaultCategories() {
+        lifecycleScope.launch {
+            FinanceRepositoryProvider.get(applicationContext).apply {
+                seedDefaultCategoriesIfEmpty()
+                enforceCategoryPolicy()
+            }
+        }
     }
 
     private fun setIconScalingAnimation(

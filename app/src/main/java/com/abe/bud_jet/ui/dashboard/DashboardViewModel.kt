@@ -7,18 +7,33 @@ import com.abe.bud_jet.database.FinanceRepository
 import com.abe.bud_jet.database.DashboardSummary
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.combine
 import com.abe.bud_jet.database.models.Transaction
 import com.abe.bud_jet.database.models.toUiModel
+import com.abe.bud_jet.database.models.withCategoryName
 
 data class DashboardUiState(
     val balanceFormatted: String,
     val monthDeltaFormatted: String,
     val monthDeltaRaw: Double,
-    val recentTransactions: List<Transaction>
+    val recentTransactions: List<Transaction>,
+    val recentChips: List<RecentTransactionChip>,
+    val expenseCategories: List<DashboardCategoryChip>,
+    val incomeCategories: List<DashboardCategoryChip>
+)
+
+data class RecentTransactionChip(
+    val id: Long,
+    val amount: Double,
+    val isIncome: Boolean
+)
+
+data class DashboardCategoryChip(
+    val id: Long,
+    val name: String,
+    val colorHex: String?,
+    val isIncome: Boolean
 )
 
 class DashboardViewModel(
@@ -28,17 +43,49 @@ class DashboardViewModel(
     val uiState: StateFlow<DashboardUiState> =
         combine(
             repository.observeDashboardSummary(),
-            repository.observeRecentTransactions(limit = 3)
-        ) { summary: DashboardSummary, recentEntities ->
+            repository.observeRecentTransactions(limit = 3),
+            repository.observeCategoriesByType(isIncome = false),
+            repository.observeCategoriesByType(isIncome = true)
+        ) { summary: DashboardSummary, recentEntities, expenseCategoriesRaw, incomeCategoriesRaw ->
             val balanceText = formatMoney(balance = summary.balance)
             val monthDelta = summary.totalIncome - summary.totalExpense
             val monthDeltaText = formatMoneyDelta(monthDelta)
-            val recent = recentEntities.map { it.toUiModel() }
+            val categoryNamesById = (expenseCategoriesRaw + incomeCategoriesRaw)
+                .associateBy({ it.id }, { it.name })
+            val recent = recentEntities
+                .map { it.toUiModel() }
+                .map { tx -> tx.withCategoryName(categoryNamesById[tx.categoryId]) }
+            val recentChips = recent
+                .take(3)
+                .map { RecentTransactionChip(id = it.id, amount = it.amount, isIncome = it.isIncome) }
+            val expenseCategories = expenseCategoriesRaw
+                .map {
+                    DashboardCategoryChip(
+                        id = it.id,
+                        name = it.name,
+                        colorHex = it.color,
+                        isIncome = false
+                    )
+                }
+                .take(FinanceRepository.MAX_EXPENSE_CATEGORIES)
+            val incomeCategories = incomeCategoriesRaw
+                .map {
+                    DashboardCategoryChip(
+                        id = it.id,
+                        name = it.name,
+                        colorHex = it.color,
+                        isIncome = true
+                    )
+                }
+                .take(FinanceRepository.MAX_INCOME_CATEGORIES)
             DashboardUiState(
                 balanceFormatted = balanceText,
                 monthDeltaFormatted = monthDeltaText,
                 monthDeltaRaw = monthDelta,
-                recentTransactions = recent
+                recentTransactions = recent,
+                recentChips = recentChips,
+                expenseCategories = expenseCategories,
+                incomeCategories = incomeCategories
             )
         }
             .stateIn(
@@ -48,7 +95,10 @@ class DashboardViewModel(
                     balanceFormatted = "$0",
                     monthDeltaFormatted = "$0",
                     monthDeltaRaw = 0.0,
-                    recentTransactions = emptyList()
+                    recentTransactions = emptyList(),
+                    recentChips = emptyList(),
+                    expenseCategories = emptyList(),
+                    incomeCategories = emptyList()
                 )
             )
 

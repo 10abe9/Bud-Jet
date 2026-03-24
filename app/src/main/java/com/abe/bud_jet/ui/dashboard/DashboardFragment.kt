@@ -1,29 +1,47 @@
 package com.abe.bud_jet.ui.dashboard
 
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.core.os.bundleOf
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.navOptions
 import com.abe.bud_jet.database.FinanceRepositoryProvider
+import com.abe.bud_jet.database.FinanceRepository
 import com.abe.bud_jet.databinding.FragmentDashboardBinding
 import com.abe.bud_jet.ui.operations.AddTransactionBottomSheet
+import com.abe.bud_jet.ui.operations.OperationsFragment
 import com.abe.bud_jet.utils.VibrationManager
 import com.abe.bud_jet.utils.collectWithLifecycle
-import com.abe.bud_jet.database.models.Transaction
-import android.view.LayoutInflater as AndroidLayoutInflater
-import com.abe.bud_jet.databinding.ItemTransactionBinding
+import com.google.android.material.chip.Chip
 
 class DashboardFragment : Fragment() {
+    private val fixedCategoryPalette = listOf(
+        "#F59E0B",
+        "#3B82F6",
+        "#10B981",
+        "#8B5CF6",
+        "#EF4444",
+        "#06B6D4",
+        "#F97316",
+        "#84CC16",
+        "#EC4899",
+        "#6366F1"
+    )
 
     private var _binding: FragmentDashboardBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var vibrator: VibrationManager
+    private val repository by lazy { FinanceRepositoryProvider.get(requireContext()) }
     private val dashboardViewModel: DashboardViewModel by viewModels {
         DashboardViewModelFactory(
-            FinanceRepositoryProvider.get(requireContext())
+            repository
         )
     }
 
@@ -58,47 +76,108 @@ class DashboardFragment : Fragment() {
                 }
                 binding.textBalanceStatus.setTextColor(requireContext().getColor(colorRes))
 
-                updateRecentTransactions(state.recentTransactions)
+                renderRecentTransactions(state.recentChips)
+                renderCategories(
+                    expenseCategories = state.expenseCategories,
+                    incomeCategories = state.incomeCategories
+                )
             }
     }
 
-    private fun updateRecentTransactions(transactions: List<Transaction>) {
-        val listContainer = binding.layoutRecentList
+    private fun renderRecentTransactions(chips: List<RecentTransactionChip>) {
+        val chipGroup = binding.chipGroupRecentTransactions
         val emptyContainer = binding.layoutRecentEmpty
+        chipGroup.removeAllViews()
 
-        listContainer.removeAllViews()
-
-        if (transactions.isEmpty()) {
+        if (chips.isEmpty()) {
             emptyContainer.visibility = View.VISIBLE
-            listContainer.visibility = View.GONE
             return
         }
-
         emptyContainer.visibility = View.GONE
-        listContainer.visibility = View.VISIBLE
 
-        val inflater = AndroidLayoutInflater.from(requireContext())
-        transactions.take(3).forEach { tx ->
-            val itemBinding = ItemTransactionBinding.inflate(inflater, listContainer, false)
-            val amountText = if (tx.isIncome) {
-                "+$${tx.amount}"
-            } else {
-                "-$${tx.amount}"
+        chips.take(3).forEach { tx ->
+            val chip = Chip(requireContext()).apply {
+                val amount = String.format("%.2f", kotlin.math.abs(tx.amount))
+                text = if (tx.isIncome) "+$$amount" else "-$$amount"
+                isCheckable = false
+                isClickable = false
+                chipBackgroundColor =
+                    ColorStateList.valueOf(requireContext().getColor(com.abe.bud_jet.R.color.card))
+                chipStrokeWidth = 1.5f
+                val strokeColor = if (tx.isIncome) {
+                    requireContext().getColor(com.abe.bud_jet.R.color.finance_income)
+                } else {
+                    requireContext().getColor(com.abe.bud_jet.R.color.finance_expense)
+                }
+                chipStrokeColor = ColorStateList.valueOf(strokeColor)
+                setTextColor(strokeColor)
+                setOnClickListener {
+                    findNavController().navigate(
+                        com.abe.bud_jet.R.id.navigation_operations,
+                        bundleOf(OperationsFragment.ARG_FOCUS_TRANSACTION_ID to tx.id),
+                        navOptions {
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    )
+                }
             }
-            itemBinding.tvCategory.text = tx.title
-            itemBinding.tvAmount.text = amountText
-            val color = if (tx.isIncome) {
-                requireContext().getColor(com.abe.bud_jet.R.color.finance_income)
-            } else {
-                requireContext().getColor(com.abe.bud_jet.R.color.finance_expense)
-            }
-            itemBinding.tvAmount.setTextColor(color)
-            // В simple версии используем только отформатированную дату
-            itemBinding.tvTime.text = tx.date
-            itemBinding.tvDate.text = ""
-
-            listContainer.addView(itemBinding.root)
+            chipGroup.addView(chip)
         }
+    }
+
+    private fun renderCategories(
+        expenseCategories: List<DashboardCategoryChip>,
+        incomeCategories: List<DashboardCategoryChip>
+    ) {
+        val ordered = (expenseCategories + incomeCategories)
+            .sortedBy { it.id }
+            .mapIndexed { index, chip ->
+                chip.copy(colorHex = fixedCategoryPalette[index % fixedCategoryPalette.size])
+            }
+        val colorsById = ordered.associateBy({ it.id }, { it.colorHex })
+        val expenseColored = expenseCategories.map { it.copy(colorHex = colorsById[it.id]) }
+        val incomeColored = incomeCategories.map { it.copy(colorHex = colorsById[it.id]) }
+
+        renderChipRow(binding.chipGroupExpenseCategories, expenseColored)
+        renderChipRow(binding.chipGroupIncomeCategories, incomeColored)
+    }
+
+    private fun renderChipRow(
+        chipGroup: com.google.android.material.chip.ChipGroup,
+        categories: List<DashboardCategoryChip>
+    ) {
+        chipGroup.removeAllViews()
+        categories.forEach { category -> chipGroup.addView(buildCategoryChip(category)) }
+    }
+
+    private fun buildCategoryChip(category: DashboardCategoryChip): Chip {
+        return Chip(requireContext()).apply {
+            text = category.name
+            isCheckable = false
+            isClickable = true
+            chipBackgroundColor = ColorStateList.valueOf(requireContext().getColor(com.abe.bud_jet.R.color.card))
+
+            val colorHex = category.colorHex ?: fixedCategoryPalette.first()
+            runCatching {
+                val parsed = Color.parseColor(colorHex)
+                chipStrokeWidth = 1.5f
+                chipStrokeColor = ColorStateList.valueOf(parsed)
+                setTextColor(requireContext().getColor(com.abe.bud_jet.R.color.text_primary))
+            }
+
+            setOnLongClickListener {
+                showDeleteCategoryDialog(category)
+                true
+            }
+        }
+    }
+
+    private fun showDeleteCategoryDialog(category: DashboardCategoryChip) {
+        DeleteCategoryBottomSheet.newInstance(
+            categoryId = category.id,
+            categoryName = category.name
+        ).show(parentFragmentManager, "delete_category")
     }
 
     private fun setupButtons() {
@@ -118,6 +197,15 @@ class DashboardFragment : Fragment() {
             AddTransactionBottomSheet.newInstance(isIncomeDefault = false)
                 .show(parentFragmentManager, "add_from_recent")
         }
+
+        binding.btnAddCategoryDashboard.setOnClickListener {
+            showAddCategoryDialog()
+        }
+    }
+
+    private fun showAddCategoryDialog() {
+        AddCategoryBottomSheet()
+            .show(parentFragmentManager, "add_category")
     }
 
     override fun onDestroyView() {
