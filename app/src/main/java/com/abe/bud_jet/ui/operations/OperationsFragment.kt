@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.abe.bud_jet.database.FinanceRepositoryProvider
 import com.abe.bud_jet.adapters.TransactionsAdapter
@@ -38,6 +39,9 @@ class OperationsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         pendingFocusTransactionId = arguments?.getLong(ARG_FOCUS_TRANSACTION_ID)?.takeIf { it > 0L }
+            ?: findNavController().getBackStackEntry(com.abe.bud_jet.R.id.mobile_navigation)
+                .savedStateHandle
+                .get<Long>("focus_transaction_id")
         setupRecycler()
         setupClicks()
         observeData()
@@ -83,6 +87,9 @@ class OperationsFragment : Fragment() {
                 adapter.highlightTransaction(targetId)
             }, 120L)
             pendingFocusTransactionId = null
+            findNavController().getBackStackEntry(com.abe.bud_jet.R.id.mobile_navigation)
+                .savedStateHandle
+                .remove<Long>("focus_transaction_id")
         }
     }
 

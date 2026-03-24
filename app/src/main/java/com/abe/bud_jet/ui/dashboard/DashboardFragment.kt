@@ -6,19 +6,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.navOptions
 import com.abe.bud_jet.database.FinanceRepositoryProvider
 import com.abe.bud_jet.database.FinanceRepository
 import com.abe.bud_jet.databinding.FragmentDashboardBinding
 import com.abe.bud_jet.ui.operations.AddTransactionBottomSheet
-import com.abe.bud_jet.ui.operations.OperationsFragment
 import com.abe.bud_jet.utils.VibrationManager
 import com.abe.bud_jet.utils.collectWithLifecycle
 import com.google.android.material.chip.Chip
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class DashboardFragment : Fragment() {
     private val fixedCategoryPalette = listOf(
@@ -112,14 +111,16 @@ class DashboardFragment : Fragment() {
                 chipStrokeColor = ColorStateList.valueOf(strokeColor)
                 setTextColor(strokeColor)
                 setOnClickListener {
-                    findNavController().navigate(
-                        com.abe.bud_jet.R.id.navigation_operations,
-                        bundleOf(OperationsFragment.ARG_FOCUS_TRANSACTION_ID to tx.id),
-                        navOptions {
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    )
+                    val navController = findNavController()
+                    runCatching {
+                        navController.getBackStackEntry(com.abe.bud_jet.R.id.mobile_navigation)
+                            .savedStateHandle["focus_transaction_id"] = tx.id
+                        requireActivity()
+                            .findViewById<BottomNavigationView>(com.abe.bud_jet.R.id.nav_view)
+                            .selectedItemId = com.abe.bud_jet.R.id.navigation_operations
+                    }.onFailure {
+                        Toast.makeText(requireContext(), "Unable to open transaction", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
             chipGroup.addView(chip)
