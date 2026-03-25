@@ -37,6 +37,9 @@ interface TransactionsDao {
     )
     fun observeTotalByType(type: TransactionType): Flow<Double>
 
+    @Query("SELECT MIN(timestamp) FROM transactions")
+    fun observeMinTimestamp(): Flow<Long?>
+
     @Query("UPDATE transactions SET category_id = NULL WHERE category_id = :categoryId")
     suspend fun clearCategoryReferences(categoryId: Long)
 }

@@ -29,6 +29,16 @@ class VibrationManager private constructor(context: Context) {
         vibratePattern(longArrayOf(0, 60, 40, 60))
     }
 
+    /**
+     * Duo/duolingo-like long success:
+     * короткие импульсы с паузами суммарно ~1s, чтобы это воспринималось как "прогресс/подсказка",
+     * а не как единичный тик.
+     */
+    fun duoLongSuccess() {
+        // pattern: [delay, on, off, on, off, ...]
+        vibratePattern(longArrayOf(0, 90, 110, 90, 110, 90, 110, 90, 260))
+    }
+
     private fun vibrate(duration: Long) {
         if (!vibrator.hasVibrator()) return
 

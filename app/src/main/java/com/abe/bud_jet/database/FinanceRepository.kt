@@ -64,6 +64,9 @@ class FinanceRepository(
     fun observeTotalExpense(): Flow<Double> =
         transactionsDao.observeTotalByType(TransactionType.EXPENSE)
 
+    fun observeMinTimestamp(): Flow<Long?> =
+        transactionsDao.observeMinTimestamp()
+
     fun observeCategories(): Flow<List<CategoryEntity>> =
         categoryDao.observeAll()
 

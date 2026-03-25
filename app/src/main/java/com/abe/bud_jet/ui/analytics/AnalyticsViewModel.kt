@@ -12,66 +12,182 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+
+data class AnalyticsMonthChartUi(
+    val label: String,
+    val stats: List<CategoryStat>,
+    val totalExpense: Float,
+    val emptyMessage: String?
+)
 
 class AnalyticsViewModel(
     private val repository: FinanceRepository
 ) : ViewModel() {
 
-    private val monthOptions: List<AnalyticsMonthOption> = buildMonthOptions(lastMonths = 12)
     private val selectedMonthIndex = MutableStateFlow(0)
 
-    val uiState: StateFlow<AnalyticsUiState> = combine(
-        selectedMonthIndex,
-        repository.observeCategories(),
-        repository.observeRecentTransactions(limit = 5000),
-        repository.observeTotalExpense()
-    ) { index, categories, allTransactions, totalExpenseEver ->
-        val safeIndex = index.coerceIn(0, monthOptions.lastIndex)
-        val month = monthOptions[safeIndex]
-        val monthExpenses = allTransactions.filterExpensesInPeriod(month)
-        val stats = monthExpenses.toCategoryStats(categories)
-        val total = stats.sumOf { it.total.toDouble() }.toFloat()
+    private fun buildMonthOptionsFromTimestamp(firstTimestamp: Long): List<AnalyticsMonthOption> {
+        val now = Calendar.getInstance()
+        val formatter = SimpleDateFormat("MMMM yyyy", Locale.getDefault())
 
-        val emptyMessage = when {
-            totalExpenseEver <= 0.0 -> "No expenses yet. Add your first expense to unlock analytics."
-            stats.isEmpty() -> "No expenses in ${month.label}. Try another month."
-            else -> null
+        val firstCal = (now.clone() as Calendar).apply {
+            timeInMillis = firstTimestamp
+            set(Calendar.DAY_OF_MONTH, 1)
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
         }
 
-        AnalyticsUiState(
-            monthOptions = monthOptions.map { it.label },
-            selectedMonthIndex = safeIndex,
-            stats = stats,
-            totalExpense = total,
-            emptyMessage = emptyMessage,
-            isLoading = false,
-            errorMessage = null
-        )
+        val currentMonthStart = (now.clone() as Calendar).apply {
+            set(Calendar.DAY_OF_MONTH, 1)
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }.timeInMillis
+
+        val options = mutableListOf<AnalyticsMonthOption>()
+        var cursor = firstCal
+        while (cursor.timeInMillis <= currentMonthStart) {
+            val monthStart = cursor.timeInMillis
+            val monthEnd = (cursor.clone() as Calendar).apply {
+                add(Calendar.MONTH, 1)
+                add(Calendar.MILLISECOND, -1)
+            }.timeInMillis
+
+            options.add(
+                AnalyticsMonthOption(
+                    label = formatter.format(cursor.time).replaceFirstChar { ch ->
+                        if (ch.isLowerCase()) ch.titlecase(Locale.getDefault()) else ch.toString()
+                    },
+                    startMillis = monthStart,
+                    endMillis = monthEnd
+                )
+            )
+
+            cursor = (cursor.clone() as Calendar).apply { add(Calendar.MONTH, 1) }
+        }
+
+        return options
     }
-        .catch { throwable ->
+
+    private val monthOptions: StateFlow<List<AnalyticsMonthOption>> =
+        repository.observeMinTimestamp()
+            .map { minTs ->
+                if (minTs == null) emptyList() else buildMonthOptionsFromTimestamp(minTs)
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = emptyList()
+            )
+
+    init {
+        // On first load select the current month (last in the generated list).
+        viewModelScope.launch {
+            val options = monthOptions.filter { it.isNotEmpty() }.first()
+            selectedMonthIndex.value = (options.lastIndex).coerceAtLeast(0)
+        }
+    }
+
+    private val transactionsInRange: StateFlow<List<TransactionEntity>> =
+        monthOptions.flatMapLatest { options ->
+            if (options.isEmpty()) {
+                flowOf(emptyList())
+            } else {
+                val from = options.first().startMillis
+                val to = options.last().endMillis
+                repository.observeTransactionsInPeriod(from, to)
+            }
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = emptyList()
+        )
+
+    private val monthCharts: StateFlow<List<AnalyticsMonthChartUi>> =
+        combine(
+            monthOptions,
+            repository.observeCategories(),
+            repository.observeTotalExpense(),
+            transactionsInRange
+        ) { options, categories, totalExpenseEver, allTransactions ->
+            options.map { month ->
+                val monthExpenses = allTransactions.filterExpensesInPeriod(month)
+                val stats = monthExpenses.toCategoryStats(categories)
+                val total = stats.sumOf { it.total.toDouble() }.toFloat()
+
+                val emptyMessage = when {
+                    totalExpenseEver <= 0.0 -> "No expenses yet. Add your first expense to unlock analytics."
+                    stats.isEmpty() -> "No expenses in ${month.label}. Try another month."
+                    else -> null
+                }
+
+                AnalyticsMonthChartUi(
+                    label = month.label,
+                    stats = stats,
+                    totalExpense = total,
+                    emptyMessage = emptyMessage
+                )
+            }
+        }
+            .catch { throwable ->
+                emit(emptyList())
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = emptyList()
+            )
+
+    val uiState: StateFlow<AnalyticsUiState> =
+        combine(selectedMonthIndex, monthOptions, monthCharts) { index, options, charts ->
+            val safeIndex = index.coerceIn(0, (options.lastIndex).coerceAtLeast(0))
+            val selectedChart = charts.getOrNull(safeIndex)
+
+            AnalyticsUiState(
+                monthOptions = options.map { it.label },
+                monthCharts = charts,
+                selectedMonthIndex = safeIndex,
+                stats = selectedChart?.stats ?: emptyList(),
+                totalExpense = selectedChart?.totalExpense ?: 0f,
+                emptyMessage = selectedChart?.emptyMessage,
+                isLoading = false,
+                errorMessage = null
+            )
+        }.catch { throwable ->
             emit(
                 AnalyticsUiState(
-                    monthOptions = monthOptions.map { it.label },
+                    monthOptions = emptyList(),
+                    monthCharts = emptyList(),
+                    selectedMonthIndex = 0,
                     stats = emptyList(),
                     totalExpense = 0f,
+                    emptyMessage = null,
                     isLoading = false,
                     errorMessage = throwable.message ?: "Unable to load analytics"
                 )
             )
-        }
-        .stateIn(
+        }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = AnalyticsUiState(isLoading = true)
         )
 
     fun onMonthSelected(position: Int) {
-        if (position !in monthOptions.indices) return
+        val maxIndex = monthOptions.value.lastIndex
+        if (position < 0 || position > maxIndex) return
         selectedMonthIndex.value = position
     }
 
@@ -99,37 +215,11 @@ class AnalyticsViewModel(
             .sortedByDescending { it.total }
     }
 
-    private fun buildMonthOptions(lastMonths: Int): List<AnalyticsMonthOption> {
-        val now = Calendar.getInstance()
-        val formatter = SimpleDateFormat("MMMM yyyy", Locale.getDefault())
-        return (0 until lastMonths).map { offset ->
-            val monthCal = (now.clone() as Calendar).apply {
-                add(Calendar.MONTH, -offset)
-                set(Calendar.DAY_OF_MONTH, 1)
-                set(Calendar.HOUR_OF_DAY, 0)
-                set(Calendar.MINUTE, 0)
-                set(Calendar.SECOND, 0)
-                set(Calendar.MILLISECOND, 0)
-            }
-            val start = monthCal.timeInMillis
-            val end = (monthCal.clone() as Calendar).apply {
-                add(Calendar.MONTH, 1)
-                add(Calendar.MILLISECOND, -1)
-            }.timeInMillis
-
-            AnalyticsMonthOption(
-                label = formatter.format(monthCal.time).replaceFirstChar { ch ->
-                    if (ch.isLowerCase()) ch.titlecase(Locale.getDefault()) else ch.toString()
-                },
-                startMillis = start,
-                endMillis = end
-            )
-        }
-    }
 }
 
 data class AnalyticsUiState(
     val monthOptions: List<String> = emptyList(),
+    val monthCharts: List<AnalyticsMonthChartUi> = emptyList(),
     val selectedMonthIndex: Int = 0,
     val stats: List<CategoryStat> = emptyList(),
     val totalExpense: Float = 0f,

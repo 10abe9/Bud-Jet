@@ -47,6 +47,16 @@ class OperationsFragment : Fragment() {
             ?: findNavController().getBackStackEntry(com.abe.bud_jet.R.id.mobile_navigation)
                 .savedStateHandle
                 .get<Long>("focus_transaction_id")
+
+        // If dashboard updates focus_transaction_id while this fragment is already created,
+        // we still must pick it up and scroll/highlight accordingly.
+        val backStackEntry = findNavController().getBackStackEntry(com.abe.bud_jet.R.id.mobile_navigation)
+        backStackEntry.savedStateHandle.getLiveData<Long>("focus_transaction_id")
+            .observe(viewLifecycleOwner) { newId ->
+                val id = newId?.takeIf { it > 0L } ?: return@observe
+                pendingFocusTransactionId = id
+            }
+
         setupRecycler()
         setupClicks()
         setupFilterResultListener()
