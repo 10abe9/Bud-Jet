@@ -7,12 +7,17 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.abe.bud_jet.ui.operations.FilterOperationsBottomSheet.Companion.RESULT_KEY
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.abe.bud_jet.database.FinanceRepositoryProvider
 import com.abe.bud_jet.adapters.TransactionsAdapter
 import com.abe.bud_jet.databinding.FragmentOperationsBinding
 import com.abe.bud_jet.utils.collectWithLifecycle
 import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.android.material.chip.Chip
+import androidx.core.content.ContextCompat
+import android.content.res.ColorStateList
+import kotlin.math.max
 
 class OperationsFragment : Fragment() {
 
@@ -44,20 +49,32 @@ class OperationsFragment : Fragment() {
                 .get<Long>("focus_transaction_id")
         setupRecycler()
         setupClicks()
+        setupFilterResultListener()
+        setupSearchResultListener()
         observeData()
     }
 
     private fun setupRecycler() {
-        adapter = TransactionsAdapter { transaction ->
-            EditTransactionBottomSheet.newInstance(
-                id = transaction.id,
-                amount = transaction.amount,
-                isIncome = transaction.isIncome,
-                categoryId = transaction.categoryId,
-                note = transaction.note,
-                timestamp = transaction.timestamp
-            ).show(parentFragmentManager, "edit_transaction")
-        }
+        adapter = TransactionsAdapter(
+            onTransactionClick = { transaction ->
+                EditTransactionBottomSheet.newInstance(
+                    id = transaction.id,
+                    amount = transaction.amount,
+                    isIncome = transaction.isIncome,
+                    categoryId = transaction.categoryId,
+                    note = transaction.note,
+                    timestamp = transaction.timestamp
+                ).show(parentFragmentManager, "edit_transaction")
+            },
+            onTransactionLongClick = { transaction ->
+                val sign = if (transaction.isIncome) "+" else "-"
+                val amount = String.format("%.2f", kotlin.math.abs(transaction.amount))
+                DeleteTransactionBottomSheet.newInstance(
+                    id = transaction.id,
+                    message = "Delete transaction $sign$$amount?"
+                ).show(parentFragmentManager, "delete_transaction")
+            }
+        )
 
         binding.rvTransactions.layoutManager = LinearLayoutManager(requireContext())
         binding.rvTransactions.adapter = adapter
@@ -66,15 +83,84 @@ class OperationsFragment : Fragment() {
     private fun observeData() {
         viewModel.uiState.collectWithLifecycle(viewLifecycleOwner) { state ->
             adapter.submitList(state.transactions)
-            binding.tvExpensesAmount.text = state.expensesFormatted
+            binding.tvExpensesAmount.text = state.totalsFormatted
             binding.tvExpensesPeriod.text = state.periodLabel
+            binding.tvExpensesTitle.text = when (state.totalsMode) {
+                OperationsTotalsMode.INCOME -> "Income"
+                OperationsTotalsMode.EXPENSES -> "Expenses"
+            }
+            binding.tvExpensesTitle.setTextColor(
+                when (state.totalsMode) {
+                    OperationsTotalsMode.INCOME -> ContextCompat.getColor(requireContext(), com.abe.bud_jet.R.color.finance_income)
+                    OperationsTotalsMode.EXPENSES -> ContextCompat.getColor(requireContext(), com.abe.bud_jet.R.color.finance_expense)
+                }
+            )
             when (state.selectedPeriod) {
                 OperationsPeriod.WEEK -> binding.chipGroupFilters.check(binding.chipWeek.id)
                 OperationsPeriod.MONTH -> binding.chipGroupFilters.check(binding.chipMonth.id)
                 OperationsPeriod.YEAR -> binding.chipGroupFilters.check(binding.chipYear.id)
                 OperationsPeriod.CUSTOM -> binding.chipGroupFilters.check(binding.chipCustom.id)
             }
+            applyPeriodChipHighlight(state.selectedPeriod)
+            renderActiveQueryChips(state.activeFilterText, state.activeSearchText)
             focusIfNeeded()
+        }
+    }
+
+    private fun renderActiveQueryChips(filterText: String?, searchText: String?) {
+        val chipGroup = binding.chipGroupActiveQuery
+        chipGroup.removeAllViews()
+
+        val ctx = requireContext()
+        val bgColor = ContextCompat.getColor(ctx, com.abe.bud_jet.R.color.card)
+        val strokeColor = ContextCompat.getColor(ctx, com.abe.bud_jet.R.color.brand_primary)
+        val textColor = ContextCompat.getColor(ctx, com.abe.bud_jet.R.color.text_primary)
+
+        fun createChip(text: String, onClose: () -> Unit): Chip {
+            val chip = Chip(ctx).apply {
+                this.text = text
+                isCheckable = false
+                setCloseIconVisible(true)
+                chipBackgroundColor = ColorStateList.valueOf(bgColor)
+                chipStrokeColor = ColorStateList.valueOf(strokeColor)
+                setTextColor(textColor)
+                setOnCloseIconClickListener {
+                    onClose()
+                }
+            }
+            return chip
+        }
+
+        filterText?.takeIf { it.isNotBlank() }?.let {
+            chipGroup.addView(createChip("Filter: $it") { viewModel.clearFilters() })
+        }
+        searchText?.takeIf { it.isNotBlank() }?.let {
+            chipGroup.addView(createChip("Search: $it") { viewModel.clearSearch() })
+        }
+    }
+
+    private fun applyPeriodChipHighlight(period: OperationsPeriod) {
+        val chipList = listOf(binding.chipWeek, binding.chipMonth, binding.chipYear, binding.chipCustom)
+        val ctx = requireContext()
+
+        val inactiveBg = ContextCompat.getColor(ctx, com.abe.bud_jet.R.color.card)
+        val inactiveStroke = ContextCompat.getColor(ctx, com.abe.bud_jet.R.color.border)
+        val activeBg = ContextCompat.getColor(ctx, com.abe.bud_jet.R.color.primary_container)
+        val activeStroke = ContextCompat.getColor(ctx, com.abe.bud_jet.R.color.brand_primary)
+
+        chipList.forEach { chip ->
+            val isActive = when (chip.id) {
+                binding.chipWeek.id -> period == OperationsPeriod.WEEK
+                binding.chipMonth.id -> period == OperationsPeriod.MONTH
+                binding.chipYear.id -> period == OperationsPeriod.YEAR
+                binding.chipCustom.id -> period == OperationsPeriod.CUSTOM
+                else -> false
+            }
+
+            val bgColor = if (isActive) activeBg else inactiveBg
+            val strokeColor = if (isActive) activeStroke else inactiveStroke
+            chip.chipBackgroundColor = ColorStateList.valueOf(bgColor)
+            chip.chipStrokeColor = ColorStateList.valueOf(strokeColor)
         }
     }
 
@@ -96,11 +182,11 @@ class OperationsFragment : Fragment() {
     private fun setupClicks() {
 
         binding.btnSearch.setOnClickListener {
-            // TODO: добавить UI поиска (диалог/поисковую строку)
+            showSearchBottomSheet()
         }
 
         binding.btnFilter.setOnClickListener {
-            // TODO
+            showFilterBottomSheet()
         }
 
         binding.chipWeek.setOnClickListener {
@@ -114,6 +200,54 @@ class OperationsFragment : Fragment() {
         }
         binding.chipCustom.setOnClickListener {
             openCustomRangePicker()
+        }
+
+        // Tap on total value to toggle between Expenses and Income.
+        binding.tvExpensesAmount.setOnClickListener {
+            val nextMode = when (viewModel.totalsMode.value) {
+                OperationsTotalsMode.EXPENSES -> OperationsTotalsMode.INCOME
+                OperationsTotalsMode.INCOME -> OperationsTotalsMode.EXPENSES
+            }
+            viewModel.setTotalsMode(nextMode)
+        }
+    }
+
+    private fun showSearchBottomSheet() {
+        SearchOperationsBottomSheet
+            .newInstance(viewModel.searchQuery.value)
+            .show(parentFragmentManager, "operations_search")
+    }
+
+    private fun setupSearchResultListener() {
+        parentFragmentManager.setFragmentResultListener(
+            SearchOperationsBottomSheet.RESULT_KEY,
+            viewLifecycleOwner
+        ) { _, bundle ->
+            val query = bundle.getString(SearchOperationsBottomSheet.ARG_QUERY).orEmpty()
+            viewModel.setSearchQuery(query)
+        }
+    }
+
+    private fun showFilterBottomSheet() {
+        val type = viewModel.typeFilter.value
+        val categoryId = viewModel.categoryIdFilter.value
+
+        FilterOperationsBottomSheet.newInstance(type, categoryId)
+            .show(parentFragmentManager, "operations_filter")
+    }
+
+    private fun setupFilterResultListener() {
+        parentFragmentManager.setFragmentResultListener(
+            RESULT_KEY,
+            viewLifecycleOwner
+        ) { _, bundle ->
+            val ordinal = bundle.getInt("arg_type_ordinal", OperationsTypeFilter.ALL.ordinal)
+            val type = OperationsTypeFilter.entries.getOrNull(ordinal) ?: OperationsTypeFilter.ALL
+            val categoryIdRaw = bundle.getLong("arg_category_id", -1L)
+            val categoryId = categoryIdRaw.takeIf { it >= 0L }
+
+            viewModel.setTypeFilter(type)
+            viewModel.setCategoryFilter(categoryId)
         }
     }
 

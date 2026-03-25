@@ -95,21 +95,24 @@ class DashboardFragment : Fragment() {
         emptyContainer.visibility = View.GONE
 
         chips.take(3).forEach { tx ->
-            val chip = Chip(requireContext()).apply {
+            val chip = layoutInflater.inflate(
+                com.abe.bud_jet.R.layout.item_dashboard_recent_chip,
+                chipGroup,
+                false
+            ) as Chip
+
+            chip.apply {
                 val amount = String.format("%.2f", kotlin.math.abs(tx.amount))
                 text = if (tx.isIncome) "+$$amount" else "-$$amount"
                 isCheckable = false
                 isClickable = false
-                chipBackgroundColor =
-                    ColorStateList.valueOf(requireContext().getColor(com.abe.bud_jet.R.color.card))
-                chipStrokeWidth = 1.5f
                 val strokeColor = if (tx.isIncome) {
                     requireContext().getColor(com.abe.bud_jet.R.color.finance_income)
                 } else {
                     requireContext().getColor(com.abe.bud_jet.R.color.finance_expense)
                 }
                 chipStrokeColor = ColorStateList.valueOf(strokeColor)
-                setTextColor(strokeColor)
+                setTextColor(requireContext().getColor(com.abe.bud_jet.R.color.text_primary))
                 setOnClickListener {
                     val navController = findNavController()
                     runCatching {
@@ -153,16 +156,22 @@ class DashboardFragment : Fragment() {
     }
 
     private fun buildCategoryChip(category: DashboardCategoryChip): Chip {
-        return Chip(requireContext()).apply {
+        val chip = layoutInflater.inflate(
+            com.abe.bud_jet.R.layout.item_dashboard_category_chip,
+            binding.chipGroupExpenseCategories,
+            false
+        ) as Chip
+
+        return chip.apply {
             text = category.name
             isCheckable = false
             isClickable = true
-            chipBackgroundColor = ColorStateList.valueOf(requireContext().getColor(com.abe.bud_jet.R.color.card))
+            chipBackgroundColor =
+                ColorStateList.valueOf(requireContext().getColor(com.abe.bud_jet.R.color.card))
 
             val colorHex = category.colorHex ?: fixedCategoryPalette.first()
             runCatching {
                 val parsed = Color.parseColor(colorHex)
-                chipStrokeWidth = 1.5f
                 chipStrokeColor = ColorStateList.valueOf(parsed)
                 setTextColor(requireContext().getColor(com.abe.bud_jet.R.color.text_primary))
             }

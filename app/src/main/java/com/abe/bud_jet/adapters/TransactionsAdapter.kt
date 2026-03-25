@@ -9,7 +9,8 @@ import com.abe.bud_jet.databinding.ItemTransactionBinding
 import com.google.android.material.card.MaterialCardView
 
 class TransactionsAdapter(
-    private val onTransactionClick: (Transaction) -> Unit = {}
+    private val onTransactionClick: (Transaction) -> Unit = {},
+    private val onTransactionLongClick: (Transaction) -> Unit = {}
 ) : RecyclerView.Adapter<TransactionsAdapter.ViewHolder>() {
 
     private val items = mutableListOf<Transaction>()
@@ -82,6 +83,11 @@ class TransactionsAdapter(
                         it.animate().scaleX(1f).scaleY(1f).duration = 80
                         onTransactionClick(item)
                     }
+            }
+
+            binding.root.setOnLongClickListener {
+                onTransactionLongClick(item)
+                true
             }
         }
     }

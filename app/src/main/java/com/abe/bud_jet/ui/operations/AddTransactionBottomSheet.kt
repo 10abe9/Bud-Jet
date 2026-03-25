@@ -127,7 +127,6 @@ class AddTransactionBottomSheet : BottomSheetDialogFragment() {
                 )
                 runCatching {
                     val parsed = Color.parseColor(colorHex)
-                    chipStrokeWidth = 1.5f
                     chipStrokeColor = android.content.res.ColorStateList.valueOf(parsed)
                     setTextColor(requireContext().getColor(com.abe.bud_jet.R.color.text_primary))
                 }

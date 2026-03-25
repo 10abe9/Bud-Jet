@@ -132,7 +132,6 @@ class EditTransactionBottomSheet : BottomSheetDialogFragment() {
             chipStrokeColor = android.content.res.ColorStateList.valueOf(
                 requireContext().getColor(R.color.finance_expense)
             )
-            chipStrokeWidth = 1.5f
             setTextColor(requireContext().getColor(R.color.finance_expense))
         }
         binding.chipGroupCategories.addView(deleteChip)
