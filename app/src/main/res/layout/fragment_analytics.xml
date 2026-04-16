@@ -11,7 +11,7 @@
         android:id="@+id/tvMonthTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Month"
+        android:text="@string/analytics_month"
         android:textSize="18sp"
         android:textStyle="bold"
         android:textColor="@color/text_primary"
@@ -41,7 +41,7 @@
             android:id="@+id/tvTotal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="$2450"
+            android:text="@string/placeholder_analytics_total_amount"
             android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="@color/text_primary"
@@ -53,7 +53,7 @@
             android:layout_height="40dp"
             android:layout_gravity="center_vertical|start"
             android:background="@android:color/transparent"
-            android:contentDescription="Previous month"
+            android:contentDescription="@string/analytics_previous_month"
             android:src="@drawable/ic_arrow_left"
             app:tint="@color/text_primary" />
 
@@ -63,7 +63,7 @@
             android:layout_height="40dp"
             android:layout_gravity="center_vertical|end"
             android:background="@android:color/transparent"
-            android:contentDescription="Next month"
+            android:contentDescription="@string/analytics_next_month"
             android:src="@drawable/ic_arrow_right"
             app:tint="@color/text_primary" />
 

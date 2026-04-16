@@ -12,6 +12,7 @@ data class Transaction(
     val categoryId: Long?,
     val note: String?,
     val title: String,
+    val categoryColorHex: String? = null,
     val amount: Double,
     val isIncome: Boolean,
     val date: String
@@ -29,19 +30,24 @@ fun TransactionEntity.toUiModel(): Transaction {
         categoryId = categoryId,
         note = note,
         title = if (isIncome) "Income" else "Expense",
+        categoryColorHex = null,
         amount = amount,
         isIncome = isIncome,
         date = formattedDate
     )
 }
 
-fun Transaction.withCategoryName(
-    categoryName: String?
+fun Transaction.withCategoryMeta(
+    categoryName: String?,
+    categoryColorHex: String?
 ): Transaction {
     val displayTitle = when {
         !categoryName.isNullOrBlank() -> categoryName
         !note.isNullOrBlank() -> note
         else -> title
     }
-    return copy(title = displayTitle)
+    return copy(
+        title = displayTitle,
+        categoryColorHex = categoryColorHex
+    )
 }

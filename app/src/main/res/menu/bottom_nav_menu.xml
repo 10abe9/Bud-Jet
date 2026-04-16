@@ -8,14 +8,14 @@
     <item
         android:id="@+id/navigation_operations"
         android:icon="@drawable/ic_operations"
-        android:title="Operations" />
+        android:title="@string/nav_operations" />
     <item
         android:id="@+id/navigation_analytics"
         android:icon="@drawable/ic_analytics"
-        android:title="Analytics" />
+        android:title="@string/nav_analytics" />
     <item
         android:id="@+id/navigation_goals"
         android:icon="@drawable/ic_goal"
-        android:title="Goals" />
+        android:title="@string/nav_goals" />
 
 </menu>

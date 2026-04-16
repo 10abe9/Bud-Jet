@@ -99,16 +99,12 @@ class Hello1Fragment : Fragment() {
 
             var currentBalance = 4250.80f
 
-            val events = listOf(
-                Pair(-120.40f, "Uber"),
-                Pair(240f, "Deal"),
-                Pair(-86.40f, "Food"),
-                Pair(1250f, "Salary")
-            )
+            // Demo events (amounts only). Labels are not shown in this onboarding animation.
+            val events = listOf(-120.40f, 240f, -86.40f, 1250f)
 
             delay(1000)
 
-            for ((amount, label) in events) {
+            for (amount in events) {
 
                 val newBalance = currentBalance + amount
 

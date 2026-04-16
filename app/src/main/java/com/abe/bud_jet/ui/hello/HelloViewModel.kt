@@ -7,7 +7,8 @@ import androidx.lifecycle.ViewModel
 class HelloViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
-        value = "This is Hello Fragment"
+        // This value is not currently shown in the UI; keep it empty to avoid hardcoded text.
+        value = ""
     }
     val text: LiveData<String> = _text
 }

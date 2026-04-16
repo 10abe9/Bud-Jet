@@ -15,27 +15,27 @@
     <fragment
         android:id="@+id/navigation_operations"
         android:name="com.abe.bud_jet.ui.operations.OperationsFragment"
-        android:label="Operations"
+        android:label="@string/nav_operations"
         tools:layout="@layout/fragment_operations" />
     <fragment
         android:id="@+id/navigation_analytics"
         android:name="com.abe.bud_jet.ui.analytics.AnalyticsFragment"
-        android:label="Analytics"
+        android:label="@string/nav_analytics"
         tools:layout="@layout/fragment_analytics" />
     <fragment
         android:id="@+id/navigation_goals"
         android:name="com.abe.bud_jet.ui.goals.GoalsFragment"
-        android:label="Goals"
+        android:label="@string/nav_goals"
         tools:layout="@layout/fragment_goals" />
     <fragment
         android:id="@+id/navigation_profile"
         android:name="com.abe.bud_jet.ui.profile.ProfileFragment"
-        android:label="fragment_profile"
+        android:label="@string/profile_title"
         tools:layout="@layout/fragment_profile" />
     <fragment
         android:id="@+id/hello1Fragment"
         android:name="com.abe.bud_jet.ui.hello.Hello1Fragment"
-        android:label="fragment_hello1"
+        android:label="@string/hello1_get_started"
         tools:layout="@layout/fragment_hello1" >
         <action
             android:id="@+id/action_hello1Fragment_to_hello2Fragment"
@@ -47,7 +47,7 @@
     <fragment
         android:id="@+id/hello2Fragment"
         android:name="com.abe.bud_jet.ui.hello.Hello2Fragment"
-        android:label="fragment_hello2"
+        android:label="@string/hello2_lets_set_up"
         tools:layout="@layout/fragment_hello2" >
         <action
             android:id="@+id/action_hello2Fragment_to_navigation_dashboard"

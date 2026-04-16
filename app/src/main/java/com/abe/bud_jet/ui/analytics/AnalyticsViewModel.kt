@@ -1,5 +1,6 @@
 package com.abe.bud_jet.ui.analytics
 
+import android.content.res.Resources
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.abe.bud_jet.database.FinanceRepository
@@ -7,6 +8,7 @@ import com.abe.bud_jet.database.models.CategoryStat
 import androidx.lifecycle.ViewModel
 import com.abe.bud_jet.database.entities.TransactionEntity
 import com.abe.bud_jet.database.entities.TransactionType
+import com.abe.bud_jet.R
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,7 +33,8 @@ data class AnalyticsMonthChartUi(
 )
 
 class AnalyticsViewModel(
-    private val repository: FinanceRepository
+    private val repository: FinanceRepository,
+    private val resources: Resources
 ) : ViewModel() {
 
     private val selectedMonthIndex = MutableStateFlow(0)
@@ -129,8 +132,11 @@ class AnalyticsViewModel(
                 val total = stats.sumOf { it.total.toDouble() }.toFloat()
 
                 val emptyMessage = when {
-                    totalExpenseEver <= 0.0 -> "No expenses yet. Add your first expense to unlock analytics."
-                    stats.isEmpty() -> "No expenses in ${month.label}. Try another month."
+                    totalExpenseEver <= 0.0 -> resources.getString(R.string.analytics_empty_no_expenses)
+                    stats.isEmpty() -> resources.getString(
+                        R.string.analytics_empty_no_expenses_in_month,
+                        month.label
+                    )
                     else -> null
                 }
 
@@ -176,7 +182,7 @@ class AnalyticsViewModel(
                     totalExpense = 0f,
                     emptyMessage = null,
                     isLoading = false,
-                    errorMessage = throwable.message ?: "Unable to load analytics"
+                    errorMessage = resources.getString(R.string.analytics_load_error)
                 )
             )
         }.stateIn(
@@ -209,7 +215,8 @@ class AnalyticsViewModel(
             .map { (categoryId, items) ->
                 val amount = items.sumOf { it.amount }.toFloat()
                 val name = namesById[categoryId]
-                    ?: if (categoryId == -1L) "Uncategorized" else "Other"
+                    ?: if (categoryId == -1L) resources.getString(R.string.analytics_uncategorized)
+                    else resources.getString(R.string.analytics_other)
                 CategoryStat(category = name, total = amount)
             }
             .sortedByDescending { it.total }
@@ -235,12 +242,13 @@ data class AnalyticsMonthOption(
 )
 
 class AnalyticsViewModelFactory(
-    private val repository: FinanceRepository
+    private val repository: FinanceRepository,
+    private val resources: Resources
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(AnalyticsViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return AnalyticsViewModel(repository) as T
+            return AnalyticsViewModel(repository, resources) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
