@@ -15,12 +15,30 @@ interface GoalsDao {
     fun observeAll(): Flow<List<GoalEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(goal: GoalEntity)
+    suspend fun insert(goal: GoalEntity): Long
 
     @Update
     suspend fun update(goal: GoalEntity)
 
     @Query("UPDATE goals SET currentAmount = :currentAmount WHERE id = :goalId")
     suspend fun updateProgress(goalId: Long, currentAmount: Double)
+
+    @Query("DELETE FROM goals WHERE id = :goalId")
+    suspend fun deleteById(goalId: Long): Int
+
+    @Query("DELETE FROM goals")
+    suspend fun deleteAll(): Int
+
+    @Query("SELECT * FROM goals WHERE categoryId IS NULL LIMIT 1")
+    fun observeSavingGoal(): Flow<GoalEntity?>
+
+    @Query("SELECT * FROM goals WHERE categoryId IS NULL LIMIT 1")
+    suspend fun getSavingGoalNow(): GoalEntity?
+
+    @Query("SELECT * FROM goals WHERE categoryId IS NOT NULL ORDER BY id DESC")
+    fun observeCategoryLimits(): Flow<List<GoalEntity>>
+
+    @Query("SELECT * FROM goals WHERE categoryId = :categoryId LIMIT 1")
+    suspend fun getLimitByCategoryId(categoryId: Long): GoalEntity?
 }
 

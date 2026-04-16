@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:text="Profile"
+        android:text="@string/profile_title"
         android:textColor="@color/text_primary"
         android:textSize="24sp"
         android:textStyle="bold"
@@ -27,6 +27,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
+        app:cardBackgroundColor="@color/card"
+        app:cardElevation="0dp"
         app:cardCornerRadius="20dp"
         app:strokeWidth="1dp"
         app:strokeColor="@color/border"
@@ -41,7 +43,7 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:text="User"
+                android:text="@string/profile_user_title"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="@color/text_primary"
@@ -50,7 +52,7 @@
 
             <TextView
                 android:id="@+id/tvSummary"
-                android:text="$2450 this month"
+                android:text="@string/profile_summary_placeholder"
                 android:textColor="@color/text_secondary"
                 android:layout_marginTop="4dp"
                 android:layout_width="wrap_content"
@@ -67,6 +69,8 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="8dp"
+        app:cardBackgroundColor="@color/card"
+        app:cardElevation="0dp"
         app:cardCornerRadius="20dp"
         app:strokeWidth="1dp"
         app:strokeColor="@color/border"
@@ -81,7 +85,7 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:text="Preferences"
+                android:text="@string/profile_preferences_title"
                 android:textStyle="bold"
                 android:textColor="@color/text_primary"
                 android:layout_marginBottom="8dp"
@@ -98,8 +102,15 @@
                 android:paddingHorizontal="8dp"
                 android:orientation="horizontal">
 
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_marginEnd="10dp"
+                    android:src="@drawable/ic_money"
+                    app:tint="@color/text_secondary" />
+
                 <TextView
-                    android:text="Currency"
+                    android:text="@string/profile_currency_label"
                     android:textColor="@color/text_primary"
                     android:layout_weight="1"
                     android:layout_width="0dp"
@@ -107,19 +118,63 @@
 
                 <TextView
                     android:id="@+id/tvCurrency"
-                    android:text="USD"
+                    android:text="@string/profile_currency_default"
                     android:textColor="@color/text_secondary"
                     android:layout_marginEnd="6dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
 
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_arrow_right"
+                    app:tint="@color/text_secondary" />
+
+            </LinearLayout>
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/border"/>
+
+            <!-- Language Row -->
+            <LinearLayout
+                android:id="@+id/rowLanguage"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:gravity="center_vertical"
+                android:background="?attr/selectableItemBackground"
+                android:paddingHorizontal="8dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_marginEnd="10dp"
+                    android:src="@drawable/ic_language"
+                    app:tint="@color/text_secondary" />
+
                 <TextView
-                    android:text="›"
-                    android:textSize="18sp"
+                    android:text="@string/profile_language_label"
+                    android:textColor="@color/text_primary"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:id="@+id/tvLanguage"
+                    android:text="@string/profile_language_default"
                     android:textColor="@color/text_secondary"
+                    android:layout_marginEnd="6dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
 
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_arrow_right"
+                    app:tint="@color/text_secondary" />
             </LinearLayout>
 
             <!-- Divider -->
@@ -136,8 +191,15 @@
                 android:paddingHorizontal="8dp"
                 android:orientation="horizontal">
 
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_marginEnd="10dp"
+                    android:src="@drawable/ic_notifications_black_24dp"
+                    app:tint="@color/text_secondary" />
+
                 <TextView
-                    android:text="Notifications"
+                    android:text="@string/profile_notifications_label"
                     android:textColor="@color/text_primary"
                     android:layout_weight="1"
                     android:layout_width="0dp"
@@ -154,13 +216,15 @@
 
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Goals -->
+    <!-- Data -->
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cardGoals"
+        android:id="@+id/cardData"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="8dp"
+        app:cardBackgroundColor="@color/card"
+        app:cardElevation="0dp"
         app:cardCornerRadius="20dp"
         app:strokeWidth="1dp"
         app:strokeColor="@color/border"
@@ -175,46 +239,7 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:text="Goals"
-                android:textStyle="bold"
-                android:textColor="@color/text_primary"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-            <TextView
-                android:id="@+id/tvGoalSummary"
-                android:text="Saving $320 / $500"
-                android:layout_marginTop="6dp"
-                android:textColor="@color/text_secondary"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-        </LinearLayout>
-
-    </com.google.android.material.card.MaterialCardView>
-
-    <!-- Data -->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cardData"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="8dp"
-        app:cardCornerRadius="20dp"
-        app:strokeWidth="1dp"
-        app:strokeColor="@color/border"
-        app:layout_constraintTop_toBottomOf="@id/cardGoals"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <LinearLayout
-            android:padding="16dp"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:text="Data"
+                android:text="@string/profile_data_title"
                 android:textStyle="bold"
                 android:textColor="@color/text_primary"
                 android:layout_width="wrap_content"
@@ -222,18 +247,56 @@
 
             <TextView
                 android:id="@+id/btnExport"
-                android:text="Export data"
+                android:text="@string/profile_export_data"
                 android:layout_marginTop="8dp"
                 android:textColor="@color/brand_primary"
-                android:layout_width="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:drawableStart="@drawable/ic_analytics"
+                android:drawableEnd="@drawable/ic_arrow_right"
+                android:drawablePadding="10dp"
+                android:drawableTint="@color/text_secondary"
+                android:gravity="center_vertical"
+                android:minHeight="44dp"
+                android:paddingHorizontal="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/btnSetCurrentBalance"
+                android:text="@string/profile_set_current_balance"
+                android:layout_marginTop="6dp"
+                android:textColor="@color/brand_primary"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:drawableStart="@drawable/ic_money"
+                android:drawableEnd="@drawable/ic_arrow_right"
+                android:drawablePadding="10dp"
+                android:drawableTint="@color/text_secondary"
+                android:gravity="center_vertical"
+                android:minHeight="44dp"
+                android:paddingHorizontal="8dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
             <TextView
                 android:id="@+id/btnReset"
-                android:text="Reset all data"
+                android:text="@string/profile_reset_data"
                 android:layout_marginTop="6dp"
                 android:textColor="#FF5252"
-                android:layout_width="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:drawableStart="@drawable/delete_ic"
+                android:drawableEnd="@drawable/ic_arrow_right"
+                android:drawablePadding="10dp"
+                android:drawableTint="@color/text_secondary"
+                android:gravity="center_vertical"
+                android:minHeight="44dp"
+                android:paddingHorizontal="8dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
         </LinearLayout>
@@ -246,9 +309,11 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
+        app:cardBackgroundColor="@color/card"
+        app:cardElevation="0dp"
         app:cardCornerRadius="20dp"
         app:strokeWidth="1dp"
-        app:strokeColor="@color/brand_primary"
+        app:strokeColor="@color/border"
         app:layout_constraintTop_toBottomOf="@id/cardData"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -256,18 +321,23 @@
         <LinearLayout
             android:padding="16dp"
             android:orientation="vertical"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <TextView
-                android:text="Get Premium"
+                android:text="@string/profile_premium_title"
                 android:textStyle="bold"
                 android:textColor="@color/brand_primary"
+                android:drawableStart="@drawable/ic_goal"
+                android:drawablePadding="8dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
             <TextView
-                android:text="AI insights • Smart goals • Predictions"
+                android:text="@string/profile_premium_subtitle"
                 android:layout_marginTop="4dp"
                 android:textColor="@color/text_secondary"
                 android:layout_width="wrap_content"

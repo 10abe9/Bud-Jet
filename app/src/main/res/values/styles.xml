@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- CHIP STYLE -->
     <style name="Widget.App.Chip.Filter" parent="Widget.MaterialComponents.Chip.Choice">
         <item name="chipCornerRadius">16dp</item>
         <item name="chipBackgroundColor">@color/chip_background</item>
@@ -9,38 +10,68 @@
         <item name="chipStrokeWidth">0dp</item>
     </style>
 
-    <!-- Прозрачный BottomSheet без системных скруглений -->
-    <style name="Widget.BudJet.BottomSheet" parent="Widget.MaterialComponents.BottomSheet">
-        <item name="android:background">@android:color/transparent</item>
-        <item name="shapeAppearance">@style/ShapeAppearance.BudJet.BottomSheet</item>
-    </style>
+    <!-- ========================= -->
+    <!-- BOTTOM SHEET THEME -->
+    <!-- ========================= -->
 
-    <!-- Overlay для BottomSheet -->
-    <style name="ThemeOverlay.BudJet.BottomSheet" parent="ThemeOverlay.MaterialComponents.BottomSheetDialog">
+    <style name="ThemeOverlay.BudJet.BottomSheet"
+        parent="ThemeOverlay.MaterialComponents.BottomSheetDialog">
+
+        <!-- привязываем кастомный BottomSheet -->
         <item name="bottomSheetStyle">@style/Widget.BudJet.BottomSheet.Modal</item>
+
+        <!-- затемнение фона -->
+        <item name="android:backgroundDimAmount">0.4</item>
+
     </style>
 
-    <!-- BottomSheet без системных скруглений -->
-    <style name="Widget.BudJet.BottomSheet.Modal" parent="Widget.MaterialComponents.BottomSheet.Modal">
+    <!-- ========================= -->
+    <!-- BOTTOM SHEET CONTAINER -->
+    <!-- ========================= -->
+
+    <style name="Widget.BudJet.BottomSheet.Modal"
+        parent="Widget.MaterialComponents.BottomSheet.Modal">
+
+        <!-- ВАЖНО: убираем серый системный фон -->
         <item name="android:background">@android:color/transparent</item>
-        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.BudJet.BottomSheet</item>
+
+        <!-- скругления контейнера -->
+        <item name="shapeAppearanceOverlay">
+            @style/ShapeAppearance.BudJet.BottomSheet
+        </item>
+
     </style>
 
-    <style name="ShapeAppearance.BudJet.BottomSheet" parent="ShapeAppearance.Material3.Corner.None">
+    <!-- ========================= -->
+    <!-- SHAPE (карточка контейнера) -->
+    <!-- ========================= -->
+
+    <style name="ShapeAppearance.BudJet.BottomSheet"
+        parent="ShapeAppearance.MaterialComponents.LargeComponent">
+
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">0dp</item>
+        <item name="cornerSize">20dp</item>
+
     </style>
 
-    <!-- Современный стиль текстовых полей в BottomSheet -->
-    <style name="Widget.BudJet.TextInput" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+    <!-- ========================= -->
+    <!-- TEXT INPUT STYLE -->
+    <!-- ========================= -->
+
+    <style name="Widget.BudJet.TextInput"
+        parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
         <item name="boxBackgroundColor">@color/card</item>
         <item name="boxStrokeColor">@color/border</item>
         <item name="boxStrokeWidth">1dp</item>
+
         <item name="boxCornerRadiusTopStart">16dp</item>
         <item name="boxCornerRadiusTopEnd">16dp</item>
         <item name="boxCornerRadiusBottomStart">16dp</item>
         <item name="boxCornerRadiusBottomEnd">16dp</item>
+
         <item name="hintTextColor">@color/text_secondary</item>
+
     </style>
 
 </resources>

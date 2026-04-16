@@ -1,5 +1,6 @@
 package com.abe.bud_jet.ui.operations
 
+import android.content.res.Resources
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -7,7 +8,8 @@ import com.abe.bud_jet.database.FinanceRepository
 import com.abe.bud_jet.database.entities.TransactionType
 import com.abe.bud_jet.database.models.Transaction
 import com.abe.bud_jet.database.models.toUiModel
-import com.abe.bud_jet.database.models.withCategoryName
+import com.abe.bud_jet.database.models.withCategoryMeta
+import com.abe.bud_jet.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -41,8 +43,8 @@ data class DateRange(
 
 data class OperationsUiState(
     val transactions: List<Transaction> = emptyList(),
-    val totalsFormatted: String = "$0.00",
-    val periodLabel: String = "Current week",
+    val totalAmount: Double = 0.0,
+    val periodLabel: String = "",
     val selectedPeriod: OperationsPeriod = OperationsPeriod.WEEK,
     val totalsMode: OperationsTotalsMode = OperationsTotalsMode.EXPENSES,
     val activeFilterText: String? = null,
@@ -50,7 +52,8 @@ data class OperationsUiState(
 )
 
 class OperationsViewModel(
-    private val repository: FinanceRepository
+    private val repository: FinanceRepository,
+    private val resources: Resources
 ) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
@@ -87,9 +90,13 @@ class OperationsViewModel(
             },
             repository.observeCategories()
         ) { list, categories ->
-            val categoryNamesById = categories.associateBy({ it.id }, { it.name })
+            val categoriesById = categories.associateBy { it.id }
             list.map { entity ->
-                entity.toUiModel().withCategoryName(categoryNamesById[entity.categoryId])
+                val category = entity.categoryId?.let { categoriesById[it] }
+                entity.toUiModel().withCategoryMeta(
+                    categoryName = category?.name,
+                    categoryColorHex = category?.color
+                )
             }
         }.stateIn(
             scope = viewModelScope,
@@ -176,8 +183,8 @@ class OperationsViewModel(
         combine(_typeFilter, _categoryIdFilter, categoriesById) { type, categoryId, map ->
             val typeText = when (type) {
                 OperationsTypeFilter.ALL -> null
-                OperationsTypeFilter.INCOME -> "Income"
-                OperationsTypeFilter.EXPENSE -> "Expense"
+                OperationsTypeFilter.INCOME -> resources.getString(R.string.common_income)
+                OperationsTypeFilter.EXPENSE -> resources.getString(R.string.common_expense)
             }
             val categoryText = categoryId?.let { map[it] }.takeIf { !it.isNullOrBlank() }
 
@@ -212,7 +219,7 @@ class OperationsViewModel(
             // даже если мы берём текущее значение из StateFlow напрямую.
             OperationsUiState(
                 transactions = tx,
-                totalsFormatted = formatMoney(total),
+                totalAmount = total,
                 periodLabel = buildPeriodLabel(period, range),
                 selectedPeriod = period,
                 totalsMode = _totalsMode.value,
@@ -327,9 +334,9 @@ class OperationsViewModel(
 
     private fun buildPeriodLabel(period: OperationsPeriod, range: DateRange): String {
         return when (period) {
-            OperationsPeriod.WEEK -> "Current week"
-            OperationsPeriod.MONTH -> "Current month"
-            OperationsPeriod.YEAR -> "Current year"
+            OperationsPeriod.WEEK -> resources.getString(R.string.operations_current_week)
+            OperationsPeriod.MONTH -> resources.getString(R.string.operations_current_month)
+            OperationsPeriod.YEAR -> resources.getString(R.string.operations_current_year)
             OperationsPeriod.CUSTOM -> {
                 val formatter = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
                 "${formatter.format(Date(range.from))} - ${formatter.format(Date(range.to))}"
@@ -337,10 +344,6 @@ class OperationsViewModel(
         }
     }
 
-    private fun formatMoney(value: Double): String {
-        val rounded = String.format("%.2f", kotlin.math.abs(value))
-        return "$$rounded"
-    }
 }
 
 private fun Transaction.amountFormattedContains(
@@ -353,12 +356,13 @@ private fun Transaction.amountFormattedContains(
 }
 
 class OperationsViewModelFactory(
-    private val repository: FinanceRepository
+    private val repository: FinanceRepository,
+    private val resources: Resources
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(OperationsViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return OperationsViewModel(repository) as T
+            return OperationsViewModel(repository, resources) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

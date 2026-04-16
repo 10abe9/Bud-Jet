@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="16dp"
+    android:layout_marginHorizontal="16dp"
     app:cardCornerRadius="20dp"
     app:cardElevation="0dp"
     app:strokeWidth="1dp"
@@ -18,7 +18,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Delete category"
+            android:text="@string/bottomsheet_delete_category_title"
             android:textStyle="bold"
             android:textSize="18sp"
             android:textColor="@color/text_primary" />
@@ -28,7 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="Do you really want to delete this category?"
+            android:text="@string/bottomsheet_delete_category_message"
             android:textColor="@color/text_secondary"
             android:textSize="14sp" />
 
@@ -44,7 +44,7 @@
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_weight="1"
-                android:text="Cancel" />
+            android:text="@string/common_cancel" />
 
             <Space
                 android:layout_width="10dp"
@@ -55,7 +55,7 @@
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_weight="1"
-                android:text="Delete"
+            android:text="@string/common_delete"
                 android:backgroundTint="@color/finance_expense"
                 android:textColor="@android:color/white"
                 app:cornerRadius="14dp" />

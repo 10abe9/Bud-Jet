@@ -1,12 +1,10 @@
 package com.abe.bud_jet.ui.operations
 
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.FrameLayout
 import com.abe.bud_jet.R
 import com.abe.bud_jet.database.FinanceRepository
@@ -14,14 +12,14 @@ import com.abe.bud_jet.database.FinanceRepositoryProvider
 import com.abe.bud_jet.database.entities.CategoryEntity
 import com.abe.bud_jet.database.entities.TransactionType
 import com.abe.bud_jet.databinding.BottomSheetAddTransactionBinding
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.abe.bud_jet.ui.common.BaseBottomSheetDialogFragment
 import com.google.android.material.chip.Chip
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-class AddTransactionBottomSheet : BottomSheetDialogFragment() {
+class AddTransactionBottomSheet : BaseBottomSheetDialogFragment() {
     private val fixedCategoryPalette = listOf(
         "#F59E0B",
         "#3B82F6",
@@ -68,22 +66,17 @@ class AddTransactionBottomSheet : BottomSheetDialogFragment() {
         setupSaveButton()
     }
 
-    override fun onStart() {
-        super.onStart()
-
-        // Чтобы bottom sheet «поднимался» при открытии клавиатуры
-        dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
-
-        // Фон всего окна делаем прозрачным, чтобы не было системных скруглений поверх нашей карточки
-        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-        // Убираем стандартный фон нижнего листа, чтобы не было двойных углов за нашей карточкой
-        val bottomSheet =
-            dialog?.findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
-        bottomSheet?.background = ColorDrawable(Color.TRANSPARENT)
-
-        // Дополнительно убираем фон у родительского контейнера, если он задаёт скругления
-        (view?.parent as? View)?.setBackgroundColor(Color.TRANSPARENT)
+    override fun configureBottomSheet(bottomSheet: FrameLayout?) {
+        val margin = (16 * resources.displayMetrics.density).toInt()
+        (bottomSheet?.layoutParams as? ViewGroup.MarginLayoutParams)?.let { lp ->
+            lp.width = ViewGroup.LayoutParams.MATCH_PARENT
+            lp.height = ViewGroup.LayoutParams.WRAP_CONTENT
+            lp.leftMargin = margin
+            lp.rightMargin = margin
+            lp.bottomMargin = 0
+            bottomSheet.layoutParams = lp
+            bottomSheet.requestLayout()
+        }
     }
 
     private fun setupTypeToggle() {
@@ -127,6 +120,7 @@ class AddTransactionBottomSheet : BottomSheetDialogFragment() {
                 )
                 runCatching {
                     val parsed = Color.parseColor(colorHex)
+                    chipStrokeWidth = 2f
                     chipStrokeColor = android.content.res.ColorStateList.valueOf(parsed)
                     setTextColor(requireContext().getColor(com.abe.bud_jet.R.color.text_primary))
                 }
@@ -139,13 +133,13 @@ class AddTransactionBottomSheet : BottomSheetDialogFragment() {
         binding.btnSave.setOnClickListener {
             val amountText = binding.etAmount.text?.toString()?.trim().orEmpty()
             if (amountText.isEmpty()) {
-                binding.etAmount.error = "Enter amount"
+                binding.etAmount.error = getString(R.string.common_enter_amount)
                 return@setOnClickListener
             }
 
             val amount = amountText.toDoubleOrNull()
             if (amount == null || amount <= 0) {
-                binding.etAmount.error = "Invalid amount"
+                binding.etAmount.error = getString(R.string.common_invalid_amount)
                 return@setOnClickListener
             }
 

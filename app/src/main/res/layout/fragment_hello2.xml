@@ -26,7 +26,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="128dp"
-        android:text="Let’s set things up"
+        android:text="@string/hello2_lets_set_up"
         android:fontFamily="@font/aldrich"
         android:textColor="@color/brand_primary"
         android:textSize="26sp"
@@ -38,7 +38,7 @@
     <!-- SUBTITLE -->
     <TextView
         android:id="@+id/subtitle"
-        android:text="You can change this later"
+        android:text="@string/hello2_change_later"
         android:textSize="14sp"
         android:fontFamily="@font/aldrich"
         android:textColor="@color/text_secondary"
@@ -51,7 +51,7 @@
     <!-- CURRENCY -->
     <TextView
         android:id="@+id/currency_label"
-        android:text="Currency"
+        android:text="@string/hello2_currency"
         android:textStyle="bold"
         android:textSize="16sp"
         android:textColor="@color/text_primary"
@@ -76,11 +76,11 @@
         <com.google.android.material.chip.Chip
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="USD $"
+            android:text="@string/currency_usd_label"
             style="@style/Widget.MaterialComponents.Chip.Choice"/>
 
         <com.google.android.material.chip.Chip
-            android:text="EUR €"
+            android:text="@string/currency_eur_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/Widget.MaterialComponents.Chip.Choice"/>
@@ -88,13 +88,31 @@
         <com.google.android.material.chip.Chip
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="RUB ₽"
+            android:text="@string/currency_pln_label"
             style="@style/Widget.MaterialComponents.Chip.Choice"/>
 
         <com.google.android.material.chip.Chip
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="KZT ₸"
+            android:text="@string/currency_mxn_label"
+            style="@style/Widget.MaterialComponents.Chip.Choice"/>
+
+        <com.google.android.material.chip.Chip
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/currency_brl_label"
+            style="@style/Widget.MaterialComponents.Chip.Choice"/>
+
+        <com.google.android.material.chip.Chip
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/currency_inr_label"
+            style="@style/Widget.MaterialComponents.Chip.Choice"/>
+
+        <com.google.android.material.chip.Chip
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/currency_rub_label"
             style="@style/Widget.MaterialComponents.Chip.Choice"/>
 
     </com.google.android.material.chip.ChipGroup>
@@ -102,7 +120,7 @@
     <!-- GOALS -->
     <TextView
         android:id="@+id/goals_label"
-        android:text="Your goals"
+        android:text="@string/hello2_your_goals"
         android:textStyle="bold"
         android:textSize="16sp"
         android:textColor="@color/text_primary"
@@ -129,28 +147,28 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
-            android:text="Track expenses"
+            android:text="@string/hello2_track_expenses"
             style="@style/Widget.MaterialComponents.Chip.Filter"/>
 
         <com.google.android.material.chip.Chip
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
-            android:text="Save money"
+            android:text="@string/hello2_save_money"
             style="@style/Widget.MaterialComponents.Chip.Filter"/>
 
         <com.google.android.material.chip.Chip
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
-            android:text="Analyze spending"
+            android:text="@string/hello2_analyze_spending"
             style="@style/Widget.MaterialComponents.Chip.Filter"/>
 
         <com.google.android.material.chip.Chip
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
-            android:text="Build habits"
+            android:text="@string/hello2_build_habits"
             style="@style/Widget.MaterialComponents.Chip.Filter"/>
 
     </com.google.android.material.chip.ChipGroup>
@@ -158,7 +176,7 @@
     <!-- SELECTED GOALS PREVIEW -->
     <TextView
         android:id="@+id/selected_goals_label"
-        android:text="Selected:"
+        android:text="@string/hello2_selected_label"
         android:textSize="12sp"
         android:textColor="@color/text_secondary"
         android:layout_marginTop="16dp"
@@ -185,7 +203,7 @@
         android:id="@+id/button_continue"
         android:layout_width="0dp"
         android:layout_height="56dp"
-        android:text="Continue"
+        android:text="@string/hello2_continue"
         android:textAllCaps="false"
         android:textSize="16sp"
         android:layout_marginBottom="32dp"

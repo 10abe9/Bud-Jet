@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="16dp"
+    android:layout_marginHorizontal="16dp"
     app:cardCornerRadius="20dp"
     app:cardElevation="0dp"
     app:strokeWidth="1dp"
@@ -19,7 +19,7 @@
             android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Filter"
+            android:text="@string/bottomsheet_filter_title"
             android:textStyle="bold"
             android:textSize="18sp"
             android:textColor="@color/text_primary" />
@@ -29,7 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="14dp"
-            android:text="Type"
+            android:text="@string/bottomsheet_filter_type"
             android:textColor="@color/text_secondary"
             android:textSize="13sp" />
 
@@ -44,7 +44,7 @@
                 android:id="@+id/chipTypeAll"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="All"
+            android:text="@string/bottomsheet_filter_all"
             android:checkable="true"
                 app:chipBackgroundColor="@color/card"
                 app:chipCornerRadius="12dp"
@@ -55,7 +55,7 @@
                 android:id="@+id/chipTypeIncome"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Income"
+            android:text="@string/common_income"
                 android:checkable="true"
                 app:chipBackgroundColor="@color/card"
                 app:chipCornerRadius="12dp"
@@ -68,7 +68,7 @@
                 android:id="@+id/chipTypeExpense"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Expense"
+            android:text="@string/common_expense"
                 android:checkable="true"
                 app:chipBackgroundColor="@color/card"
                 app:chipCornerRadius="12dp"
@@ -83,7 +83,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="14dp"
-            android:text="Category"
+            android:text="@string/bottomsheet_filter_category"
             android:textColor="@color/text_secondary"
             android:textSize="13sp" />
 
@@ -112,7 +112,7 @@
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_weight="1"
-                android:text="Clear"
+            android:text="@string/common_clear"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 app:cornerRadius="14dp" />
 
@@ -125,7 +125,7 @@
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_weight="1"
-                android:text="Apply"
+            android:text="@string/common_apply"
                 android:backgroundTint="@color/brand_primary"
                 android:textColor="@android:color/white"
                 app:cornerRadius="14dp" />

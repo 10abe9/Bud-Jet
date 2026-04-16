@@ -1,0 +1,266 @@
+<resources>
+    <string name="app_name">Bud-Jet</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="common_cancel">Anuluj</string>
+    <string name="common_continue">Kontynuuj</string>
+    <string name="common_apply">Zastosuj</string>
+
+    <string name="language_english">Angielski</string>
+    <string name="language_russian">Rosyjski</string>
+    <string name="language_spanish">Hiszpański</string>
+    <string name="language_polish">Polski</string>
+
+    <string name="profile_title">Profil</string>
+    <string name="profile_user_title">Użytkownik</string>
+    <string name="profile_summary_placeholder">$2450 w tym miesiącu</string>
+    <string name="profile_summary_template">%1$s2450 w tym miesiącu</string>
+    <string name="profile_preferences_title">Preferencje</string>
+    <string name="profile_currency_label">Waluta</string>
+    <string name="profile_currency_default">USD</string>
+    <string name="profile_language_label">Język</string>
+    <string name="profile_language_default">Angielski</string>
+    <string name="profile_notifications_label">Powiadomienia</string>
+    <string name="profile_goals_title">Cele</string>
+    <string name="profile_goal_summary_placeholder">Oszczędzanie $320 / $500</string>
+    <string name="profile_goal_summary_template">Oszczędzanie %1$s320 / %2$s500</string>
+    <string name="profile_data_title">Dane</string>
+    <string name="profile_export_data">Eksportuj dane</string>
+    <string name="profile_set_current_balance">Skoryguj bieżące saldo</string>
+    <string name="profile_reset_data">Resetuj wszystkie dane</string>
+    <string name="profile_reset_dialog_title">Czy zresetować wszystkie dane?</string>
+    <string name="profile_reset_dialog_message">Spowoduje to trwałe usunięcie transakcji, kategorii i celów zapisanych na tym urządzeniu.</string>
+    <string name="profile_reset_success_toast">Wszystkie dane zostały zresetowane.</string>
+    <string name="profile_premium_title">Uzyskaj Premium</string>
+    <string name="profile_premium_subtitle">Wnioski AI • Inteligentne cele • Prognozy</string>
+    <string name="profile_notifications_on">Powiadomienia włączone</string>
+    <string name="profile_notifications_off">Powiadomienia wyłączone</string>
+    <string name="profile_export_coming_soon">Eksport wkrótce</string>
+    <string name="profile_reset_coming_soon">Reset wkrótce</string>
+    <string name="profile_premium_coming_soon">Premium wkrótce</string>
+    <string name="profile_currency_changed_to">Waluta zmieniona na %1$s</string>
+    <string name="profile_converted_and_switched">Przeliczono według %1$s i przełączono na %2$s</string>
+    <string name="profile_invalid_rate">Nieprawidłowy kurs</string>
+    <string name="profile_select_currency_title">Wybierz walutę</string>
+    <string name="profile_convert_dialog_title">Czy przeliczyć istniejące transakcje?</string>
+    <string name="profile_convert_pair">Obecnie: %1$s → Nowa: %2$s</string>
+    <string name="profile_conversion_rate_hint">Kurs przeliczenia</string>
+    <string name="profile_convert_cancel_info">Jeśli anulujesz, waluta nie zmieni się.</string>
+    <string name="profile_convert_and_switch">Przelicz i przełącz</string>
+    <string name="profile_current_balance_saved">Bieżące saldo zaktualizowane</string>
+    <string name="profile_rate_source_live">Załadowano kurs na żywo. Możesz go edytować.</string>
+    <string name="profile_rate_source_saved">Tryb offline: używany jest zapisany kurs. Możesz go edytować.</string>
+    <string name="profile_rate_source_fallback">Tryb offline: używany jest kurs awaryjny. Możesz go edytować.</string>
+    <string name="profile_select_language_title">Wybierz język</string>
+
+    <!-- Notifications -->
+    <string name="notifications_reminder_channel_name">Przypomnienie o wydatkach</string>
+    <string name="notifications_reminder_title">Śledź wydatki</string>
+    <string name="notifications_reminder_message">Jeśli dziś nie dodałeś wydatków, zrób to teraz.</string>
+    <string name="notifications_permission_required">Aby włączyć przypomnienia, wymagane jest zezwolenie na powiadomienia.</string>
+    <string name="notifications_permission_denied">Odmówiono uprawnień. Później możesz włączyć przypomnienia w Profilu.</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard_total_balance">Saldo całkowite</string>
+    <string name="dashboard_this_month">W tym miesiącu</string>
+    <string name="dashboard_balance_placeholder">$4,250.80</string>
+    <string name="dashboard_this_month_delta_placeholder">+ $280.40</string>
+    <string name="dashboard_add_expense">Dodaj wydatek</string>
+    <string name="dashboard_add_income">Dodaj dochód</string>
+    <string name="dashboard_recent_transactions">Ostatnie transakcje</string>
+    <string name="dashboard_no_information">Brak informacji</string>
+    <string name="dashboard_add_expense_income">Dodaj wydatki/przychody</string>
+    <string name="dashboard_categories">Kategorie</string>
+    <string name="dashboard_expense_categories">Kategorie wydatków</string>
+    <string name="dashboard_income_categories">Kategorie dochodów</string>
+    <string name="dashboard_add_category">+ Dodaj kategorię</string>
+    <string name="dashboard_set_initial_balance">Skoryguj saldo początkowe</string>
+    <string name="dashboard_initial_balance_title">Saldo początkowe</string>
+    <string name="dashboard_initial_balance_message">Wpisz, ile pieniędzy masz już na koncie.</string>
+    <string name="dashboard_initial_balance_hint">Kwota</string>
+
+    <!-- Hello1 -->
+    <string name="hello1_get_started">Zacznij</string>
+    <string name="hello1_take_control">Przejmij kontrolę nad swoimi pieniędzmi</string>
+    <string name="hello1_track_insights">Śledź wydatki, zarządzaj dochodami\ni otrzymuj sprytne wskazówki finansowe.</string>
+    <string name="hello1_skip">Pomiń</string>
+    <string name="hello1_total_balance">Saldo całkowite</string>
+    <string name="hello1_this_month">W tym miesiącu</string>
+    <string name="hello1_balance_placeholder">$4,250.80</string>
+    <string name="hello1_month_delta_placeholder">+ $280.40</string>
+    <string name="hello1_add_expense">Dodaj wydatek</string>
+    <string name="hello1_add_income">Dodaj dochód</string>
+
+    <!-- Goals -->
+    <string name="goals_title">Cele</string>
+    <string name="goals_monthly_saving">Oszczędzanie miesięczne</string>
+    <string name="goals_saving_amount_placeholder">$320 / $500</string>
+    <string name="goals_create_saving_goal_to_get_started">Ustaw cel oszczędzania, aby zacząć.</string>
+    <string name="goals_set_goal">Ustaw cel</string>
+    <string name="goals_delete_goal">Usuń cel</string>
+    <string name="goals_spending_limits">Limity wydatków</string>
+    <string name="goals_set_monthly_caps_for_categories">Ustaw miesięczne limity dla kategorii, aby uniknąć nadmiernych wydatków.</string>
+    <string name="goals_add_limit">+ Dodaj limit</string>
+    <string name="goals_no_limits_yet">Brak limitów.\nKliknij + Dodaj limit, aby zacząć śledzić wydatki według kategorii.</string>
+
+    <string name="goals_saving_goal_deleted">Usunięto cel oszczędzania</string>
+    <string name="goals_limit_deleted">Usunięto limit</string>
+    <string name="goals_edit_goal">Edytuj cel</string>
+    <string name="goals_no_goal_set_yet">Brak ustawionego celu</string>
+
+    <!-- Common -->
+    <string name="common_amount">Kwota</string>
+    <string name="common_note_optional">Notatka (opcjonalnie)</string>
+    <string name="common_category_name">Nazwa kategorii</string>
+
+    <!-- Bottom sheets -->
+    <string name="bottomsheet_new_transaction">Nowa transakcja</string>
+    <string name="bottomsheet_expense">Wydatek</string>
+    <string name="bottomsheet_income">Dochód</string>
+    <string name="bottomsheet_add_transaction_save">Zapisz</string>
+    <string name="bottomsheet_add_category_title">Nowa kategoria</string>
+    <string name="bottomsheet_add_category_save">Zapisz</string>
+
+    <!-- Added: missing resources for extracted localized UI -->
+    <string name="common_add">Dodaj</string>
+
+    <!-- Placeholder values (Recycler / preview) -->
+    <string name="placeholder_food">Jedzenie</string>
+    <string name="placeholder_on_track">Na dobrej drodze</string>
+    <string name="placeholder_text">Tekst</string>
+    <string name="placeholder_transaction_amount_negative">-$12</string>
+    <string name="placeholder_transaction_time">12:45</string>
+    <string name="placeholder_limit_amount">$250 / $300</string>
+    <string name="placeholder_category_percent">40%</string>
+    <string name="placeholder_category_amount">$400</string>
+    <string name="placeholder_operations_amount_zero">$0.00</string>
+    <string name="placeholder_analytics_total_amount">$2450</string>
+
+    <!-- Common chips -->
+    <string name="common_week">Tydzień</string>
+    <string name="common_month">Miesiąc</string>
+    <string name="common_year">Rok</string>
+    <string name="common_custom">Własne</string>
+    <string name="common_income">Dochód</string>
+    <string name="common_expense">Wydatek</string>
+    <string name="common_clear">Wyczyść</string>
+    <string name="common_delete">Usuń</string>
+    <string name="common_search">Szukaj</string>
+
+    <!-- Operations -->
+    <string name="operations_expenses_title">Wydatki</string>
+    <string name="operations_current_week">Bieżący tydzień</string>
+    <string name="operations_current_month">Bieżący miesiąc</string>
+    <string name="operations_current_year">Bieżący rok</string>
+    <string name="operations_filter_chip_label">Filtr: %1$s</string>
+    <string name="operations_search_chip_label">Szukaj: %1$s</string>
+    <string name="operations_select_period_title">Wybierz okres</string>
+    <string name="operations_delete_transaction_message">Usuń transakcję %1$s%2$s?</string>
+
+    <!-- Analytics -->
+    <string name="analytics_month">Miesiąc</string>
+    <string name="analytics_previous_month">Poprzedni miesiąc</string>
+    <string name="analytics_next_month">Następny miesiąc</string>
+    <string name="analytics_no_data_for_selected_period">Brak danych dla wybranego okresu.</string>
+    <string name="analytics_empty_no_expenses">Brak wydatków. Dodaj swój pierwszy wydatek, aby odblokować analizy.</string>
+    <string name="analytics_empty_no_expenses_in_month">Brak wydatków w %1$s. Spróbuj innego miesiąca.</string>
+    <string name="analytics_load_error">Nie udało się wczytać analiz</string>
+    <string name="analytics_uncategorized">Bez kategorii</string>
+    <string name="analytics_other">Inne</string>
+
+    <!-- Bottom sheets: Filter / Search -->
+    <string name="bottomsheet_filter_title">Filtr</string>
+    <string name="bottomsheet_filter_type">Typ</string>
+    <string name="bottomsheet_filter_all">Wszystko</string>
+    <string name="bottomsheet_filter_category">Kategoria</string>
+    <string name="bottomsheet_search_title">Szukaj</string>
+
+    <!-- Bottom sheets: Saving goal -->
+    <string name="bottomsheet_savings_goal_title">Cel oszczędzania</string>
+    <string name="bottomsheet_target_amount_hint">Kwota docelowa</string>
+    <string name="bottomsheet_no_deadline_selected">Nie wybrano terminu</string>
+    <string name="bottomsheet_pick_date">Wybierz datę</string>
+    <string name="bottomsheet_save_goal">Zapisz cel</string>
+
+    <!-- Bottom sheets: Limit goal -->
+    <string name="bottomsheet_category_limit_title">Limit dla kategorii</string>
+    <string name="bottomsheet_categories_label">Kategorie</string>
+    <string name="bottomsheet_select_one_category">Wybierz jedną kategorię</string>
+    <string name="bottomsheet_monthly_limit_hint">Limit miesięczny</string>
+    <string name="bottomsheet_save_limit">Zapisz limit</string>
+
+    <!-- Bottom sheets: Delete -->
+    <string name="bottomsheet_delete_category_title">Usuń kategorię</string>
+    <string name="bottomsheet_delete_category_message">Czy na pewno chcesz usunąć tę kategorię?</string>
+    <string name="bottomsheet_delete_transaction_title">Usuń transakcję</string>
+    <string name="bottomsheet_delete_undo_message">Nie można cofnąć tej akcji.</string>
+    <string name="bottomsheet_delete_limit_title">Usuń limit</string>
+    <string name="bottomsheet_delete_limit_message">Czy na pewno chcesz usunąć ten limit? Tego działania nie można cofnąć.</string>
+
+    <!-- Navigation -->
+    <string name="nav_operations">Operacje</string>
+    <string name="nav_analytics">Analizy</string>
+    <string name="nav_goals">Cele</string>
+
+    <!-- Currency chips (Hello2) -->
+    <string name="currency_usd_label">USD $</string>
+    <string name="currency_eur_label">EUR €</string>
+    <string name="currency_pln_label">PLN zł</string>
+    <string name="currency_mxn_label">MXN $</string>
+    <string name="currency_brl_label">BRL R$</string>
+    <string name="currency_inr_label">INR ₹</string>
+    <string name="currency_rub_label">RUB ₽</string>
+
+    <!-- Hello2 -->
+    <string name="hello2_lets_set_up">Ustalmy to</string>
+    <string name="hello2_change_later">Możesz to zmienić później</string>
+    <string name="hello2_currency">Waluta</string>
+    <string name="hello2_your_goals">Twoje cele</string>
+    <string name="hello2_track_expenses">Śledź wydatki</string>
+    <string name="hello2_save_money">Oszczędzaj</string>
+    <string name="hello2_analyze_spending">Analizuj wydatki</string>
+    <string name="hello2_build_habits">Buduj nawyki</string>
+    <string name="hello2_selected_label">Wybrane:</string>
+    <string name="hello2_continue">Kontynuuj</string>
+    <string name="hello2_choose_currency">Proszę wybierz walutę</string>
+
+    <!-- Dashboard / errors -->
+    <string name="common_enter_category_name">Wpisz nazwę kategorii</string>
+    <string name="dashboard_category_already_exists">Kategoria już istnieje</string>
+    <string name="dashboard_limit_reached_max_categories">Osiągnięto limit: maks. %1$d kategorii</string>
+    <string name="dashboard_category_deleted">Kategoria usunięta</string>
+    <string name="dashboard_category_not_found">Nie znaleziono kategorii</string>
+    <string name="dashboard_unable_to_open_transaction">Nie można otworzyć transakcji</string>
+    <string name="dashboard_delete_category_message">Czy usunąć kategorię “%1$s”?</string>
+
+    <!-- Transactions -->
+    <string name="common_enter_amount">Wpisz kwotę</string>
+    <string name="common_invalid_amount">Nieprawidłowa kwota</string>
+    <string name="common_enter_valid_amount">Wpisz poprawną kwotę</string>
+    <string name="edit_transaction_title">Edytuj transakcję</string>
+    <string name="edit_transaction_update">Aktualizuj</string>
+    <string name="edit_transaction_invalid_amount">Nieprawidłowa kwota</string>
+    <string name="edit_transaction_transaction_deleted">Transakcja usunięta</string>
+    <string name="edit_transaction_unable_to_delete">Nie można usunąć</string>
+
+    <!-- Goals ViewModel -->
+    <string name="goals_limit_set_positive">Ustaw dodatni limit</string>
+    <string name="goals_on_track_left_this_month">Na dobrej drodze: %1$s pozostało w tym miesiącu</string>
+    <string name="goals_at_risk_over_by">Zagrożenie: przekroczono o %1$s</string>
+    <string name="goals_goal_reached_great_work">Osiągnięto cel. Świetna robota!</string>
+    <string name="goals_left_to_save">Pozostało do oszczędzenia: %1$s</string>
+    <string name="goals_need_per_day">Potrzebujesz %1$s dziennie przez %2$d dzień(dni)</string>
+    <string name="goals_category_placeholder">Kategoria #%1$s</string>
+    <string name="goals_delete_limit_message">Usuń limit “%1$s”? Tego działania nie można cofnąć.</string>
+
+    <!-- Default starter categories -->
+    <string name="default_category_health">Zdrowie</string>
+    <string name="default_category_transport">Transport</string>
+    <string name="default_category_salary">Pensja</string>
+    <string name="default_category_gift">Prezent</string>
+    <string name="default_category_freelance">Freelancer</string>
+</resources>
+

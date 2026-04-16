@@ -11,12 +11,13 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.combine
 import com.abe.bud_jet.database.models.Transaction
 import com.abe.bud_jet.database.models.toUiModel
-import com.abe.bud_jet.database.models.withCategoryName
+import com.abe.bud_jet.database.models.withCategoryMeta
 
 data class DashboardUiState(
-    val balanceFormatted: String,
-    val monthDeltaFormatted: String,
+    val balance: Double,
+    val monthDelta: Double,
     val monthDeltaRaw: Double,
+    val hasIncomeTransactions: Boolean,
     val recentTransactions: List<Transaction>,
     val recentChips: List<RecentTransactionChip>,
     val expenseCategories: List<DashboardCategoryChip>,
@@ -47,14 +48,18 @@ class DashboardViewModel(
             repository.observeCategoriesByType(isIncome = false),
             repository.observeCategoriesByType(isIncome = true)
         ) { summary: DashboardSummary, recentEntities, expenseCategoriesRaw, incomeCategoriesRaw ->
-            val balanceText = formatMoney(balance = summary.balance)
             val monthDelta = summary.totalIncome - summary.totalExpense
-            val monthDeltaText = formatMoneyDelta(monthDelta)
-            val categoryNamesById = (expenseCategoriesRaw + incomeCategoriesRaw)
-                .associateBy({ it.id }, { it.name })
+            val categoriesById = (expenseCategoriesRaw + incomeCategoriesRaw)
+                .associateBy { it.id }
             val recent = recentEntities
                 .map { it.toUiModel() }
-                .map { tx -> tx.withCategoryName(categoryNamesById[tx.categoryId]) }
+                .map { tx ->
+                    val category = tx.categoryId?.let { categoriesById[it] }
+                    tx.withCategoryMeta(
+                        categoryName = category?.name,
+                        categoryColorHex = category?.color
+                    )
+                }
             val recentChips = recent
                 .take(3)
                 .map { RecentTransactionChip(id = it.id, amount = it.amount, isIncome = it.isIncome) }
@@ -79,9 +84,10 @@ class DashboardViewModel(
                 }
                 .take(FinanceRepository.MAX_INCOME_CATEGORIES)
             DashboardUiState(
-                balanceFormatted = balanceText,
-                monthDeltaFormatted = monthDeltaText,
+                balance = summary.balance,
+                monthDelta = monthDelta,
                 monthDeltaRaw = monthDelta,
+                hasIncomeTransactions = summary.totalIncome > 0.0,
                 recentTransactions = recent,
                 recentChips = recentChips,
                 expenseCategories = expenseCategories,
@@ -92,35 +98,16 @@ class DashboardViewModel(
                 scope = viewModelScope,
                 started = SharingStarted.Lazily,
                 initialValue = DashboardUiState(
-                    balanceFormatted = "$0",
-                    monthDeltaFormatted = "$0",
+                    balance = 0.0,
+                    monthDelta = 0.0,
                     monthDeltaRaw = 0.0,
+                    hasIncomeTransactions = false,
                     recentTransactions = emptyList(),
                     recentChips = emptyList(),
                     expenseCategories = emptyList(),
                     incomeCategories = emptyList()
                 )
             )
-
-    private fun formatMoney(balance: Double): String {
-        val rounded = String.format("%.2f", kotlin.math.abs(balance))
-        return if (balance < 0) {
-            "- $$rounded"
-        } else {
-            "$$rounded"
-        }
-    }
-
-    private fun formatMoneyDelta(value: Double): String {
-        val sign = when {
-            value > 0 -> "+ "
-            value < 0 -> "- "
-            else -> ""
-        }
-        val abs = kotlin.math.abs(value)
-        val rounded = String.format("%.2f", abs)
-        return "$sign$$rounded"
-    }
 }
 
 class DashboardViewModelFactory(

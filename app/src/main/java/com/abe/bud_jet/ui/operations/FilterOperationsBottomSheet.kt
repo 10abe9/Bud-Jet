@@ -1,13 +1,10 @@
 package com.abe.bud_jet.ui.operations
 
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
-import android.widget.FrameLayout
 import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
 import com.abe.bud_jet.R
@@ -15,12 +12,12 @@ import com.abe.bud_jet.database.FinanceRepositoryProvider
 import com.abe.bud_jet.database.entities.CategoryEntity
 import com.abe.bud_jet.databinding.BottomSheetFilterOperationsBinding
 import com.google.android.material.chip.Chip
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.abe.bud_jet.ui.common.BaseBottomSheetDialogFragment
 import android.util.TypedValue
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-class FilterOperationsBottomSheet : BottomSheetDialogFragment() {
+class FilterOperationsBottomSheet : BaseBottomSheetDialogFragment() {
 
     private var _binding: BottomSheetFilterOperationsBinding? = null
     private val binding get() = _binding!!
@@ -188,14 +185,6 @@ class FilterOperationsBottomSheet : BottomSheetDialogFragment() {
         chip.chipStrokeColor = android.content.res.ColorStateList.valueOf(parsed)
 
         return chip
-    }
-
-    override fun onStart() {
-        super.onStart()
-        dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
-        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog?.findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
-            ?.background = ColorDrawable(Color.TRANSPARENT)
     }
 
     override fun onDestroyView() {

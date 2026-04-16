@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="16dp"
+    android:layout_marginHorizontal="16dp"
     app:cardCornerRadius="20dp"
     app:cardElevation="0dp"
     app:strokeWidth="1dp"
@@ -25,7 +25,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Search"
+                android:text="@string/bottomsheet_search_title"
                 android:textStyle="bold"
                 android:textSize="18sp"
                 android:textColor="@color/text_primary" />
@@ -34,7 +34,7 @@
                 android:id="@+id/btnCancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Cancel"
+                android:text="@string/common_cancel"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:textColor="@color/text_secondary"
                 app:cornerRadius="14dp" />
@@ -45,7 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:hint="Search">
+            android:hint="@string/common_search">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etSearch"
@@ -66,7 +66,7 @@
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_weight="1"
-                android:text="Clear"
+                android:text="@string/common_clear"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 app:cornerRadius="14dp" />
 
@@ -79,7 +79,7 @@
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_weight="1"
-                android:text="Apply"
+                android:text="@string/common_apply"
                 android:backgroundTint="@color/brand_primary"
                 android:textColor="@android:color/white"
                 app:cornerRadius="14dp" />

@@ -15,14 +15,18 @@ import com.abe.bud_jet.database.FinanceRepositoryProvider
 import com.abe.bud_jet.database.preferences.PreferenceManager
 import com.abe.bud_jet.databinding.ActivityMainBinding
 import com.abe.bud_jet.ui.operations.AddTransactionBottomSheet
+import com.abe.bud_jet.utils.LocaleManager
 import com.abe.bud_jet.utils.VibrationManager
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var preferenceManager: PreferenceManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        preferenceManager = PreferenceManager.getInstance(applicationContext)
+        LocaleManager.applyAppLanguage(preferenceManager.getAppLanguage())
         super.onCreate(savedInstanceState)
 
         registerVibrationManager()   // ← ПЕРЕНЕСТИ СЮДА
@@ -43,11 +47,16 @@ class MainActivity : AppCompatActivity() {
         hideUiForHelloFragments(navController)
         seedDefaultCategories()
 
-        val preferenceManager = PreferenceManager.getInstance(applicationContext)
         if (preferenceManager.getIsFirstInit()) {
             preferenceManager.setIsFirstInit(false)
             navController.navigate(R.id.hello1Fragment)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Used by notification reminders to check whether the user opened the app today.
+        preferenceManager.setLastDashboardVisitTime(System.currentTimeMillis())
     }
 
     private fun hideUiForHelloFragments(navController: NavController){

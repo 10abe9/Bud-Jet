@@ -7,6 +7,7 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="12dp"
     android:layout_marginVertical="4dp"
+    app:cardBackgroundColor="@color/card"
     app:cardCornerRadius="20dp"
     app:cardElevation="0dp"
     app:strokeWidth="1dp"
@@ -23,15 +24,16 @@
             android:id="@+id/tvCategory"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Food"
-            android:textColor="@color/text_primary"
-            android:textStyle="bold"
-            android:textSize="14sp"
-            android:maxLines="1"
-            android:ellipsize="end"
-            app:layout_constraintEnd_toStartOf="@id/tvAmount"
             android:layout_marginEnd="8dp"
-            app:layout_constraintStart_toStartOf="parent"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:layout_marginStart="24dp"
+            android:text="@string/placeholder_food"
+            android:textColor="@color/text_primary"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/tvAmount"
+            app:layout_constraintStart_toEndOf="@+id/category_ticket"
             app:layout_constraintTop_toTopOf="parent" />
 
         <!-- Amount -->
@@ -39,7 +41,7 @@
             android:id="@+id/tvAmount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="-$12"
+            android:text="@string/placeholder_transaction_amount_negative"
             android:textStyle="bold"
             android:textSize="14sp"
             android:textColor="@color/finance_expense"
@@ -51,7 +53,7 @@
             android:id="@+id/tvTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="12:45"
+            android:text="@string/placeholder_transaction_time"
             android:textColor="@color/text_secondary"
             android:textSize="11sp"
             app:layout_constraintStart_toStartOf="@id/tvCategory"
@@ -62,11 +64,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:text="TextView"
+            android:text="@string/placeholder_text"
             android:textColor="@color/text_secondary"
             android:textSize="12sp"
             app:layout_constraintStart_toEndOf="@+id/tvTime"
             app:layout_constraintTop_toBottomOf="@+id/tvCategory" />
+
+        <ImageView
+            android:id="@+id/category_ticket"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/tvTime"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tvCategory"
+            app:srcCompat="@drawable/ic_ticket" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

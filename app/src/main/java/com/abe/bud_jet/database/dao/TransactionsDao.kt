@@ -21,6 +21,9 @@ interface TransactionsDao {
     @Query("DELETE FROM transactions WHERE id = :id")
     suspend fun deleteById(id: Long): Int
 
+    @Query("DELETE FROM transactions")
+    suspend fun deleteAll(): Int
+
     @Query("SELECT * FROM transactions ORDER BY timestamp DESC LIMIT :limit")
     fun observeRecent(limit: Int): Flow<List<TransactionEntity>>
 
@@ -42,5 +45,22 @@ interface TransactionsDao {
 
     @Query("UPDATE transactions SET category_id = NULL WHERE category_id = :categoryId")
     suspend fun clearCategoryReferences(categoryId: Long)
+
+    @Query("SELECT COUNT(*) FROM transactions")
+    suspend fun getCount(): Int
+
+    @Query("UPDATE transactions SET amount = amount * :rate")
+    suspend fun multiplyAllAmounts(rate: Double)
+
+    @Query(
+        "SELECT COALESCE(SUM(amount), 0) FROM transactions " +
+            "WHERE category_id = :categoryId AND type = :type AND timestamp BETWEEN :from AND :to"
+    )
+    fun observeCategoryTotalInPeriod(
+        categoryId: Long,
+        type: TransactionType,
+        from: Long,
+        to: Long
+    ): Flow<Double>
 }
 

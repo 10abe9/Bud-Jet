@@ -6,11 +6,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.abe.bud_jet.database.models.CategoryStat
 import com.abe.bud_jet.databinding.ItemCategoryStatBinding
+import com.abe.bud_jet.utils.CurrencyFormatter
 
 class CategoryStatsAdapter :
     RecyclerView.Adapter<CategoryStatsAdapter.VH>() {
 
     private var items: List<CategoryStat> = emptyList()
+    var currencyCode: String = "USD"
 
     private val colors = listOf(
         "#FF9800",
@@ -46,7 +48,7 @@ class CategoryStatsAdapter :
         val percent = ((item.total / total) * 100).toInt()
 
         holder.binding.tvName.text = item.category
-        holder.binding.tvAmount.text = "$${item.total.toInt()}"
+        holder.binding.tvAmount.text = CurrencyFormatter.format(item.total.toDouble(), currencyCode)
         holder.binding.tvPercent.text = "$percent%"
 
         holder.binding.viewColor.setBackgroundColor(

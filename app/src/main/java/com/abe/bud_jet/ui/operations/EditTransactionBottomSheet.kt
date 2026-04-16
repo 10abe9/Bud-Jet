@@ -1,25 +1,22 @@
 package com.abe.bud_jet.ui.operations
 
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
-import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.abe.bud_jet.R
 import com.abe.bud_jet.database.FinanceRepositoryProvider
 import com.abe.bud_jet.database.entities.CategoryEntity
 import com.abe.bud_jet.databinding.BottomSheetAddTransactionBinding
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.abe.bud_jet.ui.common.BaseBottomSheetDialogFragment
 import com.google.android.material.chip.Chip
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-class EditTransactionBottomSheet : BottomSheetDialogFragment() {
+class EditTransactionBottomSheet : BaseBottomSheetDialogFragment() {
 
     private var _binding: BottomSheetAddTransactionBinding? = null
     private val binding get() = _binding!!
@@ -54,8 +51,8 @@ class EditTransactionBottomSheet : BottomSheetDialogFragment() {
         isIncomeCurrent = requireArguments().getBoolean(ARG_IS_INCOME)
         selectedCategoryId = categoryId
 
-        binding.tvTitle.text = "Edit transaction"
-        binding.btnSave.text = "Update"
+        binding.tvTitle.text = getString(R.string.edit_transaction_title)
+        binding.btnSave.text = getString(R.string.edit_transaction_update)
         binding.etAmount.setText(amount.toString())
         binding.etNote.setText(note.orEmpty())
         binding.toggleType.check(if (isIncomeCurrent) binding.btnIncome.id else binding.btnExpense.id)
@@ -101,7 +98,7 @@ class EditTransactionBottomSheet : BottomSheetDialogFragment() {
         binding.btnSave.setOnClickListener {
             val amount = binding.etAmount.text?.toString()?.toDoubleOrNull()
             if (amount == null || amount <= 0) {
-                binding.etAmount.error = "Invalid amount"
+                binding.etAmount.error = getString(R.string.edit_transaction_invalid_amount)
                 return@setOnClickListener
             }
             val note = binding.etNote.text?.toString()?.takeIf { it.isNotBlank() }
@@ -124,7 +121,7 @@ class EditTransactionBottomSheet : BottomSheetDialogFragment() {
 
     private fun setupDelete() {
         val deleteChip = Chip(requireContext()).apply {
-            text = "Delete"
+            text = getString(R.string.common_delete)
             isCheckable = false
             chipBackgroundColor = android.content.res.ColorStateList.valueOf(
                 requireContext().getColor(R.color.card)
@@ -140,21 +137,13 @@ class EditTransactionBottomSheet : BottomSheetDialogFragment() {
                 val deleted = repository.deleteTransaction(transactionId)
                 Toast.makeText(
                     requireContext(),
-                    if (deleted) "Transaction deleted" else "Unable to delete",
+                    if (deleted) getString(R.string.edit_transaction_transaction_deleted)
+                    else getString(R.string.edit_transaction_unable_to_delete),
                     Toast.LENGTH_SHORT
                 ).show()
                 if (deleted) dismissAllowingStateLoss()
             }
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
-        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog?.findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
-            ?.background = ColorDrawable(Color.TRANSPARENT)
-        (view?.parent as? View)?.setBackgroundColor(Color.TRANSPARENT)
     }
 
     override fun onDestroyView() {

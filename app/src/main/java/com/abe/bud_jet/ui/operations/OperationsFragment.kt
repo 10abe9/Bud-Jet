@@ -10,8 +10,11 @@ import androidx.navigation.fragment.findNavController
 import com.abe.bud_jet.ui.operations.FilterOperationsBottomSheet.Companion.RESULT_KEY
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.abe.bud_jet.database.FinanceRepositoryProvider
+import com.abe.bud_jet.database.preferences.PreferenceManager
 import com.abe.bud_jet.adapters.TransactionsAdapter
 import com.abe.bud_jet.databinding.FragmentOperationsBinding
+import com.abe.bud_jet.R
+import com.abe.bud_jet.utils.CurrencyFormatter
 import com.abe.bud_jet.utils.collectWithLifecycle
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.chip.Chip
@@ -25,11 +28,14 @@ class OperationsFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var adapter: TransactionsAdapter
+    private lateinit var preferenceManager: PreferenceManager
+    private var currencyCode: String = "USD"
     private var pendingFocusTransactionId: Long? = null
 
     private val viewModel: OperationsViewModel by viewModels {
         OperationsViewModelFactory(
-            FinanceRepositoryProvider.get(requireContext())
+            FinanceRepositoryProvider.get(requireContext()),
+            requireContext().resources
         )
     }
 
@@ -43,6 +49,9 @@ class OperationsFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        preferenceManager = PreferenceManager.getInstance(requireContext())
+        currencyCode = preferenceManager.getCurrencyCode()
+
         pendingFocusTransactionId = arguments?.getLong(ARG_FOCUS_TRANSACTION_ID)?.takeIf { it > 0L }
             ?: findNavController().getBackStackEntry(com.abe.bud_jet.R.id.mobile_navigation)
                 .savedStateHandle
@@ -62,6 +71,7 @@ class OperationsFragment : Fragment() {
         setupFilterResultListener()
         setupSearchResultListener()
         observeData()
+        observeCurrency()
     }
 
     private fun setupRecycler() {
@@ -78,13 +88,18 @@ class OperationsFragment : Fragment() {
             },
             onTransactionLongClick = { transaction ->
                 val sign = if (transaction.isIncome) "+" else "-"
-                val amount = String.format("%.2f", kotlin.math.abs(transaction.amount))
+                val amount = CurrencyFormatter.format(transaction.amount, currencyCode)
                 DeleteTransactionBottomSheet.newInstance(
                     id = transaction.id,
-                    message = "Delete transaction $sign$$amount?"
+                    message = getString(
+                        R.string.operations_delete_transaction_message,
+                        sign,
+                        amount
+                    )
                 ).show(parentFragmentManager, "delete_transaction")
             }
         )
+        adapter.currencyCode = currencyCode
 
         binding.rvTransactions.layoutManager = LinearLayoutManager(requireContext())
         binding.rvTransactions.adapter = adapter
@@ -93,11 +108,11 @@ class OperationsFragment : Fragment() {
     private fun observeData() {
         viewModel.uiState.collectWithLifecycle(viewLifecycleOwner) { state ->
             adapter.submitList(state.transactions)
-            binding.tvExpensesAmount.text = state.totalsFormatted
+            binding.tvExpensesAmount.text = CurrencyFormatter.format(state.totalAmount, currencyCode)
             binding.tvExpensesPeriod.text = state.periodLabel
             binding.tvExpensesTitle.text = when (state.totalsMode) {
-                OperationsTotalsMode.INCOME -> "Income"
-                OperationsTotalsMode.EXPENSES -> "Expenses"
+                OperationsTotalsMode.INCOME -> getString(R.string.common_income)
+                OperationsTotalsMode.EXPENSES -> getString(R.string.operations_expenses_title)
             }
             binding.tvExpensesTitle.setTextColor(
                 when (state.totalsMode) {
@@ -142,10 +157,18 @@ class OperationsFragment : Fragment() {
         }
 
         filterText?.takeIf { it.isNotBlank() }?.let {
-            chipGroup.addView(createChip("Filter: $it") { viewModel.clearFilters() })
+            chipGroup.addView(
+                createChip(
+                    getString(R.string.operations_filter_chip_label, it)
+                ) { viewModel.clearFilters() }
+            )
         }
         searchText?.takeIf { it.isNotBlank() }?.let {
-            chipGroup.addView(createChip("Search: $it") { viewModel.clearSearch() })
+            chipGroup.addView(
+                createChip(
+                    getString(R.string.operations_search_chip_label, it)
+                ) { viewModel.clearSearch() }
+            )
         }
     }
 
@@ -263,7 +286,7 @@ class OperationsFragment : Fragment() {
 
     private fun openCustomRangePicker() {
         val picker = MaterialDatePicker.Builder.dateRangePicker()
-            .setTitleText("Select period")
+            .setTitleText(getString(R.string.operations_select_period_title))
             .build()
         picker.addOnPositiveButtonClickListener { range ->
             val start = range.first ?: return@addOnPositiveButtonClickListener
@@ -274,6 +297,15 @@ class OperationsFragment : Fragment() {
             viewModel.setCustomRange(from, to)
         }
         picker.show(parentFragmentManager, "operations_custom_range")
+    }
+
+    private fun observeCurrency() {
+        preferenceManager.observeCurrencyCode().collectWithLifecycle(viewLifecycleOwner) { code ->
+            currencyCode = code
+            adapter.currencyCode = currencyCode
+            adapter.notifyDataSetChanged()
+            binding.tvExpensesAmount.text = CurrencyFormatter.format(viewModel.uiState.value.totalAmount, currencyCode)
+        }
     }
 
     override fun onDestroyView() {

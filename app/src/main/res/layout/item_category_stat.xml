@@ -4,6 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="8dp"
+    app:cardBackgroundColor="@color/card"
+    app:cardElevation="0dp"
     app:cardCornerRadius="16dp"
     app:strokeWidth="1dp"
     app:strokeColor="@color/border">
@@ -29,7 +31,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Food"
+            android:text="@string/placeholder_food"
             android:textColor="@color/text_primary"
             android:textSize="16sp"/>
 
@@ -38,7 +40,7 @@
             android:id="@+id/tvPercent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="40%"
+            android:text="@string/placeholder_category_percent"
             android:layout_marginEnd="12dp"
             android:textColor="@color/text_secondary"/>
 
@@ -47,7 +49,7 @@
             android:id="@+id/tvAmount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="$400"
+            android:text="@string/placeholder_category_amount"
             android:textStyle="bold"
             android:textColor="@color/text_primary"/>
 

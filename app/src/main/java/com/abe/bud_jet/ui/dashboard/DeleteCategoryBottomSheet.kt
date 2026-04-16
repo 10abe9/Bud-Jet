@@ -1,23 +1,20 @@
 package com.abe.bud_jet.ui.dashboard
 
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
-import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.abe.bud_jet.R
 import com.abe.bud_jet.database.FinanceRepository
 import com.abe.bud_jet.database.FinanceRepositoryProvider
 import com.abe.bud_jet.databinding.BottomSheetDeleteCategoryBinding
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.abe.bud_jet.ui.common.BaseBottomSheetDialogFragment
 import kotlinx.coroutines.launch
 
-class DeleteCategoryBottomSheet : BottomSheetDialogFragment() {
+class DeleteCategoryBottomSheet : BaseBottomSheetDialogFragment() {
 
     private var _binding: BottomSheetDeleteCategoryBinding? = null
     private val binding get() = _binding!!
@@ -40,31 +37,31 @@ class DeleteCategoryBottomSheet : BottomSheetDialogFragment() {
         val categoryId = requireArguments().getLong(ARG_CATEGORY_ID)
         val categoryName = requireArguments().getString(ARG_CATEGORY_NAME).orEmpty()
 
-        binding.tvDeleteMessage.text = "Delete \"$categoryName\" category?"
+        binding.tvDeleteMessage.text =
+            getString(R.string.dashboard_delete_category_message, categoryName)
 
         binding.btnCancelDelete.setOnClickListener { dismissAllowingStateLoss() }
         binding.btnConfirmDelete.setOnClickListener {
             viewLifecycleOwner.lifecycleScope.launch {
                 when (repository.deleteCategory(categoryId)) {
                     FinanceRepository.DeleteCategoryResult.SUCCESS -> {
-                        Toast.makeText(requireContext(), "Category deleted", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            requireContext(),
+                            getString(R.string.dashboard_category_deleted),
+                            Toast.LENGTH_SHORT
+                        ).show()
                         dismissAllowingStateLoss()
                     }
                     FinanceRepository.DeleteCategoryResult.NOT_FOUND -> {
-                        Toast.makeText(requireContext(), "Category not found", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            requireContext(),
+                            getString(R.string.dashboard_category_not_found),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             }
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
-        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog?.findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
-            ?.background = ColorDrawable(Color.TRANSPARENT)
-        (view?.parent as? View)?.setBackgroundColor(Color.TRANSPARENT)
     }
 
     override fun onDestroyView() {

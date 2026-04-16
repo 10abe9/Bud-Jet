@@ -1,17 +1,14 @@
 package com.abe.bud_jet.ui.operations
 
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
-import android.view.WindowManager
-import android.widget.FrameLayout
 import androidx.core.os.bundleOf
 import com.abe.bud_jet.R
 import com.abe.bud_jet.databinding.BottomSheetSearchOperationsBinding
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.abe.bud_jet.ui.common.BaseBottomSheetDialogFragment
 
-class SearchOperationsBottomSheet : BottomSheetDialogFragment() {
+class SearchOperationsBottomSheet : BaseBottomSheetDialogFragment() {
 
     private var _binding: BottomSheetSearchOperationsBinding? = null
     private val binding get() = _binding!!
@@ -54,14 +51,6 @@ class SearchOperationsBottomSheet : BottomSheetDialogFragment() {
             )
             dismissAllowingStateLoss()
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
-        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog?.findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
-            ?.background = ColorDrawable(Color.TRANSPARENT)
     }
 
     override fun onDestroyView() {

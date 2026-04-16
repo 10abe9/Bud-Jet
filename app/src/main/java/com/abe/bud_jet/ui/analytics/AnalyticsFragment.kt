@@ -11,18 +11,23 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.abe.bud_jet.R
 import com.abe.bud_jet.database.FinanceRepositoryProvider
+import com.abe.bud_jet.database.preferences.PreferenceManager
 import com.abe.bud_jet.databinding.FragmentAnalyticsBinding
+import com.abe.bud_jet.utils.CurrencyFormatter
 import com.abe.bud_jet.utils.collectWithLifecycle
 import com.abe.bud_jet.utils.VibrationManager
 
 class AnalyticsFragment : Fragment(R.layout.fragment_analytics) {
 
     private lateinit var binding: FragmentAnalyticsBinding
+    private lateinit var preferenceManager: PreferenceManager
+    private var currencyCode: String = "USD"
     private val categoryAdapter = CategoryStatsAdapter()
     private val monthChartsAdapter = MonthChartsAdapter()
     private val viewModel: AnalyticsViewModel by viewModels {
         AnalyticsViewModelFactory(
-            FinanceRepositoryProvider.get(requireContext())
+            FinanceRepositoryProvider.get(requireContext()),
+            requireContext().resources
         )
     }
 
@@ -33,6 +38,9 @@ class AnalyticsFragment : Fragment(R.layout.fragment_analytics) {
         super.onViewCreated(view, savedInstanceState)
 
         binding = FragmentAnalyticsBinding.bind(view)
+        preferenceManager = PreferenceManager.getInstance(requireContext())
+        currencyCode = preferenceManager.getCurrencyCode()
+        categoryAdapter.currencyCode = currencyCode
 
         binding.rvStats.layoutManager = LinearLayoutManager(requireContext())
         binding.rvStats.adapter = categoryAdapter
@@ -52,6 +60,7 @@ class AnalyticsFragment : Fragment(R.layout.fragment_analytics) {
 
         setupMonthArrows()
         observeUiState()
+        observeCurrency()
     }
 
     private fun setupMonthArrows() {
@@ -80,7 +89,7 @@ class AnalyticsFragment : Fragment(R.layout.fragment_analytics) {
     private fun observeUiState() {
         viewModel.uiState.collectWithLifecycle(viewLifecycleOwner) { state ->
             binding.tvMonthTitle.text = state.monthOptions.getOrNull(state.selectedMonthIndex).orEmpty()
-            binding.tvTotal.text = "$${state.totalExpense.toInt()}"
+            binding.tvTotal.text = CurrencyFormatter.format(state.totalExpense.toDouble(), currencyCode)
 
             categoryAdapter.submit(state.stats)
 
@@ -89,7 +98,7 @@ class AnalyticsFragment : Fragment(R.layout.fragment_analytics) {
 
             binding.tvEmptyState.visibility = if (hasStats) View.GONE else View.VISIBLE
             binding.tvEmptyState.text =
-                state.emptyMessage ?: "No data for selected period."
+                state.emptyMessage ?: getString(R.string.analytics_no_data_for_selected_period)
 
             monthChartsAdapter.submit(state.monthCharts)
 
@@ -98,6 +107,15 @@ class AnalyticsFragment : Fragment(R.layout.fragment_analytics) {
             ) {
                 binding.vpMonthCharts.setCurrentItem(state.selectedMonthIndex, false)
             }
+        }
+    }
+
+    private fun observeCurrency() {
+        preferenceManager.observeCurrencyCode().collectWithLifecycle(viewLifecycleOwner) { code ->
+            currencyCode = code
+            categoryAdapter.currencyCode = code
+            categoryAdapter.notifyDataSetChanged()
+            binding.tvTotal.text = CurrencyFormatter.format(viewModel.uiState.value.totalExpense.toDouble(), currencyCode)
         }
     }
 

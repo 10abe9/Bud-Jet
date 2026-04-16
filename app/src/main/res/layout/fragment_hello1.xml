@@ -41,7 +41,7 @@
         android:layout_marginBottom="32dp"
         android:layout_weight="1"
         android:backgroundTint="@color/brand_primary"
-        android:text="Get started"
+        android:text="@string/hello1_get_started"
         app:cornerRadius="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -53,7 +53,7 @@
         android:textAlignment="center"
         android:layout_marginTop="128dp"
         android:fontFamily="@font/aldrich"
-        android:text="Take control of your money"
+        android:text="@string/hello1_take_control"
         android:textColor="@color/brand_primary"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -67,8 +67,7 @@
         android:textAlignment="center"
         android:layout_marginTop="64dp"
         android:fontFamily="@font/aldrich"
-        android:text="Track spending, manage income,
-and get smart financial insights."
+        android:text="@string/hello1_track_insights"
         android:textColor="@color/text_primary"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -82,7 +81,7 @@ and get smart financial insights."
         android:textColor="@color/brand_primary_light"
         android:textSize="16sp"
         android:fontFamily="@font/aldrich"
-        android:text="Skip"
+        android:text="@string/hello1_skip"
         app:layout_constraintBottom_toBottomOf="@+id/button_get_started"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/button_get_started" />
@@ -127,7 +126,7 @@ and get smart financial insights."
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Total balance"
+                            android:text="@string/hello1_total_balance"
                             android:textColor="@color/text_secondary"
                             android:textSize="12sp" />
 
@@ -142,7 +141,7 @@ and get smart financial insights."
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="6dp"
                                 android:layout_weight="1"
-                                android:text="$4,250.80"
+                                android:text="@string/hello1_balance_placeholder"
                                 android:textColor="@color/text_primary"
                                 android:textSize="24sp"
                                 android:textStyle="bold" />
@@ -159,7 +158,7 @@ and get smart financial insights."
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="This month"
+                            android:text="@string/hello1_this_month"
                             android:textColor="@color/text_secondary"
                             android:textSize="12sp" />
 
@@ -174,7 +173,7 @@ and get smart financial insights."
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="6dp"
                                 android:layout_weight="1"
-                                android:text="+ $280.40"
+                                android:text="@string/hello1_month_delta_placeholder"
                                 android:textColor="@color/finance_income"
                                 android:textSize="24sp"
                                 android:textStyle="bold" />
@@ -199,7 +198,7 @@ and get smart financial insights."
                     android:layout_weight="1"
                     android:backgroundTint="@color/finance_expense"
                     android:elevation="0dp"
-                    android:text="Add expense"
+                    android:text="@string/hello1_add_expense"
                     android:textSize="12sp"
                     app:cornerRadius="20dp" />
 
@@ -214,7 +213,7 @@ and get smart financial insights."
                     android:layout_weight="1"
                     android:backgroundTint="@color/finance_income"
                     android:elevation="0dp"
-                    android:text="Add income"
+                    android:text="@string/hello1_add_income"
                     android:textSize="12sp"
                     app:cornerRadius="20dp" />
             </LinearLayout>

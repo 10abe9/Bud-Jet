@@ -1,11 +1,13 @@
 package com.abe.bud_jet.adapters
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.abe.bud_jet.R
 import com.abe.bud_jet.database.models.Transaction
 import com.abe.bud_jet.databinding.ItemTransactionBinding
+import com.abe.bud_jet.utils.CurrencyFormatter
 import com.google.android.material.card.MaterialCardView
 
 class TransactionsAdapter(
@@ -15,6 +17,7 @@ class TransactionsAdapter(
 
     private val items = mutableListOf<Transaction>()
     private var highlightedTransactionId: Long? = null
+    var currencyCode: String = "USD"
 
     fun submitList(list: List<Transaction>) {
         items.clear()
@@ -33,13 +36,13 @@ class TransactionsAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: Transaction) {
-            binding.tvCategory.text = item.title
+            binding.tvCategory.text = displayTitle(item)
             binding.tvDate.text = item.date
 
             val amountText = if (item.isIncome) {
-                "+$${item.amount}"
+                "+${CurrencyFormatter.format(item.amount, currencyCode)}"
             } else {
-                "-$${item.amount}"
+                "-${CurrencyFormatter.format(item.amount, currencyCode)}"
             }
 
             binding.tvAmount.text = amountText
@@ -51,6 +54,7 @@ class TransactionsAdapter(
             }
 
             binding.tvAmount.setTextColor(color)
+            binding.categoryTicket.setColorFilter(resolveCategoryTicketColor(item))
 
             val card = binding.root as? MaterialCardView
             card?.strokeWidth = 1
@@ -89,6 +93,18 @@ class TransactionsAdapter(
                 onTransactionLongClick(item)
                 true
             }
+        }
+
+        private fun displayTitle(item: Transaction): String {
+            val note = item.note?.trim().orEmpty()
+            if (note.isBlank()) return item.title
+            return if (note.length > 15) note.take(15) + "..." else note
+        }
+
+        private fun resolveCategoryTicketColor(item: Transaction): Int {
+            val fallback = binding.root.context.getColor(R.color.black)
+            val hex = item.categoryColorHex?.takeIf { it.startsWith("#") } ?: return fallback
+            return runCatching { Color.parseColor(hex) }.getOrElse { fallback }
         }
     }
 

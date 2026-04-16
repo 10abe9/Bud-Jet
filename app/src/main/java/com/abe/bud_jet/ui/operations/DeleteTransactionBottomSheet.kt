@@ -1,22 +1,19 @@
 package com.abe.bud_jet.ui.operations
 
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
-import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.abe.bud_jet.R
 import com.abe.bud_jet.database.FinanceRepositoryProvider
 import com.abe.bud_jet.databinding.BottomSheetDeleteTransactionBinding
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.abe.bud_jet.ui.common.BaseBottomSheetDialogFragment
 import kotlinx.coroutines.launch
 
-class DeleteTransactionBottomSheet : BottomSheetDialogFragment() {
+class DeleteTransactionBottomSheet : BaseBottomSheetDialogFragment() {
 
     private var _binding: BottomSheetDeleteTransactionBinding? = null
     private val binding get() = _binding!!
@@ -48,21 +45,13 @@ class DeleteTransactionBottomSheet : BottomSheetDialogFragment() {
                 val deleted = repository.deleteTransaction(id)
                 Toast.makeText(
                     requireContext(),
-                    if (deleted) "Transaction deleted" else "Unable to delete",
+                    if (deleted) getString(R.string.edit_transaction_transaction_deleted)
+                    else getString(R.string.edit_transaction_unable_to_delete),
                     Toast.LENGTH_SHORT
                 ).show()
                 if (deleted) dismissAllowingStateLoss()
             }
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
-        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog?.findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
-            ?.background = ColorDrawable(Color.TRANSPARENT)
-        (view?.parent as? View)?.setBackgroundColor(Color.TRANSPARENT)
     }
 
     override fun onDestroyView() {

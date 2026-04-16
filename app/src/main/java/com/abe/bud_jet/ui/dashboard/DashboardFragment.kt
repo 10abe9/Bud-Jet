@@ -1,23 +1,34 @@
 package com.abe.bud_jet.ui.dashboard
 
+import android.Manifest
 import android.content.res.ColorStateList
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.core.content.ContextCompat
+import android.os.Build
 import com.abe.bud_jet.database.FinanceRepositoryProvider
 import com.abe.bud_jet.database.FinanceRepository
+import com.abe.bud_jet.database.preferences.PreferenceManager
 import com.abe.bud_jet.databinding.FragmentDashboardBinding
+import com.abe.bud_jet.R
+import com.abe.bud_jet.utils.CurrencyFormatter
 import com.abe.bud_jet.ui.operations.AddTransactionBottomSheet
 import com.abe.bud_jet.utils.VibrationManager
 import com.abe.bud_jet.utils.collectWithLifecycle
 import com.google.android.material.chip.Chip
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.abe.bud_jet.notifications.NotificationReminderScheduler
+import com.abe.bud_jet.ui.profile.CurrentBalanceBottomSheet
 
 class DashboardFragment : Fragment() {
     private val fixedCategoryPalette = listOf(
@@ -37,12 +48,27 @@ class DashboardFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var vibrator: VibrationManager
+    private lateinit var preferenceManager: PreferenceManager
+    private var currencyCode: String = "USD"
+    private var initialBalance: Double = 0.0
+    private var lastDashboardState: DashboardUiState? = null
     private val repository by lazy { FinanceRepositoryProvider.get(requireContext()) }
     private val dashboardViewModel: DashboardViewModel by viewModels {
         DashboardViewModelFactory(
             repository
         )
     }
+
+    private val requestNotificationsPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            // We only ask once automatically. User can re-try from Profile later.
+            preferenceManager.setNotificationPermissionRequested(true)
+            preferenceManager.setNotificationsEnabled(granted)
+
+            if (granted) {
+                NotificationReminderScheduler.scheduleDailyExpenseReminder(requireContext())
+            }
+        }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -58,22 +84,65 @@ class DashboardFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         vibrator = VibrationManager.get()
+        preferenceManager = PreferenceManager.getInstance(requireContext())
+        currencyCode = preferenceManager.getCurrencyCode()
+        initialBalance = preferenceManager.getInitialBalance()
 
+        // Remember last time the user opened Dashboard (used to decide whether to remind).
+        preferenceManager.setLastDashboardVisitTime(System.currentTimeMillis())
+
+        maybeRequestNotificationsPermissionOnce()
+        if (preferenceManager.isNotificationsEnabled() && hasNotificationPermission()) {
+            NotificationReminderScheduler.scheduleDailyExpenseReminder(requireContext())
+        }
+
+        setupResults()
         setupUi()
         setupButtons()
+        observeCurrency()
+    }
+
+    private fun setupResults() {
+        setFragmentResultListener(CurrentBalanceBottomSheet.RESULT_KEY) { _, bundle ->
+            val balance = bundle.getDouble(CurrentBalanceBottomSheet.RESULT_BALANCE, initialBalance)
+            initialBalance = balance
+            preferenceManager.setInitialBalance(balance)
+            lastDashboardState?.let { renderBalanceSection(it) }
+        }
+    }
+
+    private fun maybeRequestNotificationsPermissionOnce() {
+        if (preferenceManager.isNotificationPermissionRequested()) return
+
+        if (hasNotificationPermission()) {
+            preferenceManager.setNotificationPermissionRequested(true)
+            preferenceManager.setNotificationsEnabled(true)
+            return
+        }
+
+        requestNotificationsPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+    }
+
+    private fun hasNotificationPermission(): Boolean {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return true
+        return ContextCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.POST_NOTIFICATIONS
+        ) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun setupUi() {
         dashboardViewModel.uiState
             .collectWithLifecycle(viewLifecycleOwner) { state ->
-                binding.textBalance.text = state.balanceFormatted
-                binding.textBalanceStatus.text = state.monthDeltaFormatted
+                lastDashboardState = state
+                renderBalanceSection(state)
                 val colorRes = when {
                     state.monthDeltaRaw > 0 -> com.abe.bud_jet.R.color.finance_income
                     state.monthDeltaRaw < 0 -> com.abe.bud_jet.R.color.finance_expense
                     else -> com.abe.bud_jet.R.color.text_primary
                 }
                 binding.textBalanceStatus.setTextColor(requireContext().getColor(colorRes))
+                binding.btnSetInitialBalance.visibility = if (state.hasIncomeTransactions) View.GONE else View.VISIBLE
 
                 renderRecentTransactions(state.recentChips)
                 renderCategories(
@@ -81,6 +150,12 @@ class DashboardFragment : Fragment() {
                     incomeCategories = state.incomeCategories
                 )
             }
+    }
+
+    private fun renderBalanceSection(state: DashboardUiState) {
+        val effectiveBalance = state.balance + initialBalance
+        binding.textBalance.text = CurrencyFormatter.formatSigned(effectiveBalance, currencyCode)
+        binding.textBalanceStatus.text = CurrencyFormatter.formatDelta(state.monthDelta, currencyCode)
     }
 
     private fun renderRecentTransactions(chips: List<RecentTransactionChip>) {
@@ -103,7 +178,8 @@ class DashboardFragment : Fragment() {
 
             chip.apply {
                 val amount = String.format("%.2f", kotlin.math.abs(tx.amount))
-                text = if (tx.isIncome) "+$$amount" else "-$$amount"
+                val symbol = CurrencyFormatter.symbolFor(currencyCode)
+                text = if (tx.isIncome) "+$symbol$amount" else "-$symbol$amount"
                 isCheckable = false
                 isClickable = false
                 val strokeColor = if (tx.isIncome) {
@@ -122,7 +198,11 @@ class DashboardFragment : Fragment() {
                             .findViewById<BottomNavigationView>(com.abe.bud_jet.R.id.nav_view)
                             .selectedItemId = com.abe.bud_jet.R.id.navigation_operations
                     }.onFailure {
-                        Toast.makeText(requireContext(), "Unable to open transaction", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            requireContext(),
+                            getString(R.string.dashboard_unable_to_open_transaction),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             }
@@ -211,11 +291,27 @@ class DashboardFragment : Fragment() {
         binding.btnAddCategoryDashboard.setOnClickListener {
             showAddCategoryDialog()
         }
+        binding.btnSetInitialBalance.setOnClickListener {
+            showInitialBalanceDialog()
+        }
     }
 
     private fun showAddCategoryDialog() {
         AddCategoryBottomSheet()
             .show(parentFragmentManager, "add_category")
+    }
+
+    private fun observeCurrency() {
+        preferenceManager.observeCurrencyCode().collectWithLifecycle(viewLifecycleOwner) { code ->
+            currencyCode = code
+            lastDashboardState?.let { renderBalanceSection(it) }
+        }
+    }
+
+    private fun showInitialBalanceDialog() {
+        CurrentBalanceBottomSheet
+            .newInstance(initialBalance)
+            .show(parentFragmentManager, "current_balance_sheet_from_dashboard")
     }
 
     override fun onDestroyView() {
