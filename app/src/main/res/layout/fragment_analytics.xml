@@ -45,6 +45,11 @@
             android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="@color/text_primary"
+            android:maxLines="1"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="12sp"
+            android:autoSizeMaxTextSize="20sp"
+            android:autoSizeStepGranularity="1sp"
             android:layout_gravity="center" />
 
         <ImageButton

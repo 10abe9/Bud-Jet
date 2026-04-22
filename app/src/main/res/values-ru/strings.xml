@@ -29,6 +29,9 @@
     <string name="profile_goal_summary_template">Накоплено %1$s320 / %2$s500</string>
     <string name="profile_data_title">Данные</string>
     <string name="profile_export_data">Экспорт данных</string>
+    <string name="profile_backup_data">Создать файл резервной копии</string>
+    <string name="profile_restore_data">Восстановить из файла копии</string>
+    <string name="profile_privacy_data">Конфиденциальность и данные</string>
     <string name="profile_set_current_balance">Скорректировать текущий баланс</string>
     <string name="profile_reset_data">Сбросить все данные</string>
     <string name="profile_reset_dialog_title">Сбросить все данные?</string>
@@ -55,6 +58,17 @@
     <string name="profile_rate_source_saved">Оффлайн-режим: используется ваш сохраненный курс. Вы можете его изменить.</string>
     <string name="profile_rate_source_fallback">Оффлайн-режим: используется резервный курс. Вы можете его изменить.</string>
     <string name="profile_select_language_title">Выберите язык</string>
+    <string name="profile_export_success">Данные успешно экспортированы</string>
+    <string name="profile_export_failed">Не удалось экспортировать данные</string>
+    <string name="profile_export_premium_required">Экспорт доступен в Premium</string>
+    <string name="profile_backup_success">Резервная копия успешно создана</string>
+    <string name="profile_backup_failed">Не удалось создать резервную копию</string>
+    <string name="profile_restore_success">Резервная копия восстановлена. Приложение будет обновлено.</string>
+    <string name="profile_restore_failed">Не удалось восстановить резервную копию</string>
+    <string name="profile_restore_confirm_title">Восстановить резервную копию?</string>
+    <string name="profile_restore_confirm_message">Это заменит текущие локальные транзакции, категории и цели.</string>
+    <string name="profile_privacy_title">Конфиденциальность и данные</string>
+    <string name="profile_privacy_message">Bud-Jet хранит ваши финансовые записи локально на этом устройстве.\n\nПри экспорте или создании резервной копии файлы создаются только в выбранном вами месте.\n\nBud-Jet не отправляет ваши транзакции, заметки, цели и категории на удаленные серверы.</string>
 
     <!-- Notifications -->
     <string name="notifications_reminder_channel_name">Напоминание о расходах</string>

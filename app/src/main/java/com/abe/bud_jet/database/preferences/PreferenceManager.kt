@@ -31,6 +31,7 @@ class PreferenceManager private constructor(context: Context) {
         private const val KEY_NOTIFICATION_PERMISSION_REQUESTED = "notification_permission_requested"
         private const val KEY_INITIAL_BALANCE = "initial_balance"
         private const val KEY_INITIAL_BALANCE_PROMPT_SHOWN = "initial_balance_prompt_shown"
+        private const val KEY_IS_PREMIUM = "is_premium"
 
         private var instance: PreferenceManager? = null
 
@@ -155,6 +156,14 @@ class PreferenceManager private constructor(context: Context) {
         preferences.edit { putBoolean(KEY_INITIAL_BALANCE_PROMPT_SHOWN, shown) }
     }
 
+    fun isPremiumEnabled(): Boolean {
+        return preferences.getBoolean(KEY_IS_PREMIUM, false)
+    }
+
+    fun setPremiumEnabled(enabled: Boolean) {
+        preferences.edit { putBoolean(KEY_IS_PREMIUM, enabled) }
+    }
+
     fun resetUserDataToDefaults() {
         val editor = preferences.edit()
 
@@ -170,6 +179,7 @@ class PreferenceManager private constructor(context: Context) {
         editor.putBoolean(KEY_NOTIFICATION_PERMISSION_REQUESTED, false)
         editor.remove(KEY_INITIAL_BALANCE)
         editor.putBoolean(KEY_INITIAL_BALANCE_PROMPT_SHOWN, false)
+        editor.putBoolean(KEY_IS_PREMIUM, false)
         // Show onboarding again after data deletion.
         editor.putBoolean(KEY_IS_FIRST_INIT, true)
 

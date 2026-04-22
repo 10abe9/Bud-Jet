@@ -29,6 +29,9 @@
     <string name="profile_goal_summary_template">Saving %1$s320 / %2$s500</string>
     <string name="profile_data_title">Data</string>
     <string name="profile_export_data">Export data</string>
+    <string name="profile_backup_data">Create backup file</string>
+    <string name="profile_restore_data">Restore from backup file</string>
+    <string name="profile_privacy_data">Privacy and data policy</string>
     <string name="profile_set_current_balance">Adjust current balance</string>
     <string name="profile_reset_data">Reset all data</string>
     <string name="profile_reset_dialog_title">Reset all data?</string>
@@ -55,6 +58,17 @@
     <string name="profile_rate_source_saved">Offline mode: using your saved rate. You can edit it.</string>
     <string name="profile_rate_source_fallback">Offline mode: using fallback rate. You can edit it.</string>
     <string name="profile_select_language_title">Select language</string>
+    <string name="profile_export_success">Data exported successfully</string>
+    <string name="profile_export_failed">Unable to export data</string>
+    <string name="profile_export_premium_required">Export is available in Premium</string>
+    <string name="profile_backup_success">Backup created successfully</string>
+    <string name="profile_backup_failed">Unable to create backup</string>
+    <string name="profile_restore_success">Backup restored. App will refresh now.</string>
+    <string name="profile_restore_failed">Unable to restore backup file</string>
+    <string name="profile_restore_confirm_title">Restore backup file?</string>
+    <string name="profile_restore_confirm_message">This will replace your current local transactions, categories, and goals.</string>
+    <string name="profile_privacy_title">Privacy and data</string>
+    <string name="profile_privacy_message">Bud-Jet stores your finance records locally on this device.\n\nWhen you export or backup data, files are created only in the location you choose.\n\nBud-Jet does not send your transactions, notes, goals, or categories to a remote server.</string>
 
     <!-- Notifications -->
     <string name="notifications_reminder_channel_name">Spending reminder</string>

@@ -17,6 +17,9 @@ interface GoalsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(goal: GoalEntity): Long
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(goals: List<GoalEntity>)
+
     @Update
     suspend fun update(goal: GoalEntity)
 
@@ -40,5 +43,8 @@ interface GoalsDao {
 
     @Query("SELECT * FROM goals WHERE categoryId = :categoryId LIMIT 1")
     suspend fun getLimitByCategoryId(categoryId: Long): GoalEntity?
+
+    @Query("SELECT * FROM goals ORDER BY id ASC")
+    suspend fun getAllNow(): List<GoalEntity>
 }
 

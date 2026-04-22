@@ -15,6 +15,9 @@ interface TransactionsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(transaction: TransactionEntity)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(transactions: List<TransactionEntity>)
+
     @Update
     suspend fun update(transaction: TransactionEntity)
 
@@ -48,6 +51,9 @@ interface TransactionsDao {
 
     @Query("SELECT COUNT(*) FROM transactions")
     suspend fun getCount(): Int
+
+    @Query("SELECT * FROM transactions ORDER BY timestamp DESC")
+    suspend fun getAllNow(): List<TransactionEntity>
 
     @Query("UPDATE transactions SET amount = amount * :rate")
     suspend fun multiplyAllAmounts(rate: Double)

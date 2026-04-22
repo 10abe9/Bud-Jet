@@ -206,6 +206,35 @@ class FinanceRepository(
         transactionsDao.multiplyAllAmounts(rate)
     }
 
+    suspend fun createBackupSnapshot(): BackupSnapshot = withContext(ioDispatcher) {
+        BackupSnapshot(
+            transactions = transactionsDao.getAllNow(),
+            categories = categoryDao.getAllNow(),
+            goals = goalsDao.getAllNow()
+        )
+    }
+
+    suspend fun restoreBackupSnapshot(snapshot: BackupSnapshot) = withContext(ioDispatcher) {
+        transactionsDao.deleteAll()
+        goalsDao.deleteAll()
+        categoryDao.deleteAll()
+
+        if (snapshot.categories.isNotEmpty()) {
+            categoryDao.insertAll(snapshot.categories)
+        }
+        if (snapshot.goals.isNotEmpty()) {
+            goalsDao.insertAll(snapshot.goals)
+        }
+        if (snapshot.transactions.isNotEmpty()) {
+            transactionsDao.insertAll(snapshot.transactions)
+        }
+
+        if (snapshot.categories.isEmpty()) {
+            seedDefaultCategoriesIfEmpty()
+            enforceCategoryPolicy()
+        }
+    }
+
     suspend fun upsertSavingGoal(targetAmount: Double, deadline: Long?) = withContext(ioDispatcher) {
         val existing = goalsDao.getSavingGoalNow()
         if (existing != null) {
@@ -363,5 +392,11 @@ data class DashboardSummary(
     val balance: Double,
     val totalIncome: Double,
     val totalExpense: Double
+)
+
+data class BackupSnapshot(
+    val transactions: List<TransactionEntity>,
+    val categories: List<CategoryEntity>,
+    val goals: List<GoalEntity>
 )
 

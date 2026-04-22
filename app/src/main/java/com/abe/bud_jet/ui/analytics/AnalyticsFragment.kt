@@ -16,6 +16,7 @@ import com.abe.bud_jet.databinding.FragmentAnalyticsBinding
 import com.abe.bud_jet.utils.CurrencyFormatter
 import com.abe.bud_jet.utils.collectWithLifecycle
 import com.abe.bud_jet.utils.VibrationManager
+import java.util.Locale
 
 class AnalyticsFragment : Fragment(R.layout.fragment_analytics) {
 
@@ -89,7 +90,7 @@ class AnalyticsFragment : Fragment(R.layout.fragment_analytics) {
     private fun observeUiState() {
         viewModel.uiState.collectWithLifecycle(viewLifecycleOwner) { state ->
             binding.tvMonthTitle.text = state.monthOptions.getOrNull(state.selectedMonthIndex).orEmpty()
-            binding.tvTotal.text = CurrencyFormatter.format(state.totalExpense.toDouble(), currencyCode)
+            binding.tvTotal.text = formatCenterTotal(state.totalExpense.toDouble())
 
             categoryAdapter.submit(state.stats)
 
@@ -115,7 +116,19 @@ class AnalyticsFragment : Fragment(R.layout.fragment_analytics) {
             currencyCode = code
             categoryAdapter.currencyCode = code
             categoryAdapter.notifyDataSetChanged()
-            binding.tvTotal.text = CurrencyFormatter.format(viewModel.uiState.value.totalExpense.toDouble(), currencyCode)
+            binding.tvTotal.text = formatCenterTotal(viewModel.uiState.value.totalExpense.toDouble())
+        }
+    }
+
+    private fun formatCenterTotal(amount: Double): String {
+        val abs = kotlin.math.abs(amount)
+        val symbol = CurrencyFormatter.symbolFor(currencyCode)
+        val sign = if (amount < 0) "-" else ""
+        return when {
+            abs >= 1_000_000_000 -> String.format(Locale.US, "%s%s%.1fB", sign, symbol, abs / 1_000_000_000.0)
+            abs >= 1_000_000 -> String.format(Locale.US, "%s%s%.1fM", sign, symbol, abs / 1_000_000.0)
+            abs >= 1_000 -> String.format(Locale.US, "%s%s%.1fK", sign, symbol, abs / 1_000.0)
+            else -> CurrencyFormatter.format(amount, currencyCode)
         }
     }
 

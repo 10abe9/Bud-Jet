@@ -155,7 +155,14 @@
                     android:layout_weight="1"
                     app:cornerRadius="20dp"
                     android:text="@string/dashboard_add_expense"
-                    android:backgroundTint="@color/finance_expense"/>
+                    android:backgroundTint="@color/finance_expense"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    app:autoSizeTextType="uniform"
+                    app:autoSizeMinTextSize="10sp"
+                    app:autoSizeMaxTextSize="14sp"
+                    app:autoSizeStepGranularity="1sp"/>
 
                 <Space
                     android:layout_width="12dp"
@@ -168,7 +175,14 @@
                     android:layout_height="48dp"
                     android:layout_weight="1"
                     android:text="@string/dashboard_add_income"
-                    android:backgroundTint="@color/finance_income"/>
+                    android:backgroundTint="@color/finance_income"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    app:autoSizeTextType="uniform"
+                    app:autoSizeMinTextSize="10sp"
+                    app:autoSizeMaxTextSize="14sp"
+                    app:autoSizeStepGranularity="1sp"/>
 
             </LinearLayout>
 

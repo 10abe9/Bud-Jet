@@ -29,6 +29,9 @@
     <string name="profile_goal_summary_template">Ahorro %1$s320 / %2$s500</string>
     <string name="profile_data_title">Datos</string>
     <string name="profile_export_data">Exportar datos</string>
+    <string name="profile_backup_data">Crear archivo de copia de seguridad</string>
+    <string name="profile_restore_data">Restaurar desde archivo de copia</string>
+    <string name="profile_privacy_data">Privacidad y datos</string>
     <string name="profile_set_current_balance">Ajustar saldo actual</string>
     <string name="profile_reset_data">Restablecer todos los datos</string>
     <string name="profile_reset_dialog_title">¿Restablecer todos los datos?</string>
@@ -55,6 +58,17 @@
     <string name="profile_rate_source_saved">Modo sin conexión: usando tu tasa guardada. Puedes editarla.</string>
     <string name="profile_rate_source_fallback">Modo sin conexión: usando una tasa de respaldo. Puedes editarla.</string>
     <string name="profile_select_language_title">Selecciona el idioma</string>
+    <string name="profile_export_success">Datos exportados correctamente</string>
+    <string name="profile_export_failed">No se pudieron exportar los datos</string>
+    <string name="profile_export_premium_required">La exportación está disponible en Premium</string>
+    <string name="profile_backup_success">Copia de seguridad creada correctamente</string>
+    <string name="profile_backup_failed">No se pudo crear la copia de seguridad</string>
+    <string name="profile_restore_success">Copia restaurada. La app se actualizará ahora.</string>
+    <string name="profile_restore_failed">No se pudo restaurar la copia de seguridad</string>
+    <string name="profile_restore_confirm_title">¿Restaurar copia de seguridad?</string>
+    <string name="profile_restore_confirm_message">Esto reemplazará tus transacciones, categorías y objetivos locales actuales.</string>
+    <string name="profile_privacy_title">Privacidad y datos</string>
+    <string name="profile_privacy_message">Bud-Jet almacena tus registros financieros localmente en este dispositivo.\n\nCuando exportas o creas una copia, los archivos se guardan solo en la ubicación que elijas.\n\nBud-Jet no envía tus transacciones, notas, objetivos ni categorías a servidores remotos.</string>
 
     <!-- Notifications -->
     <string name="notifications_reminder_channel_name">Recordatorio de gastos</string>

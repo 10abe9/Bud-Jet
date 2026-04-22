@@ -29,6 +29,9 @@
     <string name="profile_goal_summary_template">Oszczędzanie %1$s320 / %2$s500</string>
     <string name="profile_data_title">Dane</string>
     <string name="profile_export_data">Eksportuj dane</string>
+    <string name="profile_backup_data">Utwórz plik kopii zapasowej</string>
+    <string name="profile_restore_data">Przywróć z pliku kopii</string>
+    <string name="profile_privacy_data">Prywatność i dane</string>
     <string name="profile_set_current_balance">Skoryguj bieżące saldo</string>
     <string name="profile_reset_data">Resetuj wszystkie dane</string>
     <string name="profile_reset_dialog_title">Czy zresetować wszystkie dane?</string>
@@ -55,6 +58,17 @@
     <string name="profile_rate_source_saved">Tryb offline: używany jest zapisany kurs. Możesz go edytować.</string>
     <string name="profile_rate_source_fallback">Tryb offline: używany jest kurs awaryjny. Możesz go edytować.</string>
     <string name="profile_select_language_title">Wybierz język</string>
+    <string name="profile_export_success">Dane zostały wyeksportowane</string>
+    <string name="profile_export_failed">Nie udało się wyeksportować danych</string>
+    <string name="profile_export_premium_required">Eksport jest dostępny w Premium</string>
+    <string name="profile_backup_success">Kopia zapasowa została utworzona</string>
+    <string name="profile_backup_failed">Nie udało się utworzyć kopii zapasowej</string>
+    <string name="profile_restore_success">Kopia zapasowa przywrócona. Aplikacja odświeży się teraz.</string>
+    <string name="profile_restore_failed">Nie udało się przywrócić kopii zapasowej</string>
+    <string name="profile_restore_confirm_title">Przywrócić kopię zapasową?</string>
+    <string name="profile_restore_confirm_message">To zastąpi bieżące lokalne transakcje, kategorie i cele.</string>
+    <string name="profile_privacy_title">Prywatność i dane</string>
+    <string name="profile_privacy_message">Bud-Jet przechowuje Twoje dane finansowe lokalnie na tym urządzeniu.\n\nPodczas eksportu lub tworzenia kopii zapasowej pliki są zapisywane tylko w wybranej przez Ciebie lokalizacji.\n\nBud-Jet nie wysyła Twoich transakcji, notatek, celów ani kategorii na zdalne serwery.</string>
 
     <!-- Notifications -->
     <string name="notifications_reminder_channel_name">Przypomnienie o wydatkach</string>
