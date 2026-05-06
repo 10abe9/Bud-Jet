@@ -132,6 +132,21 @@
     <string name="dashboard_income_categories">Income categories</string>
     <string name="dashboard_add_category">+ Add category</string>
     <string name="dashboard_set_initial_balance">Adjust starting balance</string>
+
+    <!-- Empty-state onboarding (first value: first transactions / expenses) -->
+    <string name="onboarding_dashboard_title">Start in about a minute</string>
+    <string name="onboarding_dashboard_body">Add an expense or income, or set your starting balance.</string>
+    <string name="onboarding_dashboard_primary_cta">Add expense</string>
+    <string name="onboarding_dashboard_balance_cta">Set starting balance</string>
+    <string name="onboarding_operations_title">No operations yet</string>
+    <string name="onboarding_operations_body">Add your first expense or income for this period.</string>
+    <string name="onboarding_operations_add">Add operation</string>
+    <string name="analytics_onboarding_hint">Add 3–5 expenses to see useful category breakdowns.</string>
+    <string name="analytics_onboarding_add_expense">Add expense</string>
+    <string name="onboarding_goals_title">Set up goals</string>
+    <string name="onboarding_goals_body">Create a savings target or a monthly cap for a category.</string>
+    <string name="onboarding_goals_savings_cta">Create savings goal</string>
+    <string name="onboarding_goals_limit_cta">Add category limit</string>
     <string name="dashboard_initial_balance_title">Starting balance</string>
     <string name="dashboard_initial_balance_message">Enter how much money you already have on your account.</string>
     <string name="dashboard_initial_balance_hint">Amount</string>

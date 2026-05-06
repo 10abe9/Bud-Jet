@@ -158,17 +158,25 @@ class AnalyticsViewModel(
             )
 
     val uiState: StateFlow<AnalyticsUiState> =
-        combine(selectedMonthIndex, monthOptions, monthCharts) { index, options, charts ->
+        combine(
+            selectedMonthIndex,
+            monthOptions,
+            monthCharts,
+            repository.observeTotalExpense()
+        ) { index, options, charts, totalExpenseEver ->
             val safeIndex = index.coerceIn(0, (options.lastIndex).coerceAtLeast(0))
             val selectedChart = charts.getOrNull(safeIndex)
+            val stats = selectedChart?.stats ?: emptyList()
+            val showEmptyOnboardingCta = totalExpenseEver <= 0.0 && stats.isEmpty()
 
             AnalyticsUiState(
                 monthOptions = options.map { it.label },
                 monthCharts = charts,
                 selectedMonthIndex = safeIndex,
-                stats = selectedChart?.stats ?: emptyList(),
+                stats = stats,
                 totalExpense = selectedChart?.totalExpense ?: 0f,
                 emptyMessage = selectedChart?.emptyMessage,
+                showEmptyOnboardingCta = showEmptyOnboardingCta,
                 isLoading = false,
                 errorMessage = null
             )
@@ -181,6 +189,7 @@ class AnalyticsViewModel(
                     stats = emptyList(),
                     totalExpense = 0f,
                     emptyMessage = null,
+                    showEmptyOnboardingCta = false,
                     isLoading = false,
                     errorMessage = resources.getString(R.string.analytics_load_error)
                 )
@@ -231,6 +240,8 @@ data class AnalyticsUiState(
     val stats: List<CategoryStat> = emptyList(),
     val totalExpense: Float = 0f,
     val emptyMessage: String? = null,
+    /** True while user has no expense data yet — show onboarding CTA (activation). */
+    val showEmptyOnboardingCta: Boolean = false,
     val isLoading: Boolean = false,
     val errorMessage: String? = null
 )

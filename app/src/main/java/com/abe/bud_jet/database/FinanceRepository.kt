@@ -15,6 +15,11 @@ import kotlinx.coroutines.flow.combine
 import java.util.Calendar
 import kotlinx.coroutines.withContext
 
+/**
+ * Financial data access. Empty-state onboarding visibility in the UI is derived from
+ * flows here (e.g. recent transactions, total expenses) rather than separate prefs,
+ * so hints disappear as soon as the user records relevant data.
+ */
 class FinanceRepository(
     private val transactionsDao: TransactionsDao,
     private val categoryDao: CategoryDao,

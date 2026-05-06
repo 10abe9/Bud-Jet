@@ -30,6 +30,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.chip.Chip
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.abe.bud_jet.ui.profile.CurrentBalanceBottomSheet
+import kotlinx.coroutines.flow.combine
 
 class DashboardFragment : Fragment() {
     companion object {
@@ -153,24 +154,32 @@ class DashboardFragment : Fragment() {
     }
 
     private fun setupUi() {
-        dashboardViewModel.uiState
-            .collectWithLifecycle(viewLifecycleOwner) { state ->
-                lastDashboardState = state
-                renderBalanceSection(state)
-                val colorRes = when {
-                    state.monthDeltaRaw > 0 -> com.abe.bud_jet.R.color.finance_income
-                    state.monthDeltaRaw < 0 -> com.abe.bud_jet.R.color.finance_expense
-                    else -> com.abe.bud_jet.R.color.text_primary
-                }
-                binding.textBalanceStatus.setTextColor(requireContext().getColor(colorRes))
-                binding.btnSetInitialBalance.visibility = if (state.hasIncomeTransactions) View.GONE else View.VISIBLE
+        // Activation for onboarding: any transaction hides the dashboard banner (repository source of truth).
+        combine(
+            dashboardViewModel.uiState,
+            repository.observeRecentTransactions(1)
+        ) { state, recentSample ->
+            state to recentSample.isEmpty()
+        }.collectWithLifecycle(viewLifecycleOwner) { (state, noTransactionsYet) ->
+            lastDashboardState = state
+            binding.cardOnboardingStart.visibility =
+                if (noTransactionsYet) View.VISIBLE else View.GONE
 
-                renderRecentTransactions(state.recentChips)
-                renderCategories(
-                    expenseCategories = state.expenseCategories,
-                    incomeCategories = state.incomeCategories
-                )
+            renderBalanceSection(state)
+            val colorRes = when {
+                state.monthDeltaRaw > 0 -> com.abe.bud_jet.R.color.finance_income
+                state.monthDeltaRaw < 0 -> com.abe.bud_jet.R.color.finance_expense
+                else -> com.abe.bud_jet.R.color.text_primary
             }
+            binding.textBalanceStatus.setTextColor(requireContext().getColor(colorRes))
+            binding.btnSetInitialBalance.visibility = if (state.hasIncomeTransactions) View.GONE else View.VISIBLE
+
+            renderRecentTransactions(state.recentChips, suppressBuiltInEmpty = noTransactionsYet)
+            renderCategories(
+                expenseCategories = state.expenseCategories,
+                incomeCategories = state.incomeCategories
+            )
+        }
     }
 
     private fun renderBalanceSection(state: DashboardUiState) {
@@ -179,13 +188,16 @@ class DashboardFragment : Fragment() {
         binding.textBalanceStatus.text = CurrencyFormatter.formatDelta(state.monthDelta, currencyCode)
     }
 
-    private fun renderRecentTransactions(chips: List<RecentTransactionChip>) {
+    private fun renderRecentTransactions(
+        chips: List<RecentTransactionChip>,
+        suppressBuiltInEmpty: Boolean
+    ) {
         val chipGroup = binding.chipGroupRecentTransactions
         val emptyContainer = binding.layoutRecentEmpty
         chipGroup.removeAllViews()
 
         if (chips.isEmpty()) {
-            emptyContainer.visibility = View.VISIBLE
+            emptyContainer.visibility = if (suppressBuiltInEmpty) View.GONE else View.VISIBLE
             return
         }
         emptyContainer.visibility = View.GONE
@@ -313,6 +325,16 @@ class DashboardFragment : Fragment() {
             showAddCategoryDialog()
         }
         binding.btnSetInitialBalance.setOnClickListener {
+            showInitialBalanceDialog()
+        }
+
+        binding.btnOnboardingAddExpense.setOnClickListener {
+            vibrator.tap()
+            AddTransactionBottomSheet.newInstance(isIncomeDefault = false)
+                .show(parentFragmentManager, "onboarding_dashboard_add_expense")
+        }
+        binding.btnOnboardingSetBalance.setOnClickListener {
+            vibrator.tap()
             showInitialBalanceDialog()
         }
     }

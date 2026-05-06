@@ -13,10 +13,12 @@ import com.abe.bud_jet.database.preferences.PreferenceManager
 import com.abe.bud_jet.databinding.FragmentGoalsBinding
 import com.abe.bud_jet.utils.CurrencyFormatter
 import com.abe.bud_jet.utils.collectWithLifecycle
+import com.abe.bud_jet.utils.VibrationManager
 
 class GoalsFragment : Fragment(R.layout.fragment_goals) {
 
     private lateinit var binding: FragmentGoalsBinding
+    private val vibrator: VibrationManager by lazy { VibrationManager.get() }
     private lateinit var preferenceManager: PreferenceManager
     private var currencyCode: String = "USD"
     private val viewModel: GoalsViewModel by viewModels {
@@ -68,6 +70,18 @@ class GoalsFragment : Fragment(R.layout.fragment_goals) {
         binding.btnAddLimit.setOnClickListener {
             showLimitBottomSheet(prefill = null)
         }
+        binding.btnOnboardingCreateSavings.setOnClickListener {
+            vibrator.tap()
+            val saving = viewModel.uiState.value.savingCard
+            showSavingGoalBottomSheet(
+                currentAmount = saving.targetAmount.takeIf { saving.hasGoal },
+                currentDeadline = saving.deadline
+            )
+        }
+        binding.btnOnboardingAddCategoryLimit.setOnClickListener {
+            vibrator.tap()
+            showLimitBottomSheet(prefill = null)
+        }
     }
 
     private fun setupResults() {
@@ -108,7 +122,15 @@ class GoalsFragment : Fragment(R.layout.fragment_goals) {
                 getString(R.string.goals_set_goal)
             }
             binding.btnDeleteSavingGoal.visibility = if (saving.hasGoal) View.VISIBLE else View.GONE
-            binding.tvLimitsEmpty.visibility = if (state.limits.isEmpty()) View.VISIBLE else View.GONE
+
+            val showGoalsOnboarding = !saving.hasGoal && state.limits.isEmpty()
+            binding.cardGoalsOnboarding.visibility =
+                if (showGoalsOnboarding) View.VISIBLE else View.GONE
+            binding.tvLimitsEmpty.visibility = when {
+                state.limits.isNotEmpty() -> View.GONE
+                showGoalsOnboarding -> View.GONE
+                else -> View.VISIBLE
+            }
 
             adapter.submit(
                 state.limits.map {

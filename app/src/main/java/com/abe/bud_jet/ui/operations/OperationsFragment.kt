@@ -16,6 +16,7 @@ import com.abe.bud_jet.databinding.FragmentOperationsBinding
 import com.abe.bud_jet.R
 import com.abe.bud_jet.utils.CurrencyFormatter
 import com.abe.bud_jet.utils.collectWithLifecycle
+import com.abe.bud_jet.utils.VibrationManager
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.chip.Chip
 import androidx.core.content.ContextCompat
@@ -31,6 +32,7 @@ class OperationsFragment : Fragment() {
     private lateinit var preferenceManager: PreferenceManager
     private var currencyCode: String = "USD"
     private var pendingFocusTransactionId: Long? = null
+    private val vibrator: VibrationManager by lazy { VibrationManager.get() }
 
     private val viewModel: OperationsViewModel by viewModels {
         OperationsViewModelFactory(
@@ -128,6 +130,13 @@ class OperationsFragment : Fragment() {
             }
             applyPeriodChipHighlight(state.selectedPeriod)
             renderActiveQueryChips(state.activeFilterText, state.activeSearchText)
+
+            val showOnboardingEmpty = state.transactions.isEmpty() &&
+                state.activeFilterText.isNullOrBlank() &&
+                state.activeSearchText.isNullOrBlank()
+            binding.cardOperationsOnboarding.visibility =
+                if (showOnboardingEmpty) View.VISIBLE else View.GONE
+
             focusIfNeeded()
         }
     }
@@ -242,6 +251,12 @@ class OperationsFragment : Fragment() {
                 OperationsTotalsMode.INCOME -> OperationsTotalsMode.EXPENSES
             }
             viewModel.setTotalsMode(nextMode)
+        }
+
+        binding.btnOperationsOnboardingAdd.setOnClickListener {
+            vibrator.tap()
+            AddTransactionBottomSheet.newInstance(isIncomeDefault = false)
+                .show(parentFragmentManager, "operations_onboarding_add")
         }
     }
 

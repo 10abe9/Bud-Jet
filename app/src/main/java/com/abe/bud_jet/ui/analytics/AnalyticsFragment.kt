@@ -16,6 +16,7 @@ import com.abe.bud_jet.databinding.FragmentAnalyticsBinding
 import com.abe.bud_jet.utils.CurrencyFormatter
 import com.abe.bud_jet.utils.collectWithLifecycle
 import com.abe.bud_jet.utils.VibrationManager
+import com.abe.bud_jet.ui.operations.AddTransactionBottomSheet
 import java.util.Locale
 
 class AnalyticsFragment : Fragment(R.layout.fragment_analytics) {
@@ -60,6 +61,11 @@ class AnalyticsFragment : Fragment(R.layout.fragment_analytics) {
         })
 
         setupMonthArrows()
+        binding.btnAnalyticsOnboardingAdd.setOnClickListener {
+            vibrator.tap()
+            AddTransactionBottomSheet.newInstance(isIncomeDefault = false)
+                .show(parentFragmentManager, "analytics_onboarding_add_expense")
+        }
         observeUiState()
         observeCurrency()
     }
@@ -98,8 +104,15 @@ class AnalyticsFragment : Fragment(R.layout.fragment_analytics) {
             binding.rvStats.visibility = if (hasStats) View.VISIBLE else View.GONE
 
             binding.tvEmptyState.visibility = if (hasStats) View.GONE else View.VISIBLE
-            binding.tvEmptyState.text =
-                state.emptyMessage ?: getString(R.string.analytics_no_data_for_selected_period)
+            binding.tvEmptyState.text = when {
+                state.showEmptyOnboardingCta ->
+                    getString(R.string.analytics_onboarding_hint)
+                else ->
+                    state.emptyMessage ?: getString(R.string.analytics_no_data_for_selected_period)
+            }
+
+            binding.btnAnalyticsOnboardingAdd.visibility =
+                if (!hasStats && state.showEmptyOnboardingCta) View.VISIBLE else View.GONE
 
             monthChartsAdapter.submit(state.monthCharts)
 
