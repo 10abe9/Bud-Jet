@@ -74,6 +74,9 @@
     <string name="notifications_reminder_channel_name">Напоминание о расходах</string>
     <string name="notifications_reminder_title">Отслеживайте расходы</string>
     <string name="notifications_reminder_message">Если сегодня вы не добавляли расходы, сделайте это сейчас.</string>
+    <string name="notifications_opt_in_message">Хотите ежедневное вечернее напоминание о расходах? Это можно изменить в Профиле в любой момент.</string>
+    <string name="notifications_opt_in_enable">Включить напоминания</string>
+    <string name="notifications_opt_in_later">Может позже</string>
     <string name="notifications_permission_required">Для включения напоминаний нужно разрешение на уведомления.</string>
     <string name="notifications_permission_denied">Разрешение отклонено. Позже вы сможете включить напоминания в Профиле.</string>
 

@@ -74,6 +74,9 @@
     <string name="notifications_reminder_channel_name">Przypomnienie o wydatkach</string>
     <string name="notifications_reminder_title">Śledź wydatki</string>
     <string name="notifications_reminder_message">Jeśli dziś nie dodałeś wydatków, zrób to teraz.</string>
+    <string name="notifications_opt_in_message">Czy chcesz codzienne wieczorne przypomnienie o wydatkach? Możesz to zmienić w Profilu w dowolnym momencie.</string>
+    <string name="notifications_opt_in_enable">Włącz przypomnienia</string>
+    <string name="notifications_opt_in_later">Może później</string>
     <string name="notifications_permission_required">Aby włączyć przypomnienia, wymagane jest zezwolenie na powiadomienia.</string>
     <string name="notifications_permission_denied">Odmówiono uprawnień. Później możesz włączyć przypomnienia w Profilu.</string>
 

@@ -74,6 +74,9 @@
     <string name="notifications_reminder_channel_name">Recordatorio de gastos</string>
     <string name="notifications_reminder_title">Controla tus gastos</string>
     <string name="notifications_reminder_message">Si no has añadido gastos hoy, hazlo ahora.</string>
+    <string name="notifications_opt_in_message">¿Quieres un recordatorio diario por la noche para registrar tus gastos? Puedes cambiarlo cuando quieras en Perfil.</string>
+    <string name="notifications_opt_in_enable">Activar recordatorios</string>
+    <string name="notifications_opt_in_later">Quizás más tarde</string>
     <string name="notifications_permission_required">Se requiere permiso para notificaciones para activar los recordatorios.</string>
     <string name="notifications_permission_denied">Permiso denegado. Puedes habilitar los recordatorios más tarde en Perfil.</string>
 
