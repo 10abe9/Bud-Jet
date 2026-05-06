@@ -17,6 +17,7 @@ import com.abe.bud_jet.R
 import com.abe.bud_jet.databinding.FragmentHello1Binding
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import com.abe.bud_jet.ui.dashboard.DashboardFragment
 import com.abe.bud_jet.utils.VibrationManager
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -65,6 +66,8 @@ class Hello1Fragment : Fragment() {
         }
         binding.buttonSkip.setOnClickListener {
             vibrator.error()
+            findNavController().getBackStackEntry(R.id.mobile_navigation)
+                .savedStateHandle[DashboardFragment.KEY_PROMPT_NOTIFICATIONS_AFTER_ONBOARDING] = true
             findNavController().navigate(R.id.action_hello1Fragment_to_navigation_dashboard,
                 null,
                 NavOptions.Builder()

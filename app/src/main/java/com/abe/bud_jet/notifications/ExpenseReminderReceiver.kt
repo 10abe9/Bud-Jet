@@ -22,12 +22,9 @@ class ExpenseReminderReceiver : BroadcastReceiver() {
         if (!hasNotificationPermission(context)) return
 
         val todayStart = todayStartMillis()
-        val lastVisit = preferenceManager.getLastDashboardVisitTime()
         val lastSent = preferenceManager.getLastNotificationSentTime()
 
-        // If user opened Dashboard today - don't remind.
-        if (lastVisit >= todayStart) return
-        // If we already sent today's reminder - don't spam.
+        // Send at most one reminder per day.
         if (lastSent >= todayStart) return
 
         sendReminderNotification(context)

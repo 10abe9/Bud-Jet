@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import com.abe.bud_jet.R
 import com.abe.bud_jet.databinding.FragmentHello2Binding
 import com.abe.bud_jet.database.preferences.PreferenceManager
+import com.abe.bud_jet.ui.dashboard.DashboardFragment
 import com.abe.bud_jet.utils.VibrationManager
 import com.google.android.material.chip.Chip
 
@@ -61,6 +62,8 @@ class Hello2Fragment : Fragment() {
         binding.buttonContinue.setOnClickListener {
             saveSelectedCurrency()
             VibrationManager.get().success()
+            findNavController().getBackStackEntry(R.id.mobile_navigation)
+                .savedStateHandle[DashboardFragment.KEY_PROMPT_NOTIFICATIONS_AFTER_ONBOARDING] = true
             findNavController().navigate(
                 R.id.action_hello2Fragment_to_navigation_dashboard,
                 null,

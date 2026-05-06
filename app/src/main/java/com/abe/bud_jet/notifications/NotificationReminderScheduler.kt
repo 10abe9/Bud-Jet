@@ -12,8 +12,8 @@ object NotificationReminderScheduler {
 
     /**
      * Schedules an inexact daily reminder around 20:00 device local time.
-     * The receiver itself decides whether to actually show the notification
-     * (based on last dashboard visit + whether notifications are enabled).
+     * The receiver sends at most one reminder per day and checks
+     * whether notifications are enabled and permission is granted.
      */
     fun scheduleDailyExpenseReminder(context: Context) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager

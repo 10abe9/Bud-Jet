@@ -74,6 +74,9 @@
     <string name="notifications_reminder_channel_name">Spending reminder</string>
     <string name="notifications_reminder_title">Track your expenses</string>
     <string name="notifications_reminder_message">If you have not added expenses today, do it now.</string>
+    <string name="notifications_opt_in_message">Would you like a daily evening reminder to track your spending? You can change this anytime in Profile.</string>
+    <string name="notifications_opt_in_enable">Enable reminders</string>
+    <string name="notifications_opt_in_later">Maybe later</string>
     <string name="notifications_permission_required">Notifications permission is required to enable reminders.</string>
     <string name="notifications_permission_denied">Permission denied. You can enable reminders later from Profile.</string>
 
