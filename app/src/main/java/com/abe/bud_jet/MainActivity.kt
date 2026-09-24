@@ -47,8 +47,10 @@ class MainActivity : AppCompatActivity() {
         hideUiForHelloFragments(navController)
         seedDefaultCategories()
 
-        if (preferenceManager.getIsFirstInit()) {
-            preferenceManager.setIsFirstInit(false)
+        // The flag is cleared when onboarding is finished or skipped, so closing the app
+        // mid-onboarding shows it again. savedInstanceState guards against re-navigating
+        // after recreation (e.g. language change), when the nav state is restored.
+        if (savedInstanceState == null && preferenceManager.getIsFirstInit()) {
             navController.navigate(R.id.hello1Fragment)
         }
     }

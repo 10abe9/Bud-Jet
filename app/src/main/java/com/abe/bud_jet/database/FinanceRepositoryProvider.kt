@@ -2,6 +2,7 @@ package com.abe.bud_jet.database
 
 import com.abe.bud_jet.R
 import android.content.Context
+import androidx.room.withTransaction
 
 object FinanceRepositoryProvider {
 
@@ -36,7 +37,8 @@ object FinanceRepositoryProvider {
             categoryDao = database.categoryDao(),
             goalsDao = database.goalsDao(),
             defaultExpenseCategories = expenseDefaults,
-            defaultIncomeCategories = incomeDefaults
+            defaultIncomeCategories = incomeDefaults,
+            runInTransaction = { block -> database.withTransaction { block() } }
         )
     }
 }

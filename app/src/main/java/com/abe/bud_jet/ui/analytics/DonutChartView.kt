@@ -21,15 +21,6 @@ class DonutChartView @JvmOverloads constructor(
     private var animatedProgress: Float = 1f
     private var progressAnimator: ValueAnimator? = null
 
-    private val colors = listOf(
-        Color.parseColor("#FF9800"),
-        Color.parseColor("#2196F3"),
-        Color.parseColor("#E91E63"),
-        Color.parseColor("#4CAF50"),
-        Color.parseColor("#9C27B0"),
-        Color.parseColor("#FFC107")
-    )
-
     fun setData(stats: List<CategoryStat>) {
         data = stats
         startFillAnimation()
@@ -96,11 +87,11 @@ class DonutChartView @JvmOverloads constructor(
         // Small gap + straight caps (BUTT) keeps segments clean.
         val gap = 1.6f
 
-        data.forEachIndexed { index, item ->
+        data.forEach { item ->
             val sweep = (item.total / total) * 360f
             val drawSweep = (sweep - gap).coerceAtLeast(0f)
 
-            paint.color = colors[index % colors.size]
+            paint.color = runCatching { Color.parseColor(item.colorHex) }.getOrDefault(Color.GRAY)
             paint.strokeCap = Paint.Cap.BUTT
 
             val segmentStart = startAngle + (gap / 2f)

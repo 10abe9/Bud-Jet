@@ -14,15 +14,6 @@ class CategoryStatsAdapter :
     private var items: List<CategoryStat> = emptyList()
     var currencyCode: String = "USD"
 
-    private val colors = listOf(
-        "#FF9800",
-        "#2196F3",
-        "#E91E63",
-        "#4CAF50",
-        "#9C27B0",
-        "#FFC107"
-    )
-
     fun submit(list: List<CategoryStat>) {
         items = list
         notifyDataSetChanged()
@@ -45,14 +36,14 @@ class CategoryStatsAdapter :
         val item = items[position]
         val total = items.sumOf { it.total.toDouble() }.toFloat()
 
-        val percent = ((item.total / total) * 100).toInt()
+        val percent = if (total > 0f) ((item.total / total) * 100).toInt() else 0
 
         holder.binding.tvName.text = item.category
         holder.binding.tvAmount.text = CurrencyFormatter.format(item.total.toDouble(), currencyCode)
         holder.binding.tvPercent.text = "$percent%"
 
         holder.binding.viewColor.setBackgroundColor(
-            Color.parseColor(colors[position % colors.size])
+            runCatching { Color.parseColor(item.colorHex) }.getOrDefault(Color.GRAY)
         )
     }
 

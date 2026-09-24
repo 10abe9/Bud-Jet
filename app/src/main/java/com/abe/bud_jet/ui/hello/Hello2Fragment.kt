@@ -61,6 +61,8 @@ class Hello2Fragment : Fragment() {
 
         binding.buttonContinue.setOnClickListener {
             saveSelectedCurrency()
+            saveSelectedGoals()
+            preferenceManager.setIsFirstInit(false)
             VibrationManager.get().success()
             findNavController().getBackStackEntry(R.id.mobile_navigation)
                 .savedStateHandle[DashboardFragment.KEY_PROMPT_NOTIFICATIONS_AFTER_ONBOARDING] = true
@@ -79,6 +81,17 @@ class Hello2Fragment : Fragment() {
         binding.chipCurrencyGroup.setOnCheckedStateChangeListener { _, checkedIds ->
             updateContinueAction(checkedIds.isNotEmpty())
         }
+    }
+
+    private fun saveSelectedGoals() {
+        val keysById = mapOf(
+            R.id.chip_goal_track to "track",
+            R.id.chip_goal_save to "save",
+            R.id.chip_goal_analyze to "analyze",
+            R.id.chip_goal_habits to "habits"
+        )
+        val selected = binding.chipGoalsGroup.checkedChipIds.mapNotNull { keysById[it] }.toSet()
+        preferenceManager.setOnboardingGoals(selected)
     }
 
     private fun saveSelectedCurrency() {

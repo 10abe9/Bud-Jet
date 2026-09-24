@@ -21,6 +21,7 @@ import com.abe.bud_jet.database.FinanceRepository
 import com.abe.bud_jet.database.preferences.PreferenceManager
 import com.abe.bud_jet.databinding.FragmentDashboardBinding
 import com.abe.bud_jet.R
+import com.abe.bud_jet.utils.CategoryPalette
 import com.abe.bud_jet.utils.CurrencyFormatter
 import com.abe.bud_jet.ui.operations.AddTransactionBottomSheet
 import com.abe.bud_jet.notifications.NotificationReminderScheduler
@@ -36,19 +37,6 @@ class DashboardFragment : Fragment() {
     companion object {
         const val KEY_PROMPT_NOTIFICATIONS_AFTER_ONBOARDING = "prompt_notifications_after_onboarding"
     }
-
-    private val fixedCategoryPalette = listOf(
-        "#F59E0B",
-        "#3B82F6",
-        "#10B981",
-        "#8B5CF6",
-        "#EF4444",
-        "#06B6D4",
-        "#F97316",
-        "#84CC16",
-        "#EC4899",
-        "#6366F1"
-    )
 
     private var _binding: FragmentDashboardBinding? = null
     private val binding get() = _binding!!
@@ -210,9 +198,10 @@ class DashboardFragment : Fragment() {
             ) as Chip
 
             chip.apply {
-                val amount = String.format("%.2f", kotlin.math.abs(tx.amount))
-                val symbol = CurrencyFormatter.symbolFor(currencyCode)
-                text = if (tx.isIncome) "+$symbol$amount" else "-$symbol$amount"
+                text = CurrencyFormatter.formatDelta(
+                    if (tx.isIncome) tx.amount else -tx.amount,
+                    currencyCode
+                )
                 isCheckable = false
                 isClickable = false
                 val strokeColor = if (tx.isIncome) {
@@ -247,17 +236,8 @@ class DashboardFragment : Fragment() {
         expenseCategories: List<DashboardCategoryChip>,
         incomeCategories: List<DashboardCategoryChip>
     ) {
-        val ordered = (expenseCategories + incomeCategories)
-            .sortedBy { it.id }
-            .mapIndexed { index, chip ->
-                chip.copy(colorHex = fixedCategoryPalette[index % fixedCategoryPalette.size])
-            }
-        val colorsById = ordered.associateBy({ it.id }, { it.colorHex })
-        val expenseColored = expenseCategories.map { it.copy(colorHex = colorsById[it.id]) }
-        val incomeColored = incomeCategories.map { it.copy(colorHex = colorsById[it.id]) }
-
-        renderChipRow(binding.chipGroupExpenseCategories, expenseColored)
-        renderChipRow(binding.chipGroupIncomeCategories, incomeColored)
+        renderChipRow(binding.chipGroupExpenseCategories, expenseCategories)
+        renderChipRow(binding.chipGroupIncomeCategories, incomeCategories)
     }
 
     private fun renderChipRow(
@@ -282,13 +262,21 @@ class DashboardFragment : Fragment() {
             chipBackgroundColor =
                 ColorStateList.valueOf(requireContext().getColor(com.abe.bud_jet.R.color.card))
 
-            val colorHex = category.colorHex ?: fixedCategoryPalette.first()
+            val colorHex = CategoryPalette.colorFor(category.id, category.colorHex)
             runCatching {
                 val parsed = Color.parseColor(colorHex)
                 chipStrokeColor = ColorStateList.valueOf(parsed)
                 setTextColor(requireContext().getColor(com.abe.bud_jet.R.color.text_primary))
             }
 
+            // Tap = quick add with this category preselected; long press = delete.
+            setOnClickListener {
+                vibrator.tap()
+                AddTransactionBottomSheet.newInstance(
+                    isIncomeDefault = category.isIncome,
+                    categoryId = category.id
+                ).show(parentFragmentManager, "add_from_category")
+            }
             setOnLongClickListener {
                 showDeleteCategoryDialog(category)
                 true

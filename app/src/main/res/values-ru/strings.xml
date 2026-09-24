@@ -291,4 +291,10 @@
     <string name="default_category_salary">Зарплата</string>
     <string name="default_category_gift">Подарок</string>
     <string name="default_category_freelance">Фриланс</string>
+    <string name="common_filter">Фильтр</string>
+    <string name="common_type">Тип</string>
+    <string name="common_all">Все</string>
+    <string name="common_category">Категория</string>
+    <string name="common_save">Сохранить</string>
+    <string name="goals_deadline_passed">Срок прошёл: осталось накопить %1$s</string>
 </resources>

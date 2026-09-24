@@ -14,6 +14,7 @@ import com.abe.bud_jet.databinding.FragmentGoalsBinding
 import com.abe.bud_jet.utils.CurrencyFormatter
 import com.abe.bud_jet.utils.collectWithLifecycle
 import com.abe.bud_jet.utils.VibrationManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class GoalsFragment : Fragment(R.layout.fragment_goals) {
 
@@ -24,7 +25,8 @@ class GoalsFragment : Fragment(R.layout.fragment_goals) {
     private val viewModel: GoalsViewModel by viewModels {
         GoalsViewModelFactory(
             FinanceRepositoryProvider.get(requireContext()),
-            requireContext().resources
+            requireContext().resources,
+            PreferenceManager.getInstance(requireContext()).observeCurrencyCode()
         )
     }
     private val adapter = LimitAdapter(
@@ -58,14 +60,21 @@ class GoalsFragment : Fragment(R.layout.fragment_goals) {
             )
         }
         binding.btnDeleteSavingGoal.setOnClickListener {
-            viewModel.uiState.value.savingCard.goalId?.let { goalId ->
-                viewModel.deleteGoal(goalId)
-                Toast.makeText(
-                    requireContext(),
-                    getString(R.string.goals_saving_goal_deleted),
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
+            val goalId = viewModel.uiState.value.savingCard.goalId ?: return@setOnClickListener
+            // Limits ask for confirmation before deletion; the saving goal now does too.
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle(getString(R.string.goals_delete_goal))
+                .setMessage(getString(R.string.bottomsheet_delete_undo_message))
+                .setNegativeButton(getString(R.string.common_cancel), null)
+                .setPositiveButton(getString(R.string.common_delete)) { _, _ ->
+                    viewModel.deleteGoal(goalId)
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.goals_saving_goal_deleted),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                .show()
         }
         binding.btnAddLimit.setOnClickListener {
             showLimitBottomSheet(prefill = null)

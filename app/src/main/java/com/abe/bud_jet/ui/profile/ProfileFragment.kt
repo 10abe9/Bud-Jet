@@ -26,6 +26,8 @@ import com.abe.bud_jet.database.entities.TransactionEntity
 import com.abe.bud_jet.database.entities.TransactionType
 import com.abe.bud_jet.database.preferences.PreferenceManager
 import com.abe.bud_jet.databinding.FragmentProfileBinding
+import com.abe.bud_jet.utils.AmountParser
+import com.abe.bud_jet.utils.DateRanges
 import com.abe.bud_jet.utils.LocaleManager
 import com.abe.bud_jet.utils.CurrencyFormatter
 import com.abe.bud_jet.utils.CurrencyRateProvider
@@ -325,7 +327,10 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
     private fun applyCurrencyConversion(fromCurrency: String, toCurrency: String, rate: Double) {
         viewLifecycleOwner.lifecycleScope.launch {
-            repository.convertAllTransactions(rate)
+            repository.convertAllAmounts(rate)
+            // The starting balance lives in preferences and must use the new currency too.
+            currentInitialBalance = preferenceManager.getInitialBalance() * rate
+            preferenceManager.setInitialBalance(currentInitialBalance)
             preferenceManager.setConversionRate(fromCurrency, toCurrency, rate)
             if (rate != 0.0) {
                 preferenceManager.setConversionRate(toCurrency, fromCurrency, 1.0 / rate)
@@ -335,7 +340,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                 requireContext(),
                 getString(
                     R.string.profile_converted_and_switched,
-                    String.format("%.4f", rate),
+                    AmountParser.toEditable(rate, maxFractionDigits = 4),
                     toCurrency
                 ),
                 Toast.LENGTH_SHORT
@@ -458,7 +463,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
     private fun buildBackupJson(snapshot: BackupSnapshot): String {
         val root = JSONObject()
-        root.put("version", 1)
+        root.put("version", 2)
         root.put("exportedAt", System.currentTimeMillis())
         root.put(
             "preferences",
@@ -498,6 +503,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                             put("targetAmount", goal.targetAmount)
                             put("currentAmount", goal.currentAmount)
                             put("deadline", goal.deadline)
+                            put("createdAt", goal.createdAt)
                         }
                     )
                 }
@@ -591,7 +597,9 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                         categoryId = item.optLong("categoryId", 0L).takeIf { item.has("categoryId") && !item.isNull("categoryId") },
                         targetAmount = item.optDouble("targetAmount", 0.0),
                         currentAmount = item.optDouble("currentAmount", 0.0),
-                        deadline = item.optLong("deadline", 0L).takeIf { item.has("deadline") && !item.isNull("deadline") }
+                        deadline = item.optLong("deadline", 0L).takeIf { item.has("deadline") && !item.isNull("deadline") },
+                        // Backups made before goals had a start date: count from the current month.
+                        createdAt = item.optLong("createdAt", DateRanges.month().from)
                     )
                 )
             }

@@ -39,6 +39,13 @@ android {
     }
 }
 
+kapt {
+    arguments {
+        // Exported Room schemas are needed to write and verify migrations.
+        arg("room.schemaLocation", "$projectDir/schemas")
+    }
+}
+
 dependencies {
 
     implementation(libs.androidx.core.ktx)

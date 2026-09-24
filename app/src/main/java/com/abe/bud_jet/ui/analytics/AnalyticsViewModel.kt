@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import com.abe.bud_jet.database.entities.TransactionEntity
 import com.abe.bud_jet.database.entities.TransactionType
 import com.abe.bud_jet.R
+import com.abe.bud_jet.utils.CategoryPalette
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -219,14 +220,17 @@ class AnalyticsViewModel(
     private fun List<TransactionEntity>.toCategoryStats(
         categories: List<com.abe.bud_jet.database.entities.CategoryEntity>
     ): List<CategoryStat> {
-        val namesById = categories.associateBy({ it.id }, { it.name })
+        val categoriesById = categories.associateBy { it.id }
         return groupBy { it.categoryId ?: -1L }
             .map { (categoryId, items) ->
                 val amount = items.sumOf { it.amount }.toFloat()
-                val name = namesById[categoryId]
+                val category = categoriesById[categoryId]
+                val name = category?.name
                     ?: if (categoryId == -1L) resources.getString(R.string.analytics_uncategorized)
                     else resources.getString(R.string.analytics_other)
-                CategoryStat(category = name, total = amount)
+                // Same color as the category chips on other screens; gray for uncategorized.
+                val color = category?.let { CategoryPalette.colorFor(it.id, it.color) } ?: "#94A3B8"
+                CategoryStat(category = name, total = amount, colorHex = color)
             }
             .sortedByDescending { it.total }
     }

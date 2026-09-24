@@ -58,15 +58,12 @@ interface TransactionsDao {
     @Query("UPDATE transactions SET amount = amount * :rate")
     suspend fun multiplyAllAmounts(rate: Double)
 
-    @Query(
-        "SELECT COALESCE(SUM(amount), 0) FROM transactions " +
-            "WHERE category_id = :categoryId AND type = :type AND timestamp BETWEEN :from AND :to"
-    )
-    fun observeCategoryTotalInPeriod(
-        categoryId: Long,
-        type: TransactionType,
-        from: Long,
-        to: Long
-    ): Flow<Double>
-}
+    @Query("SELECT COUNT(*) FROM transactions WHERE timestamp BETWEEN :from AND :to")
+    suspend fun countInPeriod(from: Long, to: Long): Int
 
+    @Query(
+        "SELECT COALESCE(SUM(CASE WHEN type = 'INCOME' THEN amount ELSE -amount END), 0) " +
+            "FROM transactions WHERE timestamp >= :from"
+    )
+    fun observeNetSince(from: Long): Flow<Double>
+}

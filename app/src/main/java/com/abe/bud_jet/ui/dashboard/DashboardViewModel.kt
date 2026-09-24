@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.abe.bud_jet.database.FinanceRepository
 import com.abe.bud_jet.database.DashboardSummary
+import com.abe.bud_jet.database.entities.TransactionType
+import com.abe.bud_jet.utils.CategoryPalette
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -46,9 +48,12 @@ class DashboardViewModel(
             repository.observeDashboardSummary(),
             repository.observeRecentTransactions(limit = 3),
             repository.observeCategoriesByType(isIncome = false),
-            repository.observeCategoriesByType(isIncome = true)
-        ) { summary: DashboardSummary, recentEntities, expenseCategoriesRaw, incomeCategoriesRaw ->
-            val monthDelta = summary.totalIncome - summary.totalExpense
+            repository.observeCategoriesByType(isIncome = true),
+            repository.observeCurrentMonthTransactions()
+        ) { summary: DashboardSummary, recentEntities, expenseCategoriesRaw, incomeCategoriesRaw, monthTransactions ->
+            val monthDelta = monthTransactions.sumOf { tx ->
+                if (tx.type == TransactionType.INCOME) tx.amount else -tx.amount
+            }
             val categoriesById = (expenseCategoriesRaw + incomeCategoriesRaw)
                 .associateBy { it.id }
             val recent = recentEntities
@@ -68,7 +73,7 @@ class DashboardViewModel(
                     DashboardCategoryChip(
                         id = it.id,
                         name = it.name,
-                        colorHex = it.color,
+                        colorHex = CategoryPalette.colorFor(it.id, it.color),
                         isIncome = false
                     )
                 }
@@ -78,7 +83,7 @@ class DashboardViewModel(
                     DashboardCategoryChip(
                         id = it.id,
                         name = it.name,
-                        colorHex = it.color,
+                        colorHex = CategoryPalette.colorFor(it.id, it.color),
                         isIncome = true
                     )
                 }

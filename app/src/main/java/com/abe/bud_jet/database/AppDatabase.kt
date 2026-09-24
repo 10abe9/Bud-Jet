@@ -18,8 +18,8 @@ import com.abe.bud_jet.database.entities.TransactionEntity
         CategoryEntity::class,
         GoalEntity::class
     ],
-    version = 2,
-    exportSchema = false
+    version = 3,
+    exportSchema = true
 )
 @TypeConverters(AppTypeConverters::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -38,7 +38,9 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "bud_jet.db"
-                ).build().also { INSTANCE = it }
+                )
+                    .addMigrations(*Migrations.ALL)
+                    .build().also { INSTANCE = it }
             }
         }
     }

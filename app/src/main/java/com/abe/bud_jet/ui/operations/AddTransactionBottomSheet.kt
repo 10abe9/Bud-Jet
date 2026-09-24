@@ -1,43 +1,26 @@
 package com.abe.bud_jet.ui.operations
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.lifecycle.lifecycleScope
 import com.abe.bud_jet.R
-import com.abe.bud_jet.database.FinanceRepository
 import com.abe.bud_jet.database.FinanceRepositoryProvider
-import com.abe.bud_jet.database.entities.CategoryEntity
 import com.abe.bud_jet.database.entities.TransactionType
 import com.abe.bud_jet.databinding.BottomSheetAddTransactionBinding
 import com.abe.bud_jet.ui.common.BaseBottomSheetDialogFragment
-import com.google.android.material.chip.Chip
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import com.abe.bud_jet.ui.common.CategoryChips
+import com.abe.bud_jet.utils.AmountParser
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class AddTransactionBottomSheet : BaseBottomSheetDialogFragment() {
-    private val fixedCategoryPalette = listOf(
-        "#F59E0B",
-        "#3B82F6",
-        "#10B981",
-        "#8B5CF6",
-        "#EF4444",
-        "#06B6D4",
-        "#F97316",
-        "#84CC16",
-        "#EC4899",
-        "#6366F1"
-    )
 
     private var _binding: BottomSheetAddTransactionBinding? = null
     private val binding get() = _binding!!
 
-    private val job = Job()
-    private val scope = CoroutineScope(Dispatchers.Main + job)
     private var categoriesJob: Job? = null
 
     private val repository by lazy {
@@ -46,6 +29,7 @@ class AddTransactionBottomSheet : BaseBottomSheetDialogFragment() {
 
     private var isIncomeCurrent: Boolean = false
     private var selectedCategoryId: Long? = null
+    private var isSaving = false
 
     override fun getTheme(): Int = R.style.ThemeOverlay_BudJet_BottomSheet
 
@@ -61,7 +45,11 @@ class AddTransactionBottomSheet : BaseBottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        selectedCategoryId = arguments?.getLong(ARG_CATEGORY_ID, -1L)?.takeIf { it >= 0L }
         setupTypeToggle()
+        binding.chipGroupCategories.setOnCheckedStateChangeListener { group, _ ->
+            selectedCategoryId = CategoryChips.selectedId(group)
+        }
         observeCategories()
         setupSaveButton()
     }
@@ -87,73 +75,48 @@ class AddTransactionBottomSheet : BaseBottomSheetDialogFragment() {
 
         binding.toggleType.addOnButtonCheckedListener { _, checkedId, isChecked ->
             if (!isChecked) return@addOnButtonCheckedListener
-            isIncomeCurrent = checkedId == binding.btnIncome.id
+            val isIncome = checkedId == binding.btnIncome.id
+            if (isIncome == isIncomeCurrent) return@addOnButtonCheckedListener
+            isIncomeCurrent = isIncome
+            // Categories of the other type cannot stay selected.
+            selectedCategoryId = null
             observeCategories()
         }
     }
 
     private fun observeCategories() {
         categoriesJob?.cancel()
-        categoriesJob = scope.launch {
+        // Tied to the view lifecycle so emissions never reach a destroyed binding.
+        categoriesJob = viewLifecycleOwner.lifecycleScope.launch {
             repository.observeCategoriesByType(isIncomeCurrent).collect { list ->
-                renderCategoryChips(list)
+                CategoryChips.render(binding.chipGroupCategories, list, selectedCategoryId)
             }
-        }
-    }
-
-    private fun renderCategoryChips(categories: List<CategoryEntity>) {
-        binding.chipGroupCategories.removeAllViews()
-        selectedCategoryId = null
-
-        categories
-            .sortedBy { it.id }
-            .forEachIndexed { index, category ->
-            val colorHex = category.color
-                ?.takeIf { it.startsWith("#") }
-                ?: fixedCategoryPalette[index % fixedCategoryPalette.size]
-            val chip = Chip(requireContext()).apply {
-                text = category.name
-                isCheckable = true
-                tag = category.id
-                chipBackgroundColor = android.content.res.ColorStateList.valueOf(
-                    requireContext().getColor(com.abe.bud_jet.R.color.card)
-                )
-                runCatching {
-                    val parsed = Color.parseColor(colorHex)
-                    chipStrokeWidth = 2f
-                    chipStrokeColor = android.content.res.ColorStateList.valueOf(parsed)
-                    setTextColor(requireContext().getColor(com.abe.bud_jet.R.color.text_primary))
-                }
-            }
-            binding.chipGroupCategories.addView(chip)
         }
     }
 
     private fun setupSaveButton() {
         binding.btnSave.setOnClickListener {
+            if (isSaving) return@setOnClickListener
             val amountText = binding.etAmount.text?.toString()?.trim().orEmpty()
             if (amountText.isEmpty()) {
                 binding.etAmount.error = getString(R.string.common_enter_amount)
                 return@setOnClickListener
             }
 
-            val amount = amountText.toDoubleOrNull()
+            val amount = AmountParser.parse(amountText)
             if (amount == null || amount <= 0) {
                 binding.etAmount.error = getString(R.string.common_invalid_amount)
                 return@setOnClickListener
             }
 
-            val isIncome = binding.toggleType.checkedButtonId == binding.btnIncome.id
-            val type = if (isIncome) TransactionType.INCOME else TransactionType.EXPENSE
-
-            val note = binding.etNote.text?.toString()?.takeIf { it.isNotBlank() }
+            val type = if (isIncomeCurrent) TransactionType.INCOME else TransactionType.EXPENSE
+            val note = binding.etNote.text?.toString()?.trim()?.takeIf { it.isNotBlank() }
             val timestamp = System.currentTimeMillis()
+            val categoryId = CategoryChips.selectedId(binding.chipGroupCategories)
 
-            val checkedId = binding.chipGroupCategories.checkedChipId
-            selectedCategoryId = binding.chipGroupCategories.findViewById<Chip?>(checkedId)?.tag as? Long
-            val categoryId: Long? = selectedCategoryId
-
-            scope.launch {
+            isSaving = true
+            binding.btnSave.isEnabled = false
+            lifecycleScope.launch {
                 if (type == TransactionType.INCOME) {
                     repository.addIncome(
                         amount = amount,
@@ -176,24 +139,21 @@ class AddTransactionBottomSheet : BaseBottomSheetDialogFragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        categoriesJob?.cancel()
         _binding = null
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        job.cancel()
     }
 
     companion object {
         private const val ARG_IS_INCOME_DEFAULT = "is_income_default"
+        private const val ARG_CATEGORY_ID = "category_id"
 
-        fun newInstance(isIncomeDefault: Boolean): AddTransactionBottomSheet {
+        fun newInstance(isIncomeDefault: Boolean, categoryId: Long? = null): AddTransactionBottomSheet {
             return AddTransactionBottomSheet().apply {
                 arguments = Bundle().apply {
                     putBoolean(ARG_IS_INCOME_DEFAULT, isIncomeDefault)
+                    putLong(ARG_CATEGORY_ID, categoryId ?: -1L)
                 }
             }
         }
     }
 }
-

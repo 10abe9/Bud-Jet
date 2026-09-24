@@ -7,12 +7,17 @@ import com.abe.bud_jet.database.entities.CategoryEntity
 import com.abe.bud_jet.database.entities.GoalEntity
 import com.abe.bud_jet.database.entities.TransactionEntity
 import com.abe.bud_jet.database.entities.TransactionType
-import com.abe.bud_jet.database.models.CategoryStat
+import com.abe.bud_jet.utils.CategoryPalette
+import com.abe.bud_jet.utils.DateRanges
+import com.abe.bud_jet.utils.MillisRange
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import java.util.Calendar
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 
 /**
@@ -26,7 +31,9 @@ class FinanceRepository(
     private val goalsDao: GoalsDao,
     private val defaultExpenseCategories: List<String>,
     private val defaultIncomeCategories: List<String>,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    /** Runs the block atomically (Room transaction in production). */
+    private val runInTransaction: suspend (suspend () -> Unit) -> Unit = { block -> block() }
 ) {
     companion object {
         const val MAX_CATEGORY_NAME_LENGTH = 18
@@ -36,18 +43,7 @@ class FinanceRepository(
         // Localization happens via injected defaults (see constructor args).
         private val DEFAULT_EXPENSE_CATEGORIES = listOf("Food", "Health", "Transport")
         private val DEFAULT_INCOME_CATEGORIES = listOf("Salary", "Gift", "Freelance")
-        private val CATEGORY_COLOR_PALETTE = listOf(
-            "#F59E0B",
-            "#3B82F6",
-            "#10B981",
-            "#8B5CF6",
-            "#EF4444",
-            "#06B6D4",
-            "#F97316",
-            "#84CC16",
-            "#EC4899",
-            "#6366F1"
-        )
+        private val CATEGORY_COLOR_PALETTE = CategoryPalette.colors
     }
 
     enum class AddCategoryResult {
@@ -74,6 +70,29 @@ class FinanceRepository(
     fun observeTotalExpense(): Flow<Double> =
         transactionsDao.observeTotalByType(TransactionType.EXPENSE)
 
+    /** Emits the current calendar month and re-emits when a new month starts. */
+    fun observeCurrentMonthRange(): Flow<MillisRange> = flow {
+        while (true) {
+            val range = DateRanges.month()
+            emit(range)
+            delay((range.to + 1 - System.currentTimeMillis()).coerceAtLeast(1_000L))
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun observeCurrentMonthTransactions(): Flow<List<TransactionEntity>> =
+        observeCurrentMonthRange().flatMapLatest { range ->
+            transactionsDao.observeInPeriod(range.from, range.to)
+        }
+
+    /** Income minus expenses recorded at or after [from]. */
+    fun observeNetSince(from: Long): Flow<Double> =
+        transactionsDao.observeNetSince(from)
+
+    suspend fun countTransactionsInPeriod(from: Long, to: Long): Int = withContext(ioDispatcher) {
+        transactionsDao.countInPeriod(from, to)
+    }
+
     fun observeMinTimestamp(): Flow<Long?> =
         transactionsDao.observeMinTimestamp()
 
@@ -91,27 +110,6 @@ class FinanceRepository(
 
     fun observeCategoryLimitGoals(): Flow<List<GoalEntity>> =
         goalsDao.observeCategoryLimits()
-
-    fun observeExpenseCategoryStats(limit: Int = 5): Flow<List<CategoryStat>> =
-        combine(
-            transactionsDao.observeRecent(limit = 1000),
-            categoryDao.observeAll()
-        ) { transactions, categories ->
-            val categoryNames = categories.associateBy({ it.id }, { it.name })
-
-            transactions
-                .asSequence()
-                .filter { it.type == TransactionType.EXPENSE && it.amount > 0.0 }
-                .groupBy { tx -> tx.categoryId ?: -1L }
-                .map { (categoryId, items) ->
-                    val total = items.sumOf { it.amount }.toFloat()
-                    val categoryName = categoryNames[categoryId]
-                        ?: if (categoryId == -1L) "Uncategorized" else "Other"
-                    CategoryStat(category = categoryName, total = total)
-                }
-                .sortedByDescending { it.total }
-                .take(limit)
-        }
 
     suspend fun addCustomCategory(name: String, isIncome: Boolean): AddCategoryResult = withContext(ioDispatcher) {
         val normalized = name
@@ -139,10 +137,16 @@ class FinanceRepository(
     }
 
     suspend fun deleteCategory(categoryId: Long): DeleteCategoryResult = withContext(ioDispatcher) {
-        val deleted = categoryDao.deleteById(categoryId)
-        if (deleted <= 0) return@withContext DeleteCategoryResult.NOT_FOUND
-        transactionsDao.clearCategoryReferences(categoryId)
-        DeleteCategoryResult.SUCCESS
+        var deleted = 0
+        runInTransaction {
+            deleted = categoryDao.deleteById(categoryId)
+            if (deleted > 0) {
+                transactionsDao.clearCategoryReferences(categoryId)
+                // A limit for a deleted category can no longer be tracked.
+                goalsDao.getLimitByCategoryId(categoryId)?.let { goalsDao.deleteById(it.id) }
+            }
+        }
+        if (deleted > 0) DeleteCategoryResult.SUCCESS else DeleteCategoryResult.NOT_FOUND
     }
 
     fun observeDashboardSummary(): Flow<DashboardSummary> =
@@ -207,8 +211,12 @@ class FinanceRepository(
         transactionsDao.getCount()
     }
 
-    suspend fun convertAllTransactions(rate: Double) = withContext(ioDispatcher) {
-        transactionsDao.multiplyAllAmounts(rate)
+    /** Converts every stored amount (transactions, saving goal, limits) with one rate, atomically. */
+    suspend fun convertAllAmounts(rate: Double) = withContext(ioDispatcher) {
+        runInTransaction {
+            transactionsDao.multiplyAllAmounts(rate)
+            goalsDao.multiplyAllAmounts(rate)
+        }
     }
 
     suspend fun createBackupSnapshot(): BackupSnapshot = withContext(ioDispatcher) {
@@ -220,6 +228,10 @@ class FinanceRepository(
     }
 
     suspend fun restoreBackupSnapshot(snapshot: BackupSnapshot) = withContext(ioDispatcher) {
+        runInTransaction { restoreBackupSnapshotInternal(snapshot) }
+    }
+
+    private suspend fun restoreBackupSnapshotInternal(snapshot: BackupSnapshot) {
         transactionsDao.deleteAll()
         goalsDao.deleteAll()
         categoryDao.deleteAll()
@@ -244,11 +256,8 @@ class FinanceRepository(
         val existing = goalsDao.getSavingGoalNow()
         if (existing != null) {
             goalsDao.update(
-                GoalEntity(
-                    id = existing.id,
-                    categoryId = null,
+                existing.copy(
                     targetAmount = targetAmount,
-                    currentAmount = 0.0,
                     deadline = deadline
                 )
             )
@@ -258,7 +267,8 @@ class FinanceRepository(
                     categoryId = null,
                     targetAmount = targetAmount,
                     currentAmount = 0.0,
-                    deadline = deadline
+                    deadline = deadline,
+                    createdAt = System.currentTimeMillis()
                 )
             )
         }
@@ -279,7 +289,8 @@ class FinanceRepository(
                     categoryId = categoryId,
                     targetAmount = limitAmount,
                     currentAmount = 0.0,
-                    deadline = null
+                    deadline = null,
+                    createdAt = System.currentTimeMillis()
                 )
             )
         }
@@ -294,38 +305,15 @@ class FinanceRepository(
      * and then reseeds starter categories if needed.
      */
     suspend fun resetAllUserDataAndReseedDefaults() = withContext(ioDispatcher) {
-        transactionsDao.deleteAll()
-        goalsDao.deleteAll()
-        categoryDao.deleteAll()
+        runInTransaction {
+            transactionsDao.deleteAll()
+            goalsDao.deleteAll()
+            categoryDao.deleteAll()
+        }
 
         // After wiping categories, we can seed localized starter categories again.
         seedDefaultCategoriesIfEmpty()
         enforceCategoryPolicy()
-    }
-
-    fun observeExpenseTotalByCategoryCurrentMonth(categoryId: Long): Flow<Double> {
-        val (from, to) = currentMonthRange()
-        return transactionsDao.observeCategoryTotalInPeriod(
-            categoryId = categoryId,
-            type = TransactionType.EXPENSE,
-            from = from,
-            to = to
-        )
-    }
-
-    private fun currentMonthRange(): Pair<Long, Long> {
-        val startCal = Calendar.getInstance().apply {
-            set(Calendar.DAY_OF_MONTH, 1)
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }
-        val endCal = (startCal.clone() as Calendar).apply {
-            add(Calendar.MONTH, 1)
-            add(Calendar.MILLISECOND, -1)
-        }
-        return startCal.timeInMillis to endCal.timeInMillis
     }
 
     private suspend fun addTransactionInternal(

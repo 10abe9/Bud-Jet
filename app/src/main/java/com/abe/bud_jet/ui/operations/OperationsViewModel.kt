@@ -5,11 +5,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.abe.bud_jet.database.FinanceRepository
-import com.abe.bud_jet.database.entities.TransactionType
 import com.abe.bud_jet.database.models.Transaction
 import com.abe.bud_jet.database.models.toUiModel
 import com.abe.bud_jet.database.models.withCategoryMeta
 import com.abe.bud_jet.R
+import com.abe.bud_jet.utils.AmountParser
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -127,7 +127,7 @@ class OperationsViewModel(
             if (q.isBlank()) return@combine uiList
 
             val lower = q.lowercase(Locale.getDefault())
-            val maybeAmount = q.toDoubleOrNull()
+            val maybeAmount = AmountParser.parse(q)
             uiList.filter { tx ->
                 tx.title.contains(lower, ignoreCase = true) ||
                     tx.note.orEmpty().contains(lower, ignoreCase = true) ||
@@ -140,16 +140,16 @@ class OperationsViewModel(
             initialValue = emptyList()
         )
 
+    // Totals follow the same filters and search as the visible list.
     private val totalsTotal: StateFlow<Double> =
-        activeRange
-            .flatMapLatest { range -> repository.observeTransactionsInPeriod(range.from, range.to) }
-            .combine(_totalsMode) { entities, mode ->
-                entities
+        filteredTransactions
+            .combine(_totalsMode) { transactions, mode ->
+                transactions
                     .asSequence()
-                    .filter { entity ->
+                    .filter { tx ->
                         when (mode) {
-                            OperationsTotalsMode.EXPENSES -> entity.type == TransactionType.EXPENSE
-                            OperationsTotalsMode.INCOME -> entity.type == TransactionType.INCOME
+                            OperationsTotalsMode.EXPENSES -> !tx.isIncome
+                            OperationsTotalsMode.INCOME -> tx.isIncome
                         }
                     }
                     .sumOf { it.amount }
@@ -215,8 +215,7 @@ class OperationsViewModel(
                 period,
                 range,
                 query ->
-            // totalsMode участвует в вычислении totalsTotal, поэтому UI пересчитается корректно,
-            // даже если мы берём текущее значение из StateFlow напрямую.
+            // totalsMode feeds totalsTotal, so reading its current value here stays consistent.
             OperationsUiState(
                 transactions = tx,
                 totalAmount = total,
@@ -249,8 +248,11 @@ class OperationsViewModel(
     fun setTypeFilter(type: OperationsTypeFilter) {
         viewModelScope.launch {
             _typeFilter.emit(type)
-            if (type == OperationsTypeFilter.ALL) {
-                _categoryIdFilter.emit(null)
+            when (type) {
+                OperationsTypeFilter.ALL -> _categoryIdFilter.emit(null)
+                // Otherwise the total would show 0 for the filtered-out type.
+                OperationsTypeFilter.INCOME -> _totalsMode.emit(OperationsTotalsMode.INCOME)
+                OperationsTypeFilter.EXPENSE -> _totalsMode.emit(OperationsTotalsMode.EXPENSES)
             }
         }
     }
@@ -258,11 +260,6 @@ class OperationsViewModel(
     fun setCategoryFilter(categoryId: Long?) {
         viewModelScope.launch {
             _categoryIdFilter.emit(categoryId)
-            // If category is picked, type should no longer be ALL.
-            if (categoryId != null && _typeFilter.value == OperationsTypeFilter.ALL) {
-                // We don't know income/expense from id alone here,
-                // the UI will set it, but keep safe: just keep ALL and filter by categoryId.
-            }
         }
     }
 
@@ -351,8 +348,9 @@ private fun Transaction.amountFormattedContains(
     maybeAmount: Double?
 ): Boolean {
     if (maybeAmount != null && kotlin.math.abs(maybeAmount - this.amount) < 0.0001) return true
-    val formatted = String.format("%.2f", kotlin.math.abs(this.amount)).lowercase(Locale.getDefault())
-    return formatted.contains(lowerQuery)
+    val plain = String.format(Locale.US, "%.2f", kotlin.math.abs(this.amount))
+    val normalizedQuery = lowerQuery.replace(',', '.')
+    return plain.contains(normalizedQuery)
 }
 
 class OperationsViewModelFactory(

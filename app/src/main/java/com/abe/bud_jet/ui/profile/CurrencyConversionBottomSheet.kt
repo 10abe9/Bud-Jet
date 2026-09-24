@@ -1,5 +1,6 @@
 package com.abe.bud_jet.ui.profile
 
+import com.abe.bud_jet.utils.AmountParser
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -30,11 +31,11 @@ class CurrencyConversionBottomSheet : BaseBottomSheetDialogFragment() {
 
         binding.tvCurrencyPair.text = getString(R.string.profile_convert_pair, from, to)
         binding.tvRateSource.text = source
-        binding.etConversionRate.setText(String.format("%.4f", rate))
+        binding.etConversionRate.setText(AmountParser.toEditable(rate, maxFractionDigits = 6))
 
         binding.btnCancelConvert.setOnClickListener { dismissAllowingStateLoss() }
         binding.btnConvert.setOnClickListener {
-            val parsed = binding.etConversionRate.text?.toString()?.trim()?.toDoubleOrNull()
+            val parsed = AmountParser.parse(binding.etConversionRate.text?.toString())
             if (parsed == null || parsed <= 0.0) {
                 binding.etConversionRate.error = getString(R.string.profile_invalid_rate)
                 return@setOnClickListener

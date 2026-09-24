@@ -11,6 +11,7 @@ data class Transaction(
     val timestamp: Long,
     val categoryId: Long?,
     val note: String?,
+    /** Category name or note; empty when neither exists (UI shows a localized fallback). */
     val title: String,
     val categoryColorHex: String? = null,
     val amount: Double,
@@ -29,7 +30,7 @@ fun TransactionEntity.toUiModel(): Transaction {
         timestamp = timestamp,
         categoryId = categoryId,
         note = note,
-        title = if (isIncome) "Income" else "Expense",
+        title = "",
         categoryColorHex = null,
         amount = amount,
         isIncome = isIncome,

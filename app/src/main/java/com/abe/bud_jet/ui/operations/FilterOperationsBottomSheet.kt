@@ -14,6 +14,7 @@ import com.abe.bud_jet.databinding.BottomSheetFilterOperationsBinding
 import com.google.android.material.chip.Chip
 import com.abe.bud_jet.ui.common.BaseBottomSheetDialogFragment
 import android.util.TypedValue
+import com.abe.bud_jet.utils.CategoryPalette
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -24,19 +25,6 @@ class FilterOperationsBottomSheet : BaseBottomSheetDialogFragment() {
 
     private val repository by lazy { FinanceRepositoryProvider.get(requireContext()) }
     private var categoriesJob: Job? = null
-
-    private val fixedCategoryPalette = listOf(
-        "#F59E0B",
-        "#3B82F6",
-        "#10B981",
-        "#8B5CF6",
-        "#EF4444",
-        "#06B6D4",
-        "#F97316",
-        "#84CC16",
-        "#EC4899",
-        "#6366F1"
-    )
 
     private var selectedType: OperationsTypeFilter = OperationsTypeFilter.ALL
     private var selectedCategoryId: Long? = null
@@ -177,9 +165,7 @@ class FilterOperationsBottomSheet : BaseBottomSheetDialogFragment() {
             )
         }
 
-        val colorHex = category.color
-            ?.takeIf { it.startsWith("#") }
-            ?: fixedCategoryPalette[kotlin.math.abs(category.name.hashCode()) % fixedCategoryPalette.size]
+        val colorHex = CategoryPalette.colorFor(category.id, category.color)
 
         val parsed = Color.parseColor(colorHex)
         chip.chipStrokeColor = android.content.res.ColorStateList.valueOf(parsed)

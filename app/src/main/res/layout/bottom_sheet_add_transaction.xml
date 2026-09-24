@@ -38,6 +38,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="numberDecimal"
+                    android:digits="0123456789.,"
                     android:maxLines="1" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -69,15 +70,21 @@
                     android:textColor="@color/finance_income" />
             </com.google.android.material.button.MaterialButtonToggleGroup>
 
-            <!-- Categories chips placeholder -->
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chipGroupCategories"
+            <!-- Categories chips (scrollable: a single-line group would clip extra categories) -->
+            <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                app:singleSelection="true"
-                app:singleLine="true"
-                android:paddingHorizontal="4dp" />
+                android:scrollbars="none">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chipGroupCategories"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:singleSelection="true"
+                    app:singleLine="true"
+                    android:paddingHorizontal="4dp" />
+            </HorizontalScrollView>
 
             <!-- Note (optional) -->
             <com.google.android.material.textfield.TextInputLayout
@@ -104,6 +111,17 @@
                 app:cornerRadius="16dp"
                 android:backgroundTint="@color/brand_primary"
                 android:textColor="@android:color/white" />
+
+            <!-- Delete (edit mode only) -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnDelete"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/common_delete"
+                android:textColor="@color/finance_expense"
+                android:visibility="gone" />
 
         </LinearLayout>
 

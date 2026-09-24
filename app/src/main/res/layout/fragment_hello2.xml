@@ -144,6 +144,7 @@
         app:layout_constraintEnd_toEndOf="parent">
 
         <com.google.android.material.chip.Chip
+            android:id="@+id/chip_goal_track"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
@@ -151,6 +152,7 @@
             style="@style/Widget.MaterialComponents.Chip.Filter"/>
 
         <com.google.android.material.chip.Chip
+            android:id="@+id/chip_goal_save"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
@@ -158,6 +160,7 @@
             style="@style/Widget.MaterialComponents.Chip.Filter"/>
 
         <com.google.android.material.chip.Chip
+            android:id="@+id/chip_goal_analyze"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
@@ -165,6 +168,7 @@
             style="@style/Widget.MaterialComponents.Chip.Filter"/>
 
         <com.google.android.material.chip.Chip
+            android:id="@+id/chip_goal_habits"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 

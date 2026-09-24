@@ -18,6 +18,8 @@ import com.abe.bud_jet.databinding.FragmentHello1Binding
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.abe.bud_jet.ui.dashboard.DashboardFragment
+import com.abe.bud_jet.database.preferences.PreferenceManager
+import com.abe.bud_jet.utils.CurrencyFormatter
 import com.abe.bud_jet.utils.VibrationManager
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -28,6 +30,8 @@ class Hello1Fragment : Fragment() {
     private var  _binding : FragmentHello1Binding? = null
     private val binding get() = _binding!!
     private lateinit var vibrator: VibrationManager
+    // Read once: the demo animator may still tick after the view is gone.
+    private var demoCurrency: String = "USD"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +50,7 @@ class Hello1Fragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         vibrator = VibrationManager.get()
+        demoCurrency = PreferenceManager.getInstance(requireContext()).getCurrencyCode()
 
         playDemoAnimation()
         setupButtons()
@@ -65,7 +70,9 @@ class Hello1Fragment : Fragment() {
             findNavController().navigate(R.id.action_hello1Fragment_to_hello2Fragment)
         }
         binding.buttonSkip.setOnClickListener {
-            vibrator.error()
+            // Skipping is a valid choice, so no "error" haptic here.
+            vibrator.tap()
+            PreferenceManager.getInstance(requireContext()).setIsFirstInit(false)
             findNavController().getBackStackEntry(R.id.mobile_navigation)
                 .savedStateHandle[DashboardFragment.KEY_PROMPT_NOTIFICATIONS_AFTER_ONBOARDING] = true
             findNavController().navigate(R.id.action_hello1Fragment_to_navigation_dashboard,
@@ -87,7 +94,7 @@ class Hello1Fragment : Fragment() {
 
         animator.addUpdateListener {
             val value = it.animatedValue as Float
-            textView.text = "$" + String.format("%,.2f", value)
+            textView.text = CurrencyFormatter.format(value.toDouble(), demoCurrency)
         }
 
         animator.start()
@@ -114,8 +121,7 @@ class Hello1Fragment : Fragment() {
                 animateBalance(binding.textBalance, currentBalance, newBalance)
 
                 binding.textBalanceStatus.text =
-                    (if (amount > 0) "+ $" else "- $") +
-                            String.format("%.2f", kotlin.math.abs(amount))
+                    CurrencyFormatter.formatDelta(amount.toDouble(), demoCurrency)
 
                 binding.textBalanceStatus.setTextColor(
                     ContextCompat.getColor(

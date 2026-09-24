@@ -291,5 +291,11 @@
     <string name="default_category_salary">Salario</string>
     <string name="default_category_gift">Regalo</string>
     <string name="default_category_freelance">Freelance</string>
+    <string name="common_filter">Filtro</string>
+    <string name="common_type">Tipo</string>
+    <string name="common_all">Todas</string>
+    <string name="common_category">Categoría</string>
+    <string name="common_save">Guardar</string>
+    <string name="goals_deadline_passed">Plazo vencido: faltan %1$s por ahorrar</string>
 </resources>
 

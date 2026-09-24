@@ -23,8 +23,8 @@ interface GoalsDao {
     @Update
     suspend fun update(goal: GoalEntity)
 
-    @Query("UPDATE goals SET currentAmount = :currentAmount WHERE id = :goalId")
-    suspend fun updateProgress(goalId: Long, currentAmount: Double)
+    @Query("UPDATE goals SET targetAmount = targetAmount * :rate, currentAmount = currentAmount * :rate")
+    suspend fun multiplyAllAmounts(rate: Double)
 
     @Query("DELETE FROM goals WHERE id = :goalId")
     suspend fun deleteById(goalId: Long): Int

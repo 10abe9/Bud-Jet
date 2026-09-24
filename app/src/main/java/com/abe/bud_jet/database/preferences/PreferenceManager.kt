@@ -32,6 +32,8 @@ class PreferenceManager private constructor(context: Context) {
         private const val KEY_INITIAL_BALANCE = "initial_balance"
         private const val KEY_INITIAL_BALANCE_PROMPT_SHOWN = "initial_balance_prompt_shown"
         private const val KEY_IS_PREMIUM = "is_premium"
+        private const val KEY_ONBOARDING_GOALS = "onboarding_goals"
+        private const val KEY_CONVERSION_RATE_V2_PREFIX = "conversion_rate_v2_"
 
         private var instance: PreferenceManager? = null
 
@@ -98,13 +100,16 @@ class PreferenceManager private constructor(context: Context) {
     }.conflate()
 
     fun getConversionRate(fromCode: String, toCode: String): Double? {
-        val key = buildRateKey(fromCode, toCode)
-        return if (preferences.contains(key)) preferences.getFloat(key, 1f).toDouble() else null
+        val key = buildRateKey(KEY_CONVERSION_RATE_V2_PREFIX, fromCode, toCode)
+        preferences.getString(key, null)?.toDoubleOrNull()?.let { return it }
+        // Rates saved by older versions were stored as Float (lossy).
+        val legacyKey = buildRateKey(KEY_CONVERSION_RATE_PREFIX, fromCode, toCode)
+        return if (preferences.contains(legacyKey)) preferences.getFloat(legacyKey, 1f).toDouble() else null
     }
 
     fun setConversionRate(fromCode: String, toCode: String, rate: Double) {
-        val key = buildRateKey(fromCode, toCode)
-        preferences.edit { putFloat(key, rate.toFloat()) }
+        val key = buildRateKey(KEY_CONVERSION_RATE_V2_PREFIX, fromCode, toCode)
+        preferences.edit { putString(key, rate.toString()) }
     }
 
     fun isNotificationsEnabled(): Boolean {
@@ -164,6 +169,14 @@ class PreferenceManager private constructor(context: Context) {
         preferences.edit { putBoolean(KEY_IS_PREMIUM, enabled) }
     }
 
+    fun getOnboardingGoals(): Set<String> {
+        return preferences.getStringSet(KEY_ONBOARDING_GOALS, emptySet()).orEmpty()
+    }
+
+    fun setOnboardingGoals(goals: Set<String>) {
+        preferences.edit { putStringSet(KEY_ONBOARDING_GOALS, goals) }
+    }
+
     fun resetUserDataToDefaults() {
         val editor = preferences.edit()
 
@@ -172,22 +185,23 @@ class PreferenceManager private constructor(context: Context) {
         conversionKeys.forEach { editor.remove(it) }
 
         editor.putString(KEY_CURRENCY_CODE, "USD")
-        editor.putString(KEY_APP_LANGUAGE, "en")
+        // Language is a device preference, not user data: keep the one the user chose.
         editor.putBoolean(KEY_NOTIFICATIONS_ENABLED, false)
         editor.putLong(KEY_LAST_DASHBOARD_VISIT, 0L)
         editor.putLong(KEY_LAST_NOTIFICATION_SENT, 0L)
         editor.putBoolean(KEY_NOTIFICATION_PERMISSION_REQUESTED, false)
         editor.remove(KEY_INITIAL_BALANCE)
         editor.putBoolean(KEY_INITIAL_BALANCE_PROMPT_SHOWN, false)
-        editor.putBoolean(KEY_IS_PREMIUM, false)
+        // Premium is tied to the purchase, not to local data, so it survives a data reset.
+        editor.remove(KEY_ONBOARDING_GOALS)
         // Show onboarding again after data deletion.
         editor.putBoolean(KEY_IS_FIRST_INIT, true)
 
         editor.apply()
     }
 
-    private fun buildRateKey(fromCode: String, toCode: String): String {
-        return KEY_CONVERSION_RATE_PREFIX + fromCode.uppercase() + "_" + toCode.uppercase()
+    private fun buildRateKey(prefix: String, fromCode: String, toCode: String): String {
+        return prefix + fromCode.uppercase() + "_" + toCode.uppercase()
     }
 }
 

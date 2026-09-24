@@ -292,5 +292,11 @@
     <string name="default_category_salary">Pensja</string>
     <string name="default_category_gift">Prezent</string>
     <string name="default_category_freelance">Freelancer</string>
+    <string name="common_filter">Filtr</string>
+    <string name="common_type">Typ</string>
+    <string name="common_all">Wszystkie</string>
+    <string name="common_category">Kategoria</string>
+    <string name="common_save">Zapisz</string>
+    <string name="goals_deadline_passed">Termin minął: zostało do odłożenia %1$s</string>
 </resources>
 

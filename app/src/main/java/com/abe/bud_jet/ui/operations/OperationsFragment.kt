@@ -15,6 +15,7 @@ import com.abe.bud_jet.adapters.TransactionsAdapter
 import com.abe.bud_jet.databinding.FragmentOperationsBinding
 import com.abe.bud_jet.R
 import com.abe.bud_jet.utils.CurrencyFormatter
+import com.abe.bud_jet.utils.DateRanges
 import com.abe.bud_jet.utils.collectWithLifecycle
 import com.abe.bud_jet.utils.VibrationManager
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -306,9 +307,9 @@ class OperationsFragment : Fragment() {
         picker.addOnPositiveButtonClickListener { range ->
             val start = range.first ?: return@addOnPositiveButtonClickListener
             val end = range.second ?: return@addOnPositiveButtonClickListener
-            // Expand to whole selected days
-            val from = start
-            val to = end + 86_399_999L
+            // Picker returns UTC midnights; expand to whole local days.
+            val from = DateRanges.pickerUtcToLocalMidnight(start)
+            val to = DateRanges.pickerUtcToLocalMidnight(end) + 86_399_999L
             viewModel.setCustomRange(from, to)
         }
         picker.show(parentFragmentManager, "operations_custom_range")

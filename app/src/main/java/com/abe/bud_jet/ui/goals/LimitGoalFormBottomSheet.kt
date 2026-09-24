@@ -1,5 +1,6 @@
 package com.abe.bud_jet.ui.goals
 
+import com.abe.bud_jet.utils.AmountParser
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
@@ -46,7 +47,7 @@ class LimitGoalFormBottomSheet : BaseBottomSheetDialogFragment() {
         binding.btnSaveCategoryLimit.setOnClickListener {
             val selectedCategoryId = binding.chipCategories.checkedChipIds.firstOrNull()
                 ?.let { chipId -> binding.chipCategories.findViewById<Chip>(chipId)?.tag as? Long }
-            val amount = binding.etLimitAmount.text?.toString()?.trim()?.toDoubleOrNull()
+            val amount = AmountParser.parse(binding.etLimitAmount.text?.toString())
 
             if (selectedCategoryId == null) {
                 binding.tvCategoryError.visibility = View.VISIBLE
@@ -75,7 +76,8 @@ class LimitGoalFormBottomSheet : BaseBottomSheetDialogFragment() {
     }
 
     private fun loadCategories() {
-        lifecycleScope.launch {
+        // View-scoped: the sheet can be dismissed before categories load.
+        viewLifecycleOwner.lifecycleScope.launch {
             val context = context ?: return@launch
             val loaded = withContext(Dispatchers.IO) {
                 FinanceRepositoryProvider.get(context)
@@ -132,7 +134,7 @@ class LimitGoalFormBottomSheet : BaseBottomSheetDialogFragment() {
             }
 
             val amount = arguments?.getDouble(ARG_LIMIT) ?: 0.0
-            if (amount > 0) binding.etLimitAmount.setText(amount.toString())
+            if (amount > 0) binding.etLimitAmount.setText(AmountParser.toEditable(amount))
         }
     }
 

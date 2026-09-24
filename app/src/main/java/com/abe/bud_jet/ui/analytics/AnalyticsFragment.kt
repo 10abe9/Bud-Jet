@@ -17,7 +17,6 @@ import com.abe.bud_jet.utils.CurrencyFormatter
 import com.abe.bud_jet.utils.collectWithLifecycle
 import com.abe.bud_jet.utils.VibrationManager
 import com.abe.bud_jet.ui.operations.AddTransactionBottomSheet
-import java.util.Locale
 
 class AnalyticsFragment : Fragment(R.layout.fragment_analytics) {
 
@@ -54,7 +53,7 @@ class AnalyticsFragment : Fragment(R.layout.fragment_analytics) {
             override fun onPageSelected(position: Int) {
                 viewModel.onMonthSelected(position)
                 if (vibrateOnNextPageSelected) {
-                    vibrator.duoLongSuccess()
+                    vibrator.tap()
                     vibrateOnNextPageSelected = false
                 }
             }
@@ -133,17 +132,8 @@ class AnalyticsFragment : Fragment(R.layout.fragment_analytics) {
         }
     }
 
-    private fun formatCenterTotal(amount: Double): String {
-        val abs = kotlin.math.abs(amount)
-        val symbol = CurrencyFormatter.symbolFor(currencyCode)
-        val sign = if (amount < 0) "-" else ""
-        return when {
-            abs >= 1_000_000_000 -> String.format(Locale.US, "%s%s%.1fB", sign, symbol, abs / 1_000_000_000.0)
-            abs >= 1_000_000 -> String.format(Locale.US, "%s%s%.1fM", sign, symbol, abs / 1_000_000.0)
-            abs >= 1_000 -> String.format(Locale.US, "%s%s%.1fK", sign, symbol, abs / 1_000.0)
-            else -> CurrencyFormatter.format(amount, currencyCode)
-        }
-    }
+    private fun formatCenterTotal(amount: Double): String =
+        CurrencyFormatter.formatCompact(amount, currencyCode)
 
     private class MonthChartsAdapter : RecyclerView.Adapter<MonthChartsAdapter.VH>() {
         private var items: List<AnalyticsMonthChartUi> = emptyList()

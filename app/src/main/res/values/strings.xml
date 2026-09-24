@@ -309,4 +309,5 @@ and get smart financial insights.</string>
     <string name="default_category_salary">Salary</string>
     <string name="default_category_gift">Gift</string>
     <string name="default_category_freelance">Freelance</string>
+    <string name="goals_deadline_passed">Deadline passed: %1$s left to save</string>
 </resources>

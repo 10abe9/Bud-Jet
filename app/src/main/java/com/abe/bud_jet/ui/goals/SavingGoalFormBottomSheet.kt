@@ -1,5 +1,7 @@
 package com.abe.bud_jet.ui.goals
 
+import com.abe.bud_jet.utils.AmountParser
+import com.abe.bud_jet.utils.DateRanges
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -35,7 +37,7 @@ class SavingGoalFormBottomSheet : BaseBottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val amount = arguments?.getDouble(ARG_AMOUNT) ?: 0.0
-        if (amount > 0) binding.etTargetAmount.setText(amount.toString())
+        if (amount > 0) binding.etTargetAmount.setText(AmountParser.toEditable(amount))
         renderDeadline()
 
         binding.btnPickDeadline.setOnClickListener { openDatePicker() }
@@ -44,7 +46,7 @@ class SavingGoalFormBottomSheet : BaseBottomSheetDialogFragment() {
             renderDeadline()
         }
         binding.btnSaveSavingGoal.setOnClickListener {
-            val parsedAmount = binding.etTargetAmount.text?.toString()?.trim()?.toDoubleOrNull()
+            val parsedAmount = AmountParser.parse(binding.etTargetAmount.text?.toString())
             if (parsedAmount == null || parsedAmount <= 0) {
                 binding.etTargetAmount.error = getString(R.string.common_enter_valid_amount)
                 return@setOnClickListener
@@ -67,10 +69,14 @@ class SavingGoalFormBottomSheet : BaseBottomSheetDialogFragment() {
 
     private fun openDatePicker() {
         val picker = MaterialDatePicker.Builder.datePicker()
-            .setSelection(selectedDeadlineMillis ?: MaterialDatePicker.todayInUtcMilliseconds())
+            .setSelection(
+                selectedDeadlineMillis?.let(DateRanges::localToPickerUtc)
+                    ?: MaterialDatePicker.todayInUtcMilliseconds()
+            )
             .build()
         picker.addOnPositiveButtonClickListener {
-            selectedDeadlineMillis = it
+            // Stored as local midnight so the shown date matches the picked one.
+            selectedDeadlineMillis = DateRanges.pickerUtcToLocalMidnight(it)
             renderDeadline()
         }
         picker.show(parentFragmentManager, "saving_goal_date_picker")

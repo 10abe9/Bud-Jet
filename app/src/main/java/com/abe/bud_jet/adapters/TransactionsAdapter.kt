@@ -96,9 +96,15 @@ class TransactionsAdapter(
         }
 
         private fun displayTitle(item: Transaction): String {
+            val context = binding.root.context
+            val fallback = context.getString(
+                if (item.isIncome) R.string.common_income else R.string.common_expense
+            )
+            val category = item.title.ifBlank { fallback }
             val note = item.note?.trim().orEmpty()
-            if (note.isBlank()) return item.title
-            return if (note.length > 15) note.take(15) + "..." else note
+            if (note.isBlank() || note == category) return category
+            val shortNote = if (note.length > 24) note.take(24) + "…" else note
+            return "$category · $shortNote"
         }
 
         private fun resolveCategoryTicketColor(item: Transaction): Int {
