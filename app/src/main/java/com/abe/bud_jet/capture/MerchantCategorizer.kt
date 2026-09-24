@@ -6,25 +6,33 @@ package com.abe.bud_jet.capture
  */
 object MerchantCategorizer {
 
-    private val keywordsByDefaultKey: Map<String, List<String>> = mapOf(
-        "transport" to listOf(
-            "taxi", "такси", "uber", "bolt", "yandex go", "yandex*go", "яндекс go", "citymobil",
-            "metro", "метро", "транспорт", "parking", "парковк", "азс", "fuel", "shell", "lukoil",
-            "лукойл", "orlen", "bp ", "gazprom", "газпромнефть", "ржд", "rzd", "aeroflot", "аэрофлот",
-            "renfe", "cabify", "freenow", "jakdojade", "mpk", "ztm"
-        ),
+    /**
+     * US merchants and generic English words. Order matters: the first matching category wins,
+     * so "food" goes first to keep "Uber Eats" out of transport ("uber").
+     * Keep keywords specific: they are matched as substrings of the merchant name.
+     */
+    private val keywordsByDefaultKey: Map<String, List<String>> = linkedMapOf(
         "food" to listOf(
-            "кафе", "cafe", "café", "coffee", "кофе", "ресторан", "restaurant", "restauracja",
-            "restaurante", "pizza", "пицц", "burger", "бургер", "mcdonald", "kfc", "вкусно",
-            "starbucks", "пятерочка", "пятёрочка", "pyaterochka", "magnit", "магнит", "перекресток",
-            "перекрёсток", "perekrestok", "vkusvill", "вкусвилл", "лента", "lenta", "ашан", "auchan",
-            "dixy", "дикси", "biedronka", "lidl", "żabka", "zabka", "carrefour", "mercadona",
-            "walmart", "продукт", "grocery", "supermarket", "market", "delivery club", "самокат",
-            "samokat", "glovo", "wolt", "uber eats", "doordash", "bakery", "пекарн", "sushi", "суши"
+            "uber eats", "uber *eats", "ubereats", "doordash", "grubhub", "instacart", "postmates",
+            "cafe", "café", "coffee", "restaurant", "diner", "bakery", "pizza", "burger", "sushi",
+            "grill", "bistro", "deli", "grocery", "supermarket", "starbucks", "dunkin", "mcdonald",
+            "burger king", "wendy", "taco bell", "chipotle", "chick-fil-a", "subway", "domino",
+            "papa john", "panera", "kfc", "popeyes", "whole foods", "trader joe", "kroger",
+            "safeway", "publix", "albertsons", "costco", "aldi", "wegmans", "h-e-b", "food lion",
+            "giant eagle", "sprouts", "walmart grocery", "7-eleven"
+        ),
+        "transport" to listOf(
+            // No bare "metro"/"mobil"/"arco": they match MetroPCS, T-Mobile and "Marcos".
+            "uber", "lyft", "taxi", "transit", "metrocard", "wmata", "amtrak", "greyhound",
+            "parking", "parkmobile", "spothero", "toll", "e-zpass", "ezpass", "fastrak",
+            "gas station", "fuel", "shell", "chevron", "exxon", "mobil oil", "bp ", "sunoco",
+            "valero", "speedway", "citgo", "arco ampm", "delta air", "united airlines",
+            "american airlines", "southwest air", "jetblue", "alaska air", "spirit air"
         ),
         "health" to listOf(
-            "аптек", "apteka", "pharmacy", "farmacia", "клиник", "clinic", "klinika", "стоматолог",
-            "dentist", "hospital", "больниц", "медси", "invitro", "инвитро", "lab", "здоров", "health"
+            "pharmacy", "cvs", "walgreens", "rite aid", "duane reade", "goodrx", "clinic",
+            "hospital", "urgent care", "minuteclinic", "one medical", "medical", "dental",
+            "dentist", "doctor", "labcorp", "quest diagnostics", "optometr", "kaiser", "health"
         )
     )
 

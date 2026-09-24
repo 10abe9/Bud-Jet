@@ -8,11 +8,25 @@ class MerchantCategorizerTest {
 
     @Test
     fun guessesBuiltInCategories() {
-        assertEquals("transport", MerchantCategorizer.guessDefaultKey("YANDEX*GO"))
-        assertEquals("food", MerchantCategorizer.guessDefaultKey("PYATEROCHKA 1234"))
-        assertEquals("food", MerchantCategorizer.guessDefaultKey("Biedronka"))
-        assertEquals("health", MerchantCategorizer.guessDefaultKey("Аптека Ригла"))
+        assertEquals("transport", MerchantCategorizer.guessDefaultKey("UBER *TRIP"))
+        assertEquals("transport", MerchantCategorizer.guessDefaultKey("SHELL OIL 57442"))
+        assertEquals("food", MerchantCategorizer.guessDefaultKey("WHOLE FOODS MKT #10234"))
+        assertEquals("food", MerchantCategorizer.guessDefaultKey("STARBUCKS STORE 0412"))
+        assertEquals("health", MerchantCategorizer.guessDefaultKey("CVS/PHARMACY #1234"))
         assertNull(MerchantCategorizer.guessDefaultKey("Netflix.com"))
+    }
+
+    @Test
+    fun avoidsCommonFalsePositives() {
+        assertNull(MerchantCategorizer.guessDefaultKey("T-MOBILE AUTOPAY"))
+        assertNull(MerchantCategorizer.guessDefaultKey("METROPCS"))
+        assertNull(MerchantCategorizer.guessDefaultKey("MARCOS"))
+    }
+
+    @Test
+    fun uberEatsIsFoodNotTransport() {
+        assertEquals("food", MerchantCategorizer.guessDefaultKey("UBER *EATS"))
+        assertEquals("food", MerchantCategorizer.guessDefaultKey("Uber Eats"))
     }
 
     @Test
