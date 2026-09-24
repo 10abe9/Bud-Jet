@@ -146,7 +146,7 @@ Bud-Jet does not send your transactions, notes, goals, or categories to a remote
 
     <!-- Empty-state onboarding (first value: first transactions / expenses) -->
     <string name="onboarding_dashboard_title">Start in about a minute</string>
-    <string name="onboarding_dashboard_body">Add an expense or income, or set your starting balance.</string>
+    <string name="onboarding_dashboard_body">Tap \"Add expense\" or \"Add income\" above to record your first transaction. You can also set your starting balance.</string>
     <string name="onboarding_dashboard_primary_cta">Add expense</string>
     <string name="onboarding_dashboard_balance_cta">Set starting balance</string>
     <string name="onboarding_operations_title">No operations yet</string>

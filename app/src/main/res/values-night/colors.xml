@@ -9,6 +9,10 @@
     <!-- AI accent -->
     <color name="ai_accent">#A78BFA</color>
     <color name="premium_button">#7C3AED</color>
+    <color name="expense_container">#3B1219</color>
+    <color name="on_expense_container">#F87171</color>
+    <color name="income_container">#0F2A1A</color>
+    <color name="on_income_container">#4ADE80</color>
 
     <!-- Finance colors -->
     <color name="finance_income">#22C55E</color>

@@ -458,15 +458,6 @@ class DashboardFragment : Fragment() {
             showInitialBalanceDialog()
         }
 
-        binding.btnOnboardingAddExpense.setOnClickListener {
-            vibrator.tap()
-            AddTransactionBottomSheet.newInstance(isIncomeDefault = false)
-                .show(parentFragmentManager, "onboarding_dashboard_add_expense")
-        }
-        binding.btnOnboardingSetBalance.setOnClickListener {
-            vibrator.tap()
-            showInitialBalanceDialog()
-        }
     }
 
     private fun showAddCategoryDialog() {

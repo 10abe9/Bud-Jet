@@ -9,6 +9,9 @@
         <item name="colorSecondary">@color/ai_accent</item>
         <item name="colorOnSecondary">@color/white</item>
 
+        <!-- Sentence-case buttons (no ALL CAPS / letter spacing), for every button style. -->
+        <item name="textAppearanceButton">@style/TextAppearance.BudJet.Button</item>
+
         <item name="android:colorBackground">@color/background</item>
 
     </style>

@@ -102,7 +102,7 @@ Bud-Jet no envía tus transacciones, notas, metas ni categorías a ningún servi
     <string name="dashboard_add_category">+ Agregar categoría</string>
     <string name="dashboard_set_initial_balance">Ajustar saldo inicial</string>
     <string name="onboarding_dashboard_title">Empieza en un minuto</string>
-    <string name="onboarding_dashboard_body">Añade un gasto o ingreso, o define tu saldo inicial.</string>
+    <string name="onboarding_dashboard_body">Toca «Agregar gasto» o «Agregar ingreso» arriba para registrar tu primera transacción. También puedes indicar tu saldo inicial.</string>
     <string name="onboarding_dashboard_primary_cta">Añadir gasto</string>
     <string name="onboarding_dashboard_balance_cta">Definir saldo inicial</string>
     <string name="onboarding_operations_title">Aún no hay operaciones</string>

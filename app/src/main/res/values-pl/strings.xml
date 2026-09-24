@@ -102,7 +102,7 @@ Bud-Jet nie wysyła Twoich transakcji, notatek, celów ani kategorii na zdalny s
     <string name="dashboard_add_category">+ Dodaj kategorię</string>
     <string name="dashboard_set_initial_balance">Skoryguj saldo początkowe</string>
     <string name="onboarding_dashboard_title">Zacznij w minutę</string>
-    <string name="onboarding_dashboard_body">Dodaj wydatek lub przychód albo ustaw saldo początkowe.</string>
+    <string name="onboarding_dashboard_body">Dotknij „Dodaj wydatek” lub „Dodaj dochód” powyżej, aby zapisać pierwszą transakcję. Możesz też ustawić saldo początkowe.</string>
     <string name="onboarding_dashboard_primary_cta">Dodaj wydatek</string>
     <string name="onboarding_dashboard_balance_cta">Ustaw saldo początkowe</string>
     <string name="onboarding_operations_title">Brak operacji</string>

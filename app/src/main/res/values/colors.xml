@@ -10,6 +10,11 @@
     <color name="ai_accent">#8B5CF6</color>
     <!-- Filled Premium buttons: white text stays readable in both themes. -->
     <color name="premium_button">#7C3AED</color>
+    <!-- Tonal "add" buttons: soft container + readable colored text. -->
+    <color name="expense_container">#FEE2E2</color>
+    <color name="on_expense_container">#B91C1C</color>
+    <color name="income_container">#DCFCE7</color>
+    <color name="on_income_container">#15803D</color>
 
     <!-- Finance colors -->
     <!-- Darker shades keep text readable on light backgrounds (contrast). -->

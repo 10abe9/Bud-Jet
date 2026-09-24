@@ -102,7 +102,7 @@ Bud-Jet не отправляет ваши операции, заметки, ц�
     <string name="dashboard_add_category">+ Добавить категорию</string>
     <string name="dashboard_set_initial_balance">Скорректировать стартовый баланс</string>
     <string name="onboarding_dashboard_title">Начните за минуту</string>
-    <string name="onboarding_dashboard_body">Добавьте расход или доход либо задайте стартовый баланс.</string>
+    <string name="onboarding_dashboard_body">Нажмите «Добавить расход» или «Добавить доход» выше, чтобы записать первую операцию. Стартовый баланс можно указать в карточке баланса.</string>
     <string name="onboarding_dashboard_primary_cta">Добавить расход</string>
     <string name="onboarding_dashboard_balance_cta">Задать стартовый баланс</string>
     <string name="onboarding_operations_title">Пока нет операций</string>
