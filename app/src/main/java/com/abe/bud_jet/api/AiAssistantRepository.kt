@@ -12,17 +12,21 @@ import java.util.Date
 import java.util.Locale
 
 /**
- * Entry point for AI features. Checks the user's consent and Premium before anything leaves
- * the device, builds the [BudgetSummary] and calls the backend.
+ * Entry point for AI features. Checks the user's consent and the Pro plan before anything
+ * leaves the device, builds the [BudgetSummary] and calls the backend.
  */
 class AiAssistantRepository(private val context: Context) {
 
     sealed class Outcome<out T> {
         data class Success<T>(val value: T) : Outcome<T>()
-        /** The user did not turn the assistant on, or Premium is not active. */
+        /** The user did not turn the assistant on, or the Pro plan is not active. */
         object Disabled : Outcome<Nothing>()
         /** No server address in gradle.properties yet. */
         object NotConfigured : Outcome<Nothing>()
+        /** The server did not confirm a Pro subscription (HTTP 402/403). */
+        object NotEntitled : Outcome<Nothing>()
+        /** Daily request limit reached (HTTP 429). */
+        object RateLimited : Outcome<Nothing>()
         data class Failed(val reason: String) : Outcome<Nothing>()
     }
 
@@ -34,9 +38,10 @@ class AiAssistantRepository(private val context: Context) {
         return BudJetApi.aiInsights(caller(), buildSummary()).toOutcome()
     }
 
-    suspend fun ask(question: String): Outcome<String> {
+    /** [question] must already pass [AiChatPolicy.normalize]; [history] is trimmed here. */
+    suspend fun ask(question: String, history: List<ChatTurn>): Outcome<String> {
         if (!preferences.isAiAssistantActive()) return Outcome.Disabled
-        return BudJetApi.aiChat(caller(), buildSummary(), question).toOutcome()
+        return BudJetApi.aiChat(caller(), buildSummary(), question, AiChatPolicy.trimHistory(history)).toOutcome()
     }
 
     private fun caller() = BudJetApi.Caller(
@@ -91,7 +96,11 @@ class AiAssistantRepository(private val context: Context) {
     private fun <T> BudJetApi.ApiResult<T>.toOutcome(): Outcome<T> = when (this) {
         is BudJetApi.ApiResult.Success -> Outcome.Success(value)
         BudJetApi.ApiResult.NotConfigured -> Outcome.NotConfigured
-        is BudJetApi.ApiResult.HttpError -> Outcome.Failed("HTTP $code: $message")
+        is BudJetApi.ApiResult.HttpError -> when (code) {
+            402, 403 -> Outcome.NotEntitled
+            429 -> Outcome.RateLimited
+            else -> Outcome.Failed("HTTP $code: $message")
+        }
         is BudJetApi.ApiResult.NetworkError -> Outcome.Failed(cause.message ?: cause.javaClass.simpleName)
     }
 }

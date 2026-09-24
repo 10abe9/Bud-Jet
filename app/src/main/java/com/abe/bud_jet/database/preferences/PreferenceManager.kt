@@ -4,6 +4,7 @@ package com.abe.bud_jet.database.preferences
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.LocaleList
+import com.abe.bud_jet.premium.Tier
 import com.abe.bud_jet.utils.ThemeManager
 import androidx.core.content.edit
 import kotlinx.coroutines.channels.awaitClose
@@ -38,7 +39,8 @@ class PreferenceManager private constructor(context: Context) {
         private const val KEY_APP_THEME = "app_theme"
         private const val KEY_INSTALL_ID = "install_id"
         private const val KEY_PURCHASE_TOKEN = "purchase_token"
-        private const val KEY_DEBUG_PREMIUM = "debug_premium"
+        private const val KEY_DEBUG_TIER = "debug_tier"
+        private const val KEY_PLAN_TIER = "plan_tier"
         private const val KEY_CAPTURE_LISTENER_ALIVE_AT = "capture_listener_alive_at"
         private const val KEY_CAPTURE_LAST_CAPTURED_AT = "capture_last_captured_at"
         private const val KEY_CAPTURE_PROMO_DISMISSED = "capture_promo_dismissed"
@@ -194,31 +196,43 @@ class PreferenceManager private constructor(context: Context) {
         preferences.edit { putString(KEY_APP_THEME, mode) }
     }
 
-    /** User's choice; the assistant is active only while Premium is (see PremiumManager). */
+    /** User's choice; the assistant is active only on the Pro plan (see PremiumManager). */
     fun isAiAssistantEnabled(): Boolean = preferences.getBoolean(KEY_AI_ASSISTANT_ENABLED, false)
 
     fun setAiAssistantEnabled(enabled: Boolean) {
         preferences.edit { putBoolean(KEY_AI_ASSISTANT_ENABLED, enabled) }
     }
 
-    /** The assistant may send data only when the user enabled it and Premium is active. */
-    fun isAiAssistantActive(): Boolean = isAiAssistantEnabled() && isPremiumEnabled()
+    /** The assistant may send data only when the user enabled it and the Pro plan is active. */
+    fun isAiAssistantActive(): Boolean = isAiAssistantEnabled() && getPlanTier().hasAiAssistant
 
-    /** Test-only Premium switch, honored only in debuggable builds. */
-    fun isDebugPremium(): Boolean = preferences.getBoolean(KEY_DEBUG_PREMIUM, false)
+    /** Test-only plan override, honored only in debuggable builds. Null = use the real purchase. */
+    fun getDebugTier(): Tier? = Tier.parse(preferences.getString(KEY_DEBUG_TIER, null))
 
-    fun setDebugPremium(enabled: Boolean) {
-        preferences.edit { putBoolean(KEY_DEBUG_PREMIUM, enabled) }
+    fun setDebugTier(tier: Tier?) {
+        preferences.edit {
+            if (tier == null) remove(KEY_DEBUG_TIER) else putString(KEY_DEBUG_TIER, tier.name)
+        }
     }
 
-    /** Cached Premium entitlement, kept in sync with Google Play by PremiumManager. */
-    fun isPremiumEnabled(): Boolean {
-        return preferences.getBoolean(KEY_IS_PREMIUM, false)
+    /**
+     * Cached plan, kept in sync with Google Play by PremiumManager, so the notification service
+     * and offline starts know it. Before there were two plans only "Premium" (now Pro) existed.
+     */
+    fun getPlanTier(): Tier {
+        Tier.parse(preferences.getString(KEY_PLAN_TIER, null))?.let { return it }
+        return if (preferences.getBoolean(KEY_IS_PREMIUM, false)) Tier.PRO else Tier.FREE
     }
 
-    fun setPremiumEnabled(enabled: Boolean) {
-        preferences.edit { putBoolean(KEY_IS_PREMIUM, enabled) }
+    fun setPlanTier(tier: Tier) {
+        preferences.edit {
+            putString(KEY_PLAN_TIER, tier.name)
+            putBoolean(KEY_IS_PREMIUM, tier.hasPaidFeatures)
+        }
     }
+
+    /** Any paid plan: automatic tracking and export. */
+    fun isPremiumEnabled(): Boolean = getPlanTier().hasPaidFeatures
 
     fun getPremiumPromoDismissCount(): Int {
         return preferences.getInt(KEY_PREMIUM_PROMO_DISMISS_COUNT, 0)

@@ -36,7 +36,8 @@ class MainActivity : AppCompatActivity() {
         R.id.hello2Fragment,
         R.id.hello3Fragment,
         R.id.navigation_profile,
-        R.id.navigation_auto_capture
+        R.id.navigation_auto_capture,
+        R.id.navigation_ai_assistant
     )
 
     private lateinit var binding: ActivityMainBinding

@@ -22,19 +22,33 @@ Bud-Jet — приложение для учёта личных расходов
 
 ## Передача данных
 
-Bud-Jet не продаёт и не передаёт ваши данные третьим лицам. Приложение обращается в интернет только для получения курса валют при конвертации (передаются только коды валют).
+Bud-Jet не продаёт ваши данные и не передаёт их для рекламы. Без ИИ-помощника приложение обращается в интернет только:
+
+- за курсом валют при конвертации — передаются только коды валют;
+- в Google Play — для оформления и проверки подписки.
+
+Если ИИ-помощник выключен (так по умолчанию), ваши операции, заметки, цели и категории **никуда не отправляются**.
 
 Резервные копии и экспорт создаются только по вашему действию и сохраняются туда, куда вы укажете.
 
 Если на телефоне включено системное резервное копирование Android, Android может сохранять данные приложения (операции, категории, цели) в вашем аккаунте Google — это делает система, а не Bud-Jet, и управляется в настройках телефона. Журнал автоучёта в резервную копию не попадает.
 
-## ИИ-помощник (Premium)
+## ИИ-помощник (тариф Pro)
 
-ИИ-помощник выключен по умолчанию и доступен только в Premium. Он включается только после вашего явного согласия. Когда он будет запущен, для советов на сервер будет отправляться сводка трат: суммы по категориям и месяцам, лимиты и цели. Заметки, тексты уведомлений, данные банка и карт не отправляются. После выключения помощника данные больше не отправляются. Точное описание обработки на сервере будет добавлено сюда до запуска функции.
+ИИ-помощник выключен по умолчанию и доступен только в тарифе Pro. Он включается только после вашего явного согласия в приложении.
+
+- **Когда отправляются данные.** Только когда вы сами запрашиваете советы или задаёте вопрос на экране «ИИ-помощник».
+- **Что отправляется.** Сводка за последние три месяца: суммы доходов и расходов по месяцам, суммы по категориям (названия категорий), лимиты и траты по ним в текущем месяце, цель накоплений (сумма, накоплено, срок), валюта. Для вопросов — текст вашего вопроса и несколько предыдущих сообщений этого разговора.
+- **Что не отправляется никогда.** Отдельные операции, заметки, тексты уведомлений, названия магазинов, данные банка и карт.
+- **Служебные данные запроса.** Случайный идентификатор установки (не связан с вашей личностью; нужен для ограничения числа запросов), язык и версия приложения, токен покупки Google Play (нужен, чтобы сервер проверил подписку Pro).
+- **Кто обрабатывает.** Сервер Bud-Jet передаёт сводку языковой модели (сервис Ollama) только для формирования ответа. Сводки и вопросы не хранятся после ответа и не используются для обучения моделей. _(Проверьте условия выбранного провайдера модели перед публикацией.)_
+- **Как отключить.** Выключите «ИИ-помощник» в профиле — после этого ничего не отправляется. Разговор с помощником в приложении не сохраняется и пропадает при закрытии экрана.
+
+Ответы ИИ могут быть неточными и не являются финансовой консультацией.
 
 ## Подписка
 
-Оплата Premium обрабатывается Google Play. Bud-Jet не получает данные вашей карты; приложение получает от Google Play только статус подписки.
+Есть два тарифа: «Базовый» (автоучёт трат и экспорт) и Pro (всё из «Базового» и ИИ-помощник). Оплату обрабатывает Google Play. Bud-Jet не получает данные вашей карты; приложение получает от Google Play только статус подписки и токен покупки. Чтобы подтвердить подписку, приложение может отправить токен покупки на сервер Bud-Jet, который проверяет его в Google Play.
 
 ## Дети
 
@@ -54,4 +68,8 @@ Bud-Jet is a personal expense tracker. All finance records (transactions, catego
 
 **Automatic tracking (optional).** If you enable it and grant notification access in Android settings, Bud-Jet reads the title and text of notifications. Amounts, merchant and date are extracted only from apps you turn on in the "Apps" list. Notifications from other apps are checked in memory only for an amount with a currency, to suggest adding the app; only the app name and a count are stored, never the text. Notifications that could not be recognized confidently are stored on the device until you confirm or skip them, for at most 30 days. Notification content and data derived from it are **never sent** to the developer or third parties. You can turn access off at any time in Profile → Automatic tracking or in Android settings.
 
-Bud-Jet does not sell or share your data. The only network request is fetching currency exchange rates (currency codes only). Backups and exports are created only on your request, in the location you choose. Any future feature that needs to send data (such as AI insights in Premium) will require your explicit consent and this policy will be updated before it launches.
+Bud-Jet does not sell your data or share it for advertising. **Without the AI assistant** (it is off by default), your transactions, notes, goals and categories are never sent anywhere; the app goes online only to fetch currency exchange rates (currency codes only) and to talk to Google Play about your subscription. Backups and exports are created only on your request, in the location you choose.
+
+**AI assistant (Pro plan, optional).** Off by default; it works only after you turn it on and agree. Data is sent only when you ask for tips or ask a question on the AI assistant screen: a summary of the last three months (income and expense totals per month, totals per category with category names, limits and this month's spending on them, your savings goal and currency), and for questions, the question text and a few previous messages of that conversation. Never sent: individual transactions, notes, notification texts, store names, bank or card details. Each request also carries a random install ID (not linked to you; used for rate limiting), app language and version, and your Google Play purchase token (to verify the Pro subscription). The Bud-Jet server passes the summary to a language model (Ollama) only to produce the answer; summaries and questions are not stored after answering and are not used for model training. Turn the assistant off in Profile and nothing is sent again. The conversation is not saved on the device. AI answers can be wrong and are not financial advice.
+
+**Subscriptions.** Two plans: Basic (automatic tracking, export) and Pro (Basic plus the AI assistant). Payments are processed by Google Play; Bud-Jet never receives your card details, only the subscription status and a purchase token, which may be sent to the Bud-Jet server to verify the subscription with Google Play.

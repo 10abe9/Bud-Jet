@@ -186,6 +186,7 @@
             <!-- AI assistant Row (Premium, off by default) -->
             <LinearLayout
                 android:id="@+id/rowAiAssistant"
+                android:background="?attr/selectableItemBackground"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="48dp"

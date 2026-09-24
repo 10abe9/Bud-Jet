@@ -61,16 +61,37 @@
     </com.google.android.material.card.MaterialCardView>
 
     <TextView
-        android:id="@+id/tvAi"
+        android:id="@+id/tvChoosePlan"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/hello3_ai"
-        android:textColor="@color/text_secondary"
-        android:textSize="14sp"
+        android:layout_marginTop="20dp"
+        android:text="@string/plan_choose_title"
+        android:textColor="@color/text_primary"
+        android:textSize="15sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cardExample" />
+
+    <include
+        android:id="@+id/planBasic"
+        layout="@layout/item_plan_option"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvChoosePlan" />
+
+    <include
+        android:id="@+id/planPro"
+        layout="@layout/item_plan_option"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/planBasic" />
 
     <TextView
         android:id="@+id/tvPrivacy"
@@ -82,7 +103,7 @@
         android:textSize="13sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvAi" />
+        app:layout_constraintTop_toBottomOf="@id/planPro" />
 
     <!-- Price and trial terms, visible before the user taps "Try for free" -->
     <TextView

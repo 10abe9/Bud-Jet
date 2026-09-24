@@ -38,7 +38,7 @@
     <string name="profile_reset_dialog_message">Это навсегда удалит ваши транзакции, категории и цели, сохраненные на этом устройстве.</string>
     <string name="profile_reset_success_toast">Все данные сброшены.</string>
     <string name="profile_premium_title">Получить Premium</string>
-    <string name="profile_premium_subtitle">Автоучёт трат • ИИ-помощник • Первый месяц бесплатно</string>
+    <string name="profile_premium_subtitle">Автоучёт трат • ИИ-помощник в Pro • Первый месяц бесплатно</string>
     <string name="profile_notifications_on">Уведомления включены</string>
     <string name="profile_notifications_off">Уведомления выключены</string>
     <string name="profile_export_coming_soon">Экспорт скоро появится</string>
@@ -68,13 +68,7 @@
     <string name="profile_restore_confirm_title">Восстановить резервную копию?</string>
     <string name="profile_restore_confirm_message">Это заменит текущие локальные транзакции, категории и цели.</string>
     <string name="profile_privacy_title">Конфиденциальность и данные</string>
-    <string name="profile_privacy_message">Bud-Jet хранит ваши финансовые записи только на этом устройстве.
-
-Если вы включите автоучёт, Bud-Jet будет читать уведомления об оплатах от выбранных вами приложений. Они обрабатываются только на этом устройстве, их текст никуда не отправляется.
-
-При экспорте или резервном копировании файлы создаются только там, где вы укажете.
-
-Bud-Jet не отправляет ваши операции, заметки, цели и категории на удалённый сервер.</string>
+    <string name="profile_privacy_message">Bud-Jet хранит ваши финансовые записи только на этом устройстве.\n\nЕсли вы включите автоучёт, Bud-Jet будет читать уведомления об оплатах от выбранных вами приложений. Они обрабатываются только на этом устройстве, их текст никуда не отправляется.\n\nПри экспорте или резервном копировании файлы создаются только там, где вы укажете.\n\nBud-Jet не отправляет ваши операции, заметки, цели и категории на удалённый сервер.\n\nЕдинственное исключение — ИИ-помощник (тариф Pro). По умолчанию он выключен. Только после того как вы включите его и дадите согласие, при запросе совета или вопросе приложение отправляет в наш ИИ-сервис сводку: суммы по категориям и месяцам, лимиты и цель накоплений, а также ваш вопрос. Никогда не отправляются: заметки, тексты уведомлений, названия магазинов, данные банка и карт. Сводка нужна только для ответа и не хранится. Выключите помощника в профиле — и больше ничего не отправляется.\n\nОплату обрабатывает Google Play: данные вашей карты Bud-Jet не видит.</string>
 
     <!-- Notifications -->
     <string name="notifications_reminder_channel_name">Напоминание о расходах</string>
@@ -309,24 +303,21 @@ Bud-Jet не отправляет ваши операции, заметки, ц�
     <string name="premium_offer_title">Вы можете экономить около %1$s в месяц</string>
     <string name="premium_offer_body">Вы тратите около %1$s в месяц. Если тратить всего на 5%% меньше, освободится %2$s — это %3$s. Совершим сделку?</string>
     <plurals name="premium_payback">
-        <item quantity="one">в %1$d раз больше цены Premium (%2$s/мес)</item>
-        <item quantity="few">в %1$d раза больше цены Premium (%2$s/мес)</item>
-        <item quantity="many">в %1$d раз больше цены Premium (%2$s/мес)</item>
-        <item quantity="other">в %1$d раза больше цены Premium (%2$s/мес)</item>
+        <item quantity="one">в %1$d раз больше цены тарифа «Базовый» (%2$s/мес)</item>
+        <item quantity="few">в %1$d раза больше цены тарифа «Базовый» (%2$s/мес)</item>
+        <item quantity="many">в %1$d раз больше цены тарифа «Базовый» (%2$s/мес)</item>
+        <item quantity="other">в %1$d раза больше цены тарифа «Базовый» (%2$s/мес)</item>
     </plurals>
     <string name="premium_offer_cta">Совершим сделку?</string>
     <string name="premium_offer_not_now">Не сейчас</string>
     <string name="premium_sheet_title">Сделка, которая окупается</string>
-    <string name="premium_sheet_generic_body">Premium сам записывает траты из уведомлений банка, а по желанию подключает ИИ-помощника, который с вашего согласия анализирует траты.</string>
+    <string name="premium_sheet_generic_body">Bud-Jet сам записывает траты и поступления из уведомлений банка. В тарифе Pro есть ещё ИИ-помощник: он даёт советы и отвечает на вопросы о бюджете — только с вашего согласия.</string>
     <string name="premium_sheet_spend_label">Ваши расходы</string>
     <string name="premium_sheet_savings_label" formatted="false">Если тратить на 5% меньше</string>
-    <string name="premium_sheet_price_label">Premium</string>
+    <string name="premium_sheet_price_label">Тариф «Базовый»</string>
     <string name="premium_sheet_benefit_label">Ваша выгода</string>
     <string name="premium_per_month">%1$s/мес</string>
     <string name="premium_sheet_disclaimer">Оценка по вашим расходам за последние 30 дней. Реальная экономия зависит от ваших привычек.</string>
-    <string name="premium_sheet_features_title">Что входит</string>
-    <string name="premium_sheet_buy">По рукам — %1$s/мес</string>
-    <string name="premium_sheet_buy_generic">Оформить Premium</string>
 
     <!-- Automatic capture of payment notifications -->
     <string name="capture_service_label">Bud-Jet: уведомления об оплатах</string>
@@ -361,7 +352,7 @@ Bud-Jet не отправляет ваши операции, заметки, ц�
     <string name="capture_rationale_open_settings">Открыть настройки</string>
     <string name="capture_confirm_title">Подтвердите трату</string>
     <string name="hello3_title">Не вводите траты вручную</string>
-    <string name="hello3_body">С Bud-Jet Premium покупки сами записываются из уведомлений банка: сумма, магазин и дата.</string>
+    <string name="hello3_body">Bud-Jet может сам записывать покупки и поступления из уведомлений банка: сумма, магазин и дата.</string>
     <string name="hello3_example">🔔 «Покупка 450 ₽ PYATEROCHKA»\n→ Еда · −450 ₽, добавлено автоматически</string>
     <string name="hello3_privacy">Уведомления читаются только на вашем устройстве и никуда не отправляются. Включить это можно и позже в профиле.</string>
     <string name="hello3_enable">Попробовать бесплатно</string>
@@ -408,31 +399,25 @@ Bud-Jet не отправляет ваши операции, заметки, ц�
 
     <!-- Premium subscription and AI assistant -->
     <string name="ai_assistant_title">ИИ-помощник</string>
-    <string name="ai_assistant_subtitle_premium">Доступен в Premium</string>
-    <string name="ai_assistant_subtitle_on">Включён · анализирует сводку трат</string>
+    <string name="ai_assistant_subtitle_premium">Доступен в тарифе Pro</string>
+    <string name="ai_assistant_subtitle_on">Включён · нажмите, чтобы открыть</string>
     <string name="ai_assistant_subtitle_off">Выключен · данные остаются на устройстве</string>
-    <string name="ai_assistant_premium_only">ИИ-помощник доступен в Premium</string>
+    <string name="ai_assistant_premium_only">ИИ-помощник входит в тариф Pro</string>
     <string name="ai_assistant_consent_title">Включить ИИ-помощника?</string>
-    <string name="ai_assistant_consent_message">Чтобы давать советы, помощник отправляет в наш ИИ-сервис сводку ваших трат: суммы по категориям и месяцам, лимиты и цели.\n\nНе отправляются: заметки, тексты уведомлений, данные банка и карт.\n\nВыключить можно в любой момент — тогда ничего не отправляется.</string>
+    <string name="ai_assistant_consent_message">Только когда вы просите совет или задаёте вопрос, помощник отправляет в наш ИИ-сервис сводку трат (суммы по категориям и месяцам, лимиты и цели) и ваш вопрос.\n\nНикогда не отправляются: отдельные операции, заметки, тексты уведомлений, названия магазинов, данные банка и карт.\n\nВыключить можно в любой момент — тогда ничего не отправляется.</string>
     <string name="ai_assistant_consent_accept">Включить</string>
     <string name="ai_assistant_disabled_toast">Хорошо, данные остаются только на устройстве — мы не будем отправлять их для ИИ-анализа.</string>
-    <string name="capture_premium_required">Автоучёт трат входит в Premium. Первый месяц — бесплатно.</string>
+    <string name="capture_premium_required">Автоучёт трат есть в обоих тарифах. Первый месяц — бесплатно.</string>
     <string name="capture_get_premium">Попробовать Premium бесплатно</string>
-    <string name="hello3_ai">По желанию можно включить ИИ-помощника: с вашего согласия он проанализирует траты и подскажет, как разумнее распоряжаться деньгами.</string>
     <string name="hello3_terms_trial">Первый месяц — бесплатно, затем %1$s в месяц. Отменить можно в любой момент в Google Play.</string>
     <string name="hello3_terms_paid">%1$s в месяц. Отменить можно в любой момент в Google Play.</string>
     <string name="hello3_terms_generic">Первый месяц — бесплатно. Цена будет показана в Google Play до оплаты.</string>
-    <string name="premium_feature_auto_capture">Траты записываются сами из уведомлений банка</string>
-    <string name="premium_feature_ai_assistant">ИИ-помощник по желанию: с вашего согласия анализирует траты и даёт советы (скоро)</string>
-    <string name="premium_feature_export">Экспорт операций в CSV</string>
     <string name="premium_trial_terms">Бесплатно до %1$s, затем %2$s в месяц, если не отменить подписку до этой даты. Отменить можно в любой момент в Google Play.</string>
     <string name="premium_terms">%1$s в месяц, продлевается автоматически. Отменить можно в любой момент в Google Play.</string>
     <string name="premium_try_free">Попробовать бесплатно — %1$d дней</string>
     <string name="premium_unavailable">Подписка сейчас недоступна: нет связи с Google Play или она не продаётся в вашем регионе.</string>
-    <string name="premium_active_terms">Premium активен. Управлять подпиской или отменить её можно в Google Play.</string>
+    <string name="premium_active_terms">Этот тариф активен. Управлять подпиской или отменить её можно в Google Play.</string>
     <string name="premium_manage_subscription">Управлять подпиской</string>
-    <string name="premium_debug_on">Тестовый Premium включён (отладочная сборка)</string>
-    <string name="premium_debug_off">Тестовый Premium выключен</string>
     <string name="profile_premium_active">Premium активен</string>
     <string name="profile_premium_active_subtitle">Автоучёт трат • ИИ-помощник • Управление подпиской</string>
 
@@ -444,4 +429,47 @@ Bud-Jet не отправляет ваши операции, заметки, ц�
     <string name="theme_picker_title">Тема оформления</string>
     <string name="capture_rationale_note">Всё обрабатывается на телефоне и никуда не отправляется. Android откроет настройки — включите там Bud-Jet.</string>
     <string name="capture_promo_try">Попробовать</string>
+
+    <!-- Plans (Basic / Pro) and the AI assistant screen -->
+    <string name="plan_free_name">Бесплатный</string>
+    <string name="plan_basic_name">Базовый</string>
+    <string name="plan_pro_name">Pro</string>
+    <string name="plan_basic_features">• Траты и поступления записываются сами из уведомлений банка\n• Регулярные платежи\n• Экспорт в CSV</string>
+    <string name="plan_pro_features">• Всё из «Базового»\n• ИИ-помощник: советы по тратам и лимитам, ответы на ваши вопросы</string>
+    <string name="plan_badge_current">ВАШ ТАРИФ</string>
+    <string name="plan_badge_ai">ИИ</string>
+    <string name="plan_choose_title">Выберите тариф</string>
+    <string name="plan_upgrade_terms">Сегодня вы доплатите только разницу за оставшиеся дни, затем %1$s в месяц. Отменить можно в любой момент в Google Play.</string>
+    <string name="plan_downgrade_terms">Неиспользованные дни Pro зачтутся в «Базовый», затем %1$s в месяц. Отменить можно в любой момент в Google Play.</string>
+    <string name="plan_buy_generic">Оформить «%1$s»</string>
+    <string name="plan_buy">«%1$s» — %2$s/мес</string>
+    <string name="plan_switch_to">Перейти на «%1$s» — %2$s/мес</string>
+    <string name="premium_debug_tier">Тестовый тариф: %1$s (отладочная сборка)</string>
+    <string name="profile_plan_active">Тариф «%1$s» активен</string>
+    <string name="profile_basic_active_subtitle">Автоучёт трат • ИИ-помощник — в тарифе Pro</string>
+    <string name="ai_tips_title">Советы по бюджету</string>
+    <string name="ai_tips_refresh">Обновить</string>
+    <string name="ai_tips_get">Получить советы</string>
+    <string name="ai_tips_empty">Помощник посмотрит на последние три месяца и подскажет, что изменить: лимиты, категории, цель накоплений.</string>
+    <string name="ai_tips_none">Пока советовать нечего — бюджет выглядит сбалансированным.</string>
+    <string name="ai_chat_title">Спросить помощника</string>
+    <string name="ai_chat_hint">Только вопросы о вашем бюджете: траты, лимиты, цели. Выберите вопрос ниже или напишите свой.</string>
+    <string name="ai_chat_thinking">Помощник думает…</string>
+    <string name="ai_chat_input_hint">Ваш вопрос</string>
+    <string name="ai_chat_send">Отправить</string>
+    <string name="ai_chat_too_long">Не больше %1$d символов</string>
+    <string name="ai_disclaimer">Советы ИИ могут быть неточными и не являются финансовой консультацией. Помощник видит только сводку трат: суммы по категориям и месяцам, лимиты и цели.</string>
+    <string name="ai_suggest_spend_less">Как тратить меньше?</string>
+    <string name="ai_suggest_growth">Какая категория растёт быстрее всего?</string>
+    <string name="ai_suggest_limits">Предложи лимиты на следующий месяц</string>
+    <string name="ai_suggest_goal">Успею ли я накопить на цель?</string>
+    <string name="ai_problem_disabled">ИИ-помощник выключен. Включите его в профиле.</string>
+    <string name="ai_problem_not_configured">Сервис ИИ ещё не подключён. Он заработает в одном из ближайших обновлений.</string>
+    <string name="ai_problem_not_entitled">Сервер не смог подтвердить подписку Pro. Откройте Google Play и проверьте, что она активна.</string>
+    <string name="ai_problem_rate_limited">На сегодня лимит вопросов исчерпан. Помощник снова ответит завтра.</string>
+    <string name="ai_problem_failed">Не удалось связаться с помощником. Проверьте интернет и попробуйте ещё раз.</string>
+    <string name="ai_assistant_coming_soon">ИИ-помощник: скоро</string>
+    <!-- Used while the Pro plan (AI) is not on sale yet -->
+    <string name="profile_premium_subtitle_basic">Автоучёт трат • Экспорт CSV • Первый месяц бесплатно</string>
+    <string name="premium_sheet_generic_body_basic">Bud-Jet сам записывает траты и поступления из уведомлений банка — вводить их вручную не нужно.</string>
 </resources>

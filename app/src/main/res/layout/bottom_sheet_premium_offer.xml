@@ -128,22 +128,24 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="@string/premium_sheet_features_title"
+                android:text="@string/plan_choose_title"
                 android:textColor="@color/text_primary"
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
-            <TextView
-                style="@style/BudJet.PremiumFeature"
-                android:text="@string/premium_feature_auto_capture" />
+            <include
+                android:id="@+id/planBasic"
+                layout="@layout/item_plan_option"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp" />
 
-            <TextView
-                style="@style/BudJet.PremiumFeature"
-                android:text="@string/premium_feature_ai_assistant" />
-
-            <TextView
-                style="@style/BudJet.PremiumFeature"
-                android:text="@string/premium_feature_export" />
+            <include
+                android:id="@+id/planPro"
+                layout="@layout/item_plan_option"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp" />
 
             <!-- Trial and billing terms, shown before the user agrees -->
             <TextView

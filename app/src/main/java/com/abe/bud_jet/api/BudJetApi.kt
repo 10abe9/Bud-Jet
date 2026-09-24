@@ -76,11 +76,24 @@ object BudJetApi {
         }
     }
 
-    /** POST /v1/ai/chat: a question about the budget, answered with the summary as context. */
-    suspend fun aiChat(caller: Caller, summary: BudgetSummary, message: String): ApiResult<String> {
+    /**
+     * POST /v1/ai/chat: a question about the budget, answered with the summary as context.
+     * [history] is the recent conversation (oldest first), already trimmed by [AiChatPolicy].
+     */
+    suspend fun aiChat(
+        caller: Caller,
+        summary: BudgetSummary,
+        message: String,
+        history: List<ChatTurn>
+    ): ApiResult<String> {
         val body = JSONObject()
             .put("summary", summary.toJson())
             .put("message", message)
+            .put("history", JSONArray().apply {
+                history.forEach { turn ->
+                    put(JSONObject().put("role", if (turn.fromUser) "user" else "assistant").put("text", turn.text))
+                }
+            })
         return request("POST", "/v1/ai/chat", caller, body, readTimeoutMs = AI_TIMEOUT_MS) { json ->
             json.optString("reply")
         }

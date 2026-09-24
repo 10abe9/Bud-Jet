@@ -43,7 +43,7 @@
     <string name="profile_reset_dialog_message">This permanently deletes your transactions, categories, and goals stored on this device.</string>
     <string name="profile_reset_success_toast">All data has been reset.</string>
     <string name="profile_premium_title">Get Premium</string>
-    <string name="profile_premium_subtitle">Automatic tracking • AI assistant • First month free</string>
+    <string name="profile_premium_subtitle">Automatic tracking • AI assistant in Pro • First month free</string>
     <string name="profile_notifications_on">Notifications ON</string>
     <string name="profile_notifications_off">Notifications OFF</string>
     <string name="profile_export_coming_soon">Export coming soon</string>
@@ -73,13 +73,7 @@
     <string name="profile_restore_confirm_title">Restore backup file?</string>
     <string name="profile_restore_confirm_message">This will replace your current local transactions, categories, and goals.</string>
     <string name="profile_privacy_title">Privacy and data</string>
-    <string name="profile_privacy_message">Bud-Jet stores your finance records locally on this device.
-
-If you turn on automatic tracking, Bud-Jet reads payment notifications from the apps you choose. They are processed only on this device; their text is not sent anywhere.
-
-When you export or backup data, files are created only in the location you choose.
-
-Bud-Jet does not send your transactions, notes, goals, or categories to a remote server.</string>
+    <string name="profile_privacy_message">Bud-Jet stores your finance records locally on this device.\n\nIf you turn on automatic tracking, Bud-Jet reads payment notifications from the apps you choose. They are processed only on this device; their text is not sent anywhere.\n\nWhen you export or backup data, files are created only in the location you choose.\n\nBud-Jet does not send your transactions, notes, goals, or categories to a remote server.\n\nThe only exception is the AI assistant (Pro plan). It is off by default. Only after you turn it on and agree, the app sends a summary to our AI service when you ask for tips or a question: totals by category and month, limits and your savings goal, plus your question. Never sent: notes, notification texts, store names, bank or card details. The summary is used only to answer and is not stored. Turn the assistant off in Profile and nothing is sent again.\n\nPayments are handled by Google Play; Bud-Jet never sees your card.</string>
 
     <!-- Notifications -->
     <string name="notifications_reminder_channel_name">Spending reminder</string>
@@ -263,8 +257,7 @@ Bud-Jet does not send your transactions, notes, goals, or categories to a remote
 
     <string name="hello1_balance_placeholder">$4,250.80</string>
     <string name="hello1_month_delta_placeholder">+ $280.40</string>
-    <string name="hello1_track_insights">Track spending, manage income,
-and get smart financial insights.</string>
+    <string name="hello1_track_insights">Track spending, manage income,\nand get smart financial insights.</string>
 
     <string name="goals_saving_amount_placeholder">$320 / $500</string>
 
@@ -327,22 +320,19 @@ and get smart financial insights.</string>
     <string name="premium_offer_title">You could save about %1$s a month</string>
     <string name="premium_offer_body">You spend about %1$s a month. Spending just 5%% less frees %2$s — %3$s. Shall we make a deal?</string>
     <plurals name="premium_payback">
-        <item quantity="one">%1$d× the price of Premium (%2$s/mo)</item>
-        <item quantity="other">%1$d× the price of Premium (%2$s/mo)</item>
+        <item quantity="one">%1$d× the price of the Basic plan (%2$s/mo)</item>
+        <item quantity="other">%1$d× the price of the Basic plan (%2$s/mo)</item>
     </plurals>
     <string name="premium_offer_cta">Make a deal</string>
     <string name="premium_offer_not_now">Not now</string>
     <string name="premium_sheet_title">A deal that pays for itself</string>
-    <string name="premium_sheet_generic_body">Premium records expenses for you from bank notifications, and on request adds an AI assistant that reviews your spending with your consent.</string>
+    <string name="premium_sheet_generic_body">Bud-Jet records expenses and income for you from bank notifications. The Pro plan adds an AI assistant that gives tips and answers questions about your budget — only with your consent.</string>
     <string name="premium_sheet_spend_label">Your spending</string>
     <string name="premium_sheet_savings_label" formatted="false">Spending 5% less</string>
-    <string name="premium_sheet_price_label">Premium</string>
+    <string name="premium_sheet_price_label">Basic plan</string>
     <string name="premium_sheet_benefit_label">Your net benefit</string>
     <string name="premium_per_month">%1$s/mo</string>
     <string name="premium_sheet_disclaimer">Estimate based on your last 30 days. Actual savings depend on your habits.</string>
-    <string name="premium_sheet_features_title">What you get</string>
-    <string name="premium_sheet_buy">Deal — %1$s/mo</string>
-    <string name="premium_sheet_buy_generic">Get Premium</string>
 
     <!-- Automatic capture of payment notifications -->
     <string name="capture_service_label">Bud-Jet: payment notifications</string>
@@ -377,7 +367,7 @@ and get smart financial insights.</string>
     <string name="capture_rationale_open_settings">Open settings</string>
     <string name="capture_confirm_title">Confirm payment</string>
     <string name="hello3_title">Stop typing in every expense</string>
-    <string name="hello3_body">With Bud-Jet Premium, purchases are recorded automatically from your bank notifications: amount, store and date.</string>
+    <string name="hello3_body">Bud-Jet can record purchases and income automatically from your bank notifications: amount, store and date.</string>
     <string name="hello3_example">🔔 “Purchase 45 $ WALMART”\n→ Food · −45 $, added automatically</string>
     <string name="hello3_privacy">Notifications are read only on your device and never sent anywhere. You can turn this on later in Profile.</string>
     <string name="hello3_enable">Try for free</string>
@@ -420,31 +410,25 @@ and get smart financial insights.</string>
 
     <!-- Premium subscription and AI assistant -->
     <string name="ai_assistant_title">AI assistant</string>
-    <string name="ai_assistant_subtitle_premium">Available in Premium</string>
-    <string name="ai_assistant_subtitle_on">On · analyzes a summary of your spending</string>
+    <string name="ai_assistant_subtitle_premium">Available in the Pro plan</string>
+    <string name="ai_assistant_subtitle_on">On · tap to open</string>
     <string name="ai_assistant_subtitle_off">Off · your data stays on this device</string>
-    <string name="ai_assistant_premium_only">The AI assistant is part of Premium</string>
+    <string name="ai_assistant_premium_only">The AI assistant is part of the Pro plan</string>
     <string name="ai_assistant_consent_title">Turn on the AI assistant?</string>
-    <string name="ai_assistant_consent_message">To give advice, the assistant sends a summary of your spending to our AI service: totals by category and month, limits and goals.\n\nNot sent: notes, notification texts, bank or card details.\n\nYou can turn it off at any time — then nothing is sent.</string>
+    <string name="ai_assistant_consent_message">Only when you ask for tips or a question, the assistant sends our AI service a summary of your spending (totals by category and month, limits and goals) and your question.\n\nNever sent: individual transactions, notes, notification texts, store names, bank or card details.\n\nYou can turn it off at any time — then nothing is sent.</string>
     <string name="ai_assistant_consent_accept">Turn on</string>
     <string name="ai_assistant_disabled_toast">OK, your data stays only on this device — we will not send it for AI analysis.</string>
-    <string name="capture_premium_required">Automatic tracking is part of Premium. The first month is free.</string>
+    <string name="capture_premium_required">Automatic tracking is included in both plans. The first month is free.</string>
     <string name="capture_get_premium">Try Premium for free</string>
-    <string name="hello3_ai">Optionally, turn on the AI assistant: with your consent it reviews your spending and suggests how to manage money wisely.</string>
     <string name="hello3_terms_trial">First month free, then %1$s per month. Cancel anytime in Google Play.</string>
     <string name="hello3_terms_paid">%1$s per month. Cancel anytime in Google Play.</string>
     <string name="hello3_terms_generic">First month free. The price is shown in Google Play before you pay.</string>
-    <string name="premium_feature_auto_capture">Expenses recorded automatically from bank notifications</string>
-    <string name="premium_feature_ai_assistant">AI assistant on request: with your consent it reviews spending and gives tips (coming soon)</string>
-    <string name="premium_feature_export">Export transactions to CSV</string>
     <string name="premium_trial_terms">Free until %1$s, then %2$s per month unless you cancel before that date. Cancel anytime in Google Play.</string>
     <string name="premium_terms">%1$s per month, renews automatically. Cancel anytime in Google Play.</string>
     <string name="premium_try_free">Try free for %1$d days</string>
     <string name="premium_unavailable">The subscription is unavailable right now: Google Play could not be reached or does not sell it in your region.</string>
-    <string name="premium_active_terms">Premium is active. Manage or cancel the subscription in Google Play.</string>
+    <string name="premium_active_terms">This plan is active. Manage or cancel it in Google Play.</string>
     <string name="premium_manage_subscription">Manage subscription</string>
-    <string name="premium_debug_on">Test Premium on (debug build)</string>
-    <string name="premium_debug_off">Test Premium off</string>
     <string name="profile_premium_active">Premium is active</string>
     <string name="profile_premium_active_subtitle">Automatic tracking • AI assistant • Manage subscription</string>
 
@@ -456,4 +440,47 @@ and get smart financial insights.</string>
     <string name="theme_picker_title">App theme</string>
     <string name="capture_rationale_note">Everything is processed on your phone and never sent anywhere. Android will open its settings: turn on Bud-Jet there.</string>
     <string name="capture_promo_try">Try it</string>
+
+    <!-- Plans (Basic / Pro) and the AI assistant screen -->
+    <string name="plan_free_name">Free</string>
+    <string name="plan_basic_name">Basic</string>
+    <string name="plan_pro_name">Pro</string>
+    <string name="plan_basic_features">• Expenses and income recorded automatically from bank notifications\n• Recurring payments\n• CSV export</string>
+    <string name="plan_pro_features">• Everything in Basic\n• AI assistant: tips on spending and limits, answers to your questions</string>
+    <string name="plan_badge_current">YOUR PLAN</string>
+    <string name="plan_badge_ai">AI</string>
+    <string name="plan_choose_title">Choose a plan</string>
+    <string name="plan_upgrade_terms">Today you pay only the difference for the rest of this billing period, then %1$s per month. Cancel anytime in Google Play.</string>
+    <string name="plan_downgrade_terms">Unused time on Pro becomes credit for Basic, then %1$s per month. Cancel anytime in Google Play.</string>
+    <string name="plan_buy_generic">Get %1$s</string>
+    <string name="plan_buy">Get %1$s — %2$s/mo</string>
+    <string name="plan_switch_to">Switch to %1$s — %2$s/mo</string>
+    <string name="premium_debug_tier">Test plan: %1$s (debug build)</string>
+    <string name="profile_plan_active">%1$s plan is active</string>
+    <string name="profile_basic_active_subtitle">Automatic tracking • Upgrade to Pro for the AI assistant</string>
+    <string name="ai_tips_title">Tips for your budget</string>
+    <string name="ai_tips_refresh">Refresh</string>
+    <string name="ai_tips_get">Get tips</string>
+    <string name="ai_tips_empty">The assistant looks at your last three months and suggests what to change: limits, categories, your savings goal.</string>
+    <string name="ai_tips_none">No tips right now — your budget looks balanced.</string>
+    <string name="ai_chat_title">Ask the assistant</string>
+    <string name="ai_chat_hint">Questions about your budget only: spending, limits, goals. Pick one below or type your own.</string>
+    <string name="ai_chat_thinking">The assistant is thinking…</string>
+    <string name="ai_chat_input_hint">Your question</string>
+    <string name="ai_chat_send">Send</string>
+    <string name="ai_chat_too_long">Keep it under %1$d characters</string>
+    <string name="ai_disclaimer">AI tips can be wrong and are not financial advice. The assistant sees only a summary of your spending: totals by category and month, limits and goals.</string>
+    <string name="ai_suggest_spend_less">How can I spend less?</string>
+    <string name="ai_suggest_growth">Which category is growing fastest?</string>
+    <string name="ai_suggest_limits">Suggest limits for next month</string>
+    <string name="ai_suggest_goal">Will I reach my savings goal?</string>
+    <string name="ai_problem_disabled">The AI assistant is off. Turn it on in Profile.</string>
+    <string name="ai_problem_not_configured">The AI service is not connected yet. It will start working in one of the next updates.</string>
+    <string name="ai_problem_not_entitled">The server could not confirm your Pro subscription. Open Google Play and check that it is active.</string>
+    <string name="ai_problem_rate_limited">You have reached today\'s limit of questions. The assistant will be back tomorrow.</string>
+    <string name="ai_problem_failed">Could not reach the assistant. Check your internet connection and try again.</string>
+    <string name="ai_assistant_coming_soon">AI assistant: coming soon</string>
+    <!-- Used while the Pro plan (AI) is not on sale yet -->
+    <string name="profile_premium_subtitle_basic">Automatic tracking • CSV export • First month free</string>
+    <string name="premium_sheet_generic_body_basic">Bud-Jet records expenses and income for you from bank notifications, so you do not have to type them in.</string>
 </resources>

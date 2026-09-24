@@ -3,34 +3,47 @@ package com.abe.bud_jet.premium
 import kotlin.math.floor
 
 /**
- * Monthly Premium price in the app currency for the savings pitch.
+ * Monthly plan prices in the app currency for the savings pitch.
  *
- * The real price comes from Google Play (PremiumManager.offer) and is used when Play's currency
- * matches the app currency; this table is only a fallback (no Play connection, other currency).
- * Keep it close to the prices set in Play Console.
+ * The real prices come from Google Play (PremiumManager.offers) and are used when Play's
+ * currency matches the app currency; these tables are only a fallback (no Play connection,
+ * other currency). Keep them close to the prices set in Play Console.
  */
 object PremiumPricing {
 
-    private val monthlyByCurrency = mapOf(
-        "USD" to 9.99,
-        "EUR" to 9.99,
-        "PLN" to 39.99,
-        "RUB" to 899.0,
-        "KZT" to 4990.0,
-        "INR" to 799.0,
-        "BRL" to 49.90,
-        "MXN" to 179.0
+    private val fallbackByPlan: Map<Plan, Map<String, Double>> = mapOf(
+        Plan.BASIC to mapOf(
+            "USD" to 2.99,
+            "EUR" to 2.99,
+            "PLN" to 11.99,
+            "RUB" to 249.0,
+            "KZT" to 1490.0,
+            "INR" to 249.0,
+            "BRL" to 14.90,
+            "MXN" to 59.0
+        ),
+        Plan.PRO to mapOf(
+            "USD" to 9.99,
+            "EUR" to 9.99,
+            "PLN" to 39.99,
+            "RUB" to 899.0,
+            "KZT" to 4990.0,
+            "INR" to 799.0,
+            "BRL" to 49.90,
+            "MXN" to 179.0
+        )
     )
 
-    /** Price reported by Google Play: amount and ISO currency code. */
+    /** Prices reported by Google Play per plan: amount and ISO currency code. */
     @Volatile
-    var playPrice: Pair<Double, String>? = null
+    var playPrices: Map<Plan, Pair<Double, String>> = emptyMap()
 
-    fun monthlyPrice(currencyCode: String): Double {
-        playPrice?.let { (amount, currency) ->
+    fun monthlyPrice(currencyCode: String, plan: Plan): Double {
+        playPrices[plan]?.let { (amount, currency) ->
             if (currency.equals(currencyCode, ignoreCase = true) && amount > 0.0) return amount
         }
-        return monthlyByCurrency[currencyCode.uppercase()] ?: monthlyByCurrency.getValue("USD")
+        val table = fallbackByPlan.getValue(plan)
+        return table[currencyCode.uppercase()] ?: table.getValue("USD")
     }
 }
 

@@ -28,8 +28,11 @@ import com.abe.bud_jet.database.entities.TransactionType
 import com.abe.bud_jet.database.preferences.PreferenceManager
 import com.abe.bud_jet.databinding.FragmentProfileBinding
 import com.abe.bud_jet.capture.CaptureAccess
+import com.abe.bud_jet.api.BudJetApi
+import com.abe.bud_jet.premium.Plan
 import com.abe.bud_jet.premium.PremiumManager
 import com.abe.bud_jet.premium.PremiumOfferBottomSheet
+import com.abe.bud_jet.premium.Tier
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.abe.bud_jet.premium.SavingsOfferSource
 import com.abe.bud_jet.utils.AmountParser
@@ -274,9 +277,17 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         }
 
         binding.cardPremium.setOnClickListener {
-            if (PremiumManager.isPremium.value) {
-                openUrl(PremiumManager.manageSubscriptionUrl(requireContext().packageName))
-                return@setOnClickListener
+            when (PremiumManager.tier.value) {
+                Tier.PRO -> {
+                    openUrl(PremiumManager.manageSubscriptionUrl(requireContext().packageName))
+                    return@setOnClickListener
+                }
+                // Basic: the paywall offers the upgrade (and "manage" for the current plan).
+                Tier.BASIC -> {
+                    showPaywall(Plan.PRO)
+                    return@setOnClickListener
+                }
+                Tier.FREE -> Unit
             }
             viewLifecycleOwner.lifecycleScope.launch {
                 val offer = SavingsOfferSource
@@ -302,19 +313,27 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
     private var renderingPremium = false
 
     private fun setupPremium() {
-        PremiumManager.isPremium.collectWithLifecycle(viewLifecycleOwner) { renderPremium() }
+        PremiumManager.tier.collectWithLifecycle(viewLifecycleOwner) { renderPremium() }
 
-        // Debug builds only: long-press the Premium card to test Premium without a purchase.
+        // Debug builds only: long-press the Premium card to cycle Free → Basic → Pro.
         binding.cardPremium.setOnLongClickListener {
             if (!PremiumManager.isDebugBuild()) return@setOnLongClickListener false
-            val enable = !preferenceManager.isDebugPremium()
-            PremiumManager.setDebugPremium(enable)
+            val tier = PremiumManager.cycleDebugTier()
             Toast.makeText(
                 requireContext(),
-                getString(if (enable) R.string.premium_debug_on else R.string.premium_debug_off),
+                getString(R.string.premium_debug_tier, tierName(tier)),
                 Toast.LENGTH_SHORT
             ).show()
             true
+        }
+
+        // The row opens the assistant when it is on; otherwise it works like the switch.
+        binding.rowAiAssistant.setOnClickListener {
+            if (preferenceManager.isAiAssistantActive()) {
+                findNavController().navigate(R.id.navigation_ai_assistant)
+            } else {
+                binding.switchAiAssistant.isChecked = true
+            }
         }
 
         binding.switchAiAssistant.setOnCheckedChangeListener { switch, checked ->
@@ -325,10 +344,15 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                     Toast.makeText(requireContext(), R.string.ai_assistant_disabled_toast, Toast.LENGTH_LONG).show()
                     renderPremium()
                 }
-                !PremiumManager.isPremium.value -> {
+                // Until the AI backend is live the assistant cannot answer: nothing to turn on yet.
+                !BudJetApi.isConfigured -> {
+                    switch.isChecked = false
+                    Toast.makeText(requireContext(), R.string.ai_assistant_coming_soon, Toast.LENGTH_SHORT).show()
+                }
+                !PremiumManager.tier.value.hasAiAssistant -> {
                     switch.isChecked = false
                     Toast.makeText(requireContext(), R.string.ai_assistant_premium_only, Toast.LENGTH_SHORT).show()
-                    showPaywall()
+                    showPaywall(Plan.PRO)
                 }
                 else -> showAiConsent()
             }
@@ -344,25 +368,38 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
             .setPositiveButton(R.string.ai_assistant_consent_accept) { _, _ ->
                 preferenceManager.setAiAssistantEnabled(true)
                 renderPremium()
+                if (isAdded) findNavController().navigate(R.id.navigation_ai_assistant)
             }
             .setOnCancelListener { renderPremium() }
             .show()
     }
 
     private fun renderPremium() {
-        val premium = PremiumManager.isPremium.value
-        binding.tvPremiumTitle.text = getString(if (premium) R.string.profile_premium_active else R.string.profile_premium_title)
+        val tier = PremiumManager.tier.value
+        binding.tvPremiumTitle.text = when (tier) {
+            Tier.FREE -> getString(R.string.profile_premium_title)
+            else -> getString(R.string.profile_plan_active, tierName(tier))
+        }
         binding.tvPremiumSubtitle.text = getString(
-            if (premium) R.string.profile_premium_active_subtitle else R.string.profile_premium_subtitle
+            when (tier) {
+                Tier.FREE -> if (Plan.PRO in PremiumManager.availablePlans) {
+                    R.string.profile_premium_subtitle
+                } else {
+                    R.string.profile_premium_subtitle_basic
+                }
+                Tier.BASIC -> R.string.profile_basic_active_subtitle
+                Tier.PRO -> R.string.profile_premium_active_subtitle
+            }
         )
-        val aiActive = premium && preferenceManager.isAiAssistantEnabled()
+        val aiActive = tier.hasAiAssistant && preferenceManager.isAiAssistantEnabled()
         // Programmatic update: must not trigger the consent or "turned off" flows.
         renderingPremium = true
         binding.switchAiAssistant.isChecked = aiActive
         renderingPremium = false
         binding.tvAiAssistantSubtitle.text = getString(
             when {
-                !premium -> R.string.ai_assistant_subtitle_premium
+                !BudJetApi.isConfigured -> R.string.ai_assistant_coming_soon
+                !tier.hasAiAssistant -> R.string.ai_assistant_subtitle_premium
                 aiActive -> R.string.ai_assistant_subtitle_on
                 else -> R.string.ai_assistant_subtitle_off
             }
@@ -370,8 +407,14 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         updateExportAvailabilityUi()
     }
 
-    private fun showPaywall() {
-        PremiumOfferBottomSheet.newInstance(currentCurrency, null)
+    private fun tierName(tier: Tier): String = when (tier) {
+        Tier.FREE -> getString(R.string.plan_free_name)
+        Tier.BASIC -> getString(R.string.plan_basic_name)
+        Tier.PRO -> getString(R.string.plan_pro_name)
+    }
+
+    private fun showPaywall(plan: Plan = Plan.BASIC) {
+        PremiumOfferBottomSheet.newInstance(currentCurrency, null, plan)
             .show(parentFragmentManager, "premium_offer")
     }
 
