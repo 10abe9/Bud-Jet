@@ -36,6 +36,8 @@ class PreferenceManager private constructor(context: Context) {
         private const val KEY_ONBOARDING_GOALS = "onboarding_goals"
         private const val KEY_AI_ASSISTANT_ENABLED = "ai_assistant_enabled"
         private const val KEY_APP_THEME = "app_theme"
+        private const val KEY_INSTALL_ID = "install_id"
+        private const val KEY_PURCHASE_TOKEN = "purchase_token"
         private const val KEY_DEBUG_PREMIUM = "debug_premium"
         private const val KEY_CAPTURE_LISTENER_ALIVE_AT = "capture_listener_alive_at"
         private const val KEY_CAPTURE_LAST_CAPTURED_AT = "capture_last_captured_at"
@@ -168,6 +170,21 @@ class PreferenceManager private constructor(context: Context) {
 
     fun setInitialBalancePromptShown(shown: Boolean) {
         preferences.edit { putBoolean(KEY_INITIAL_BALANCE_PROMPT_SHOWN, shown) }
+    }
+
+    /** Random id of this installation for the backend (rate limits); not tied to the user. */
+    fun getInstallId(): String {
+        preferences.getString(KEY_INSTALL_ID, null)?.let { return it }
+        val id = java.util.UUID.randomUUID().toString()
+        preferences.edit { putString(KEY_INSTALL_ID, id) }
+        return id
+    }
+
+    /** Token of the active Premium purchase, sent to the backend to prove the subscription. */
+    fun getPurchaseToken(): String? = preferences.getString(KEY_PURCHASE_TOKEN, null)
+
+    fun setPurchaseToken(token: String?) {
+        preferences.edit { if (token == null) remove(KEY_PURCHASE_TOKEN) else putString(KEY_PURCHASE_TOKEN, token) }
     }
 
     /** "system", "light" or "dark" (see ThemeManager). */

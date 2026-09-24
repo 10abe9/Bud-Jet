@@ -3,6 +3,7 @@ package com.abe.bud_jet.premium
 import android.app.Activity
 import android.content.Context
 import android.content.pm.ApplicationInfo
+import com.abe.bud_jet.api.BudJetApi
 import com.abe.bud_jet.database.preferences.PreferenceManager
 import com.android.billingclient.api.AcknowledgePurchaseParams
 import com.android.billingclient.api.BillingClient
@@ -15,7 +16,11 @@ import com.android.billingclient.api.Purchase
 import com.android.billingclient.api.PurchasesUpdatedListener
 import com.android.billingclient.api.QueryProductDetailsParams
 import com.android.billingclient.api.QueryPurchasesParams
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -154,10 +159,36 @@ object PremiumManager : PurchasesUpdatedListener {
             PRODUCT_ID in it.products && it.purchaseState == Purchase.PurchaseState.PURCHASED
         }
         active.filterNot { it.isAcknowledged }.forEach { acknowledge(it) }
+        if (active.isNotEmpty()) {
+            preferences.setPurchaseToken(active.first().purchaseToken)
+            reportToServer(active.first())
+        } else if (isFullList) {
+            preferences.setPurchaseToken(null)
+        }
         // A partial update (new purchase) can only grant; the full list decides revocation.
         billingPremium = if (isFullList) active.isNotEmpty() else billingPremium || active.isNotEmpty()
         publish()
     }
+
+    /**
+     * Lets the backend (when configured in gradle.properties) record and verify the purchase
+     * with Google. For now the answer is only logged: the entitlement still comes from Play.
+     * Once the server is live, a confirmed "active=false" can be used to revoke Premium here.
+     */
+    private fun reportToServer(purchase: Purchase) {
+        if (!BudJetApi.isConfigured) return
+        val caller = BudJetApi.Caller(
+            installId = preferences.getInstallId(),
+            purchaseToken = purchase.purchaseToken,
+            language = preferences.getAppLanguage()
+        )
+        serverScope.launch {
+            val result = BudJetApi.verifySubscription(caller, appContext.packageName, PRODUCT_ID, purchase.purchaseToken)
+            android.util.Log.d("BudJetPremium", "Server verification: $result")
+        }
+    }
+
+    private val serverScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     /** Unacknowledged subscriptions are refunded by Google after three days. */
     private fun acknowledge(purchase: Purchase) {

@@ -4,6 +4,9 @@ plugins {
     kotlin("kapt")
 }
 
+// Backend address from gradle.properties (budjet.apiBaseUrl). Empty = no server.
+val apiBaseUrl = (project.findProperty("budjet.apiBaseUrl") as String?).orEmpty().trim().trimEnd('/')
+
 android {
     namespace = "com.abe.bud_jet"
     compileSdk = 36
@@ -16,6 +19,10 @@ android {
         versionName = "8.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "API_BASE_URL", "\"$apiBaseUrl\"")
+        // Android 9+ blocks plain http unless allowed: allowed only when the backend URL is http://.
+        manifestPlaceholders["usesCleartextTraffic"] = apiBaseUrl.startsWith("http://").toString()
     }
 
     buildTypes {
@@ -36,6 +43,7 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 }
 
