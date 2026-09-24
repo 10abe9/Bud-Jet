@@ -236,10 +236,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                         preferenceManager.resetUserDataToDefaults()
                         LocaleManager.applyAppLanguage(preferenceManager.getAppLanguage())
 
-                        // Re-create repository so localized starter category names are correct.
-                        FinanceRepositoryProvider.clearInstance()
-                        val repo = FinanceRepositoryProvider.get(requireContext())
-                        repo.resetAllUserDataAndReseedDefaults()
+                        repository.resetAllUserData()
 
                         Toast.makeText(
                             requireContext(),
@@ -247,7 +244,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                             Toast.LENGTH_SHORT
                         ).show()
 
-                        // Restart to re-run onboarding / seeding.
+                        // Restart to re-run onboarding and seed localized starter categories.
                         requireActivity().recreate()
                     }
                 }
@@ -497,6 +494,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                             put("isDefault", category.isDefault)
                             put("isIncome", category.isIncome)
                             put("isCustom", category.isCustom)
+                            put("defaultKey", category.defaultKey)
                         }
                     )
                 }
@@ -589,7 +587,9 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                         color = item.optString("color").takeIf { item.has("color") && !item.isNull("color") },
                         isDefault = item.optBoolean("isDefault", true),
                         isIncome = item.optBoolean("isIncome", false),
-                        isCustom = item.optBoolean("isCustom", false)
+                        isCustom = item.optBoolean("isCustom", false),
+                        // Older backups have no key; it is restored by name on the next start.
+                        defaultKey = item.optString("defaultKey").takeIf { item.has("defaultKey") && !item.isNull("defaultKey") }
                     )
                 )
             }

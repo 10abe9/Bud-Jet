@@ -40,6 +40,12 @@ interface CategoryDao {
     @Query("DELETE FROM categories WHERE id = :id")
     suspend fun deleteById(id: Long): Int
 
+    @Query("UPDATE categories SET name = :name WHERE id = :id")
+    suspend fun updateName(id: Long, name: String)
+
+    @Query("UPDATE categories SET defaultKey = :key WHERE id = :id")
+    suspend fun updateDefaultKey(id: Long, key: String)
+
     @Query("DELETE FROM categories")
     suspend fun deleteAll(): Int
 }

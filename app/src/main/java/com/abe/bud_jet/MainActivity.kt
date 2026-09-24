@@ -103,10 +103,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun seedDefaultCategories() {
         lifecycleScope.launch {
-            FinanceRepositoryProvider.get(applicationContext).apply {
-                seedDefaultCategoriesIfEmpty()
-                enforceCategoryPolicy()
-            }
+            // Runs on every start, including the recreation after a language change,
+            // so built-in category names always follow the app language.
+            FinanceRepositoryProvider.get(applicationContext).syncDefaultCategories(
+                FinanceRepositoryProvider.localizedDefaultCategoryNames(this@MainActivity)
+            )
         }
     }
 

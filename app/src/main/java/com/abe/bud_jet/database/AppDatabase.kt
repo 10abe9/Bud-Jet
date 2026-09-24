@@ -18,7 +18,7 @@ import com.abe.bud_jet.database.entities.TransactionEntity
         CategoryEntity::class,
         GoalEntity::class
     ],
-    version = 3,
+    version = 4,
     exportSchema = true
 )
 @TypeConverters(AppTypeConverters::class)

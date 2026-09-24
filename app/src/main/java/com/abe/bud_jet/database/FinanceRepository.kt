@@ -29,8 +29,6 @@ class FinanceRepository(
     private val transactionsDao: TransactionsDao,
     private val categoryDao: CategoryDao,
     private val goalsDao: GoalsDao,
-    private val defaultExpenseCategories: List<String>,
-    private val defaultIncomeCategories: List<String>,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     /** Runs the block atomically (Room transaction in production). */
     private val runInTransaction: suspend (suspend () -> Unit) -> Unit = { block -> block() }
@@ -39,10 +37,6 @@ class FinanceRepository(
         const val MAX_CATEGORY_NAME_LENGTH = 18
         const val MAX_EXPENSE_CATEGORIES = 5
         const val MAX_INCOME_CATEGORIES = 3
-        // English fallback set to keep existing DB entries (from older installs) intact.
-        // Localization happens via injected defaults (see constructor args).
-        private val DEFAULT_EXPENSE_CATEGORIES = listOf("Food", "Health", "Transport")
-        private val DEFAULT_INCOME_CATEGORIES = listOf("Salary", "Gift", "Freelance")
         private val CATEGORY_COLOR_PALETTE = CategoryPalette.colors
     }
 
@@ -245,11 +239,7 @@ class FinanceRepository(
         if (snapshot.transactions.isNotEmpty()) {
             transactionsDao.insertAll(snapshot.transactions)
         }
-
-        if (snapshot.categories.isEmpty()) {
-            seedDefaultCategoriesIfEmpty()
-            enforceCategoryPolicy()
-        }
+        // Built-in categories are re-seeded and renamed by syncDefaultCategories on restart.
     }
 
     suspend fun upsertSavingGoal(targetAmount: Double, deadline: Long?) = withContext(ioDispatcher) {
@@ -300,20 +290,14 @@ class FinanceRepository(
         goalsDao.deleteById(goalId) > 0
     }
 
-    /**
-     * Deletes all user-generated data stored locally (transactions, goals, categories)
-     * and then reseeds starter categories if needed.
-     */
-    suspend fun resetAllUserDataAndReseedDefaults() = withContext(ioDispatcher) {
+    /** Deletes all user-generated data stored locally (transactions, goals, categories). */
+    suspend fun resetAllUserData() = withContext(ioDispatcher) {
         runInTransaction {
             transactionsDao.deleteAll()
             goalsDao.deleteAll()
             categoryDao.deleteAll()
         }
-
-        // After wiping categories, we can seed localized starter categories again.
-        seedDefaultCategoriesIfEmpty()
-        enforceCategoryPolicy()
+        // Starter categories are re-seeded by syncDefaultCategories when the app restarts.
     }
 
     private suspend fun addTransactionInternal(
@@ -333,43 +317,72 @@ class FinanceRepository(
         transactionsDao.insert(entity)
     }
 
-    suspend fun seedDefaultCategoriesIfEmpty() = withContext(ioDispatcher) {
-        val count = categoryDao.getCount()
-        if (count > 0) return@withContext
+    /**
+     * Keeps built-in categories in the current app language: recognizes old ones by name,
+     * seeds them on a fresh install and renames them to [localizedNames] (key -> name).
+     * Call with names resolved from an Activity context, which carries the app locale.
+     */
+    suspend fun syncDefaultCategories(localizedNames: Map<String, String>) = withContext(ioDispatcher) {
+        runInTransaction {
+            assignMissingDefaultKeys()
+            seedDefaultCategoriesIfEmpty(localizedNames)
+            renameDefaultCategories(localizedNames)
+            removeRetiredDefaultCategories()
+        }
+    }
 
-        val expenseDefaults = defaultExpenseCategories
-        val incomeDefaults = defaultIncomeCategories
+    /** Categories from older versions and backups have no key yet; match them by name. */
+    private suspend fun assignMissingDefaultKeys() {
+        val all = categoryDao.getAllNow()
+        val usedKeys = all.mapNotNull { it.defaultKey }.toMutableSet()
+        all.filter { it.isDefault && it.defaultKey == null }.forEach { category ->
+            val key = DefaultCategories.keyForName(category.name, category.isIncome) ?: return@forEach
+            if (usedKeys.add(key)) categoryDao.updateDefaultKey(category.id, key)
+        }
+    }
+
+    private suspend fun seedDefaultCategoriesIfEmpty(localizedNames: Map<String, String>) {
+        if (categoryDao.getCount() > 0) return
+
         val palette = CATEGORY_COLOR_PALETTE.shuffled()
-        val defaults = buildList {
-            addAll(expenseDefaults.mapIndexed { index, name ->
-                CategoryEntity(
-                    name = name,
-                    color = palette[index % palette.size],
-                    isIncome = false,
-                    isDefault = true
-                )
-            })
-            addAll(incomeDefaults.mapIndexed { index, name ->
-                CategoryEntity(
-                    name = name,
-                    color = palette[(expenseDefaults.size + index) % palette.size],
-                    isIncome = true,
-                    isDefault = true
-                )
-            })
+        val defaults = DefaultCategories.all.mapIndexed { index, definition ->
+            CategoryEntity(
+                name = localizedNames[definition.key] ?: definition.key,
+                color = palette[index % palette.size],
+                isIncome = definition.isIncome,
+                isDefault = true,
+                defaultKey = definition.key
+            )
         }
         categoryDao.insertAll(defaults)
     }
 
-    suspend fun enforceCategoryPolicy() = withContext(ioDispatcher) {
+    private suspend fun renameDefaultCategories(localizedNames: Map<String, String>) {
         val all = categoryDao.getAllNow()
-        val allowedExpenseDefaultNames = (DEFAULT_EXPENSE_CATEGORIES + defaultExpenseCategories).toSet()
-        val disallowedExpenseDefaults =
-            all.filter { !it.isIncome && it.isDefault && it.name !in allowedExpenseDefaultNames }
-        disallowedExpenseDefaults.forEach { category ->
-            categoryDao.deleteById(category.id)
-            transactionsDao.clearCategoryReferences(category.id)
+        all.filter { it.defaultKey != null }.forEach { category ->
+            val target = localizedNames[category.defaultKey] ?: return@forEach
+            if (target == category.name) return@forEach
+            // Keep the old name rather than duplicate a user category with the same name.
+            val clash = all.any {
+                it.id != category.id && it.isIncome == category.isIncome && it.name.equals(target, ignoreCase = true)
+            }
+            if (!clash) categoryDao.updateName(category.id, target)
         }
+    }
+
+    /**
+     * Older versions seeded more built-in expense categories; those without a known key are
+     * removed. Unlike the previous name-based check, this no longer depends on the app
+     * language, so switching language cannot delete current built-in categories.
+     */
+    private suspend fun removeRetiredDefaultCategories() {
+        categoryDao.getAllNow()
+            .filter { !it.isIncome && it.isDefault && it.defaultKey == null }
+            .forEach { category ->
+                categoryDao.deleteById(category.id)
+                transactionsDao.clearCategoryReferences(category.id)
+                goalsDao.getLimitByCategoryId(category.id)?.let { goalsDao.deleteById(it.id) }
+            }
     }
 
     private suspend fun pickDistinctCategoryColor(): String {

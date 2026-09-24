@@ -1,5 +1,6 @@
 package com.abe.bud_jet.database.entities
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -12,6 +13,9 @@ data class CategoryEntity(
     val color: String? = null,
     val isDefault: Boolean = true,
     val isIncome: Boolean = false,
-    val isCustom: Boolean = false
+    val isCustom: Boolean = false,
+    /** Stable id of a built-in category (see DefaultCategories); null for user categories. */
+    @ColumnInfo(name = "defaultKey")
+    val defaultKey: String? = null
 )
 

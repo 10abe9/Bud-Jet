@@ -21,5 +21,13 @@ object Migrations {
         }
     }
 
-    val ALL: Array<Migration> = arrayOf(MIGRATION_2_3)
+    val MIGRATION_3_4 = object : Migration(3, 4) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            // Keys for existing built-in categories are assigned by name on the next start
+            // (FinanceRepository.syncDefaultCategories).
+            db.execSQL("ALTER TABLE `categories` ADD COLUMN `defaultKey` TEXT")
+        }
+    }
+
+    val ALL: Array<Migration> = arrayOf(MIGRATION_2_3, MIGRATION_3_4)
 }
