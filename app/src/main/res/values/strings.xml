@@ -13,6 +13,11 @@
     <string name="language_russian">Russian</string>
     <string name="language_spanish">Spanish</string>
     <string name="language_polish">Polish</string>
+    <!-- Language names in their own language, identical in every locale. -->
+    <string name="language_endonym_en" translatable="false">English</string>
+    <string name="language_endonym_ru" translatable="false">Русский</string>
+    <string name="language_endonym_es" translatable="false">Español</string>
+    <string name="language_endonym_pl" translatable="false">Polski</string>
 
     <string name="profile_title">Profile</string>
     <string name="profile_user_title">User</string>

@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import com.abe.bud_jet.R
 import com.abe.bud_jet.databinding.FragmentHello2Binding
 import com.abe.bud_jet.database.preferences.PreferenceManager
+import com.abe.bud_jet.utils.LocaleManager
 import com.abe.bud_jet.utils.VibrationManager
 import com.google.android.material.chip.Chip
 
@@ -35,6 +36,7 @@ class Hello2Fragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         preferenceManager = PreferenceManager.getInstance(requireContext())
         preselectSavedCurrency()
+        setupLanguage()
         setupCurrency()
         setupGoals()
         updateContinueAction(hasCurrencySelected())
@@ -69,6 +71,32 @@ class Hello2Fragment : Fragment() {
     private fun setupCurrency(){
         binding.chipCurrencyGroup.setOnCheckedStateChangeListener { _, checkedIds ->
             updateContinueAction(checkedIds.isNotEmpty())
+        }
+    }
+
+    private val languageByChipId by lazy {
+        mapOf(
+            R.id.chip_language_en to "en",
+            R.id.chip_language_ru to "ru",
+            R.id.chip_language_es to "es",
+            R.id.chip_language_pl to "pl"
+        )
+    }
+
+    private fun setupLanguage() {
+        val current = preferenceManager.getAppLanguage()
+        languageByChipId.entries.firstOrNull { it.value == current }?.let {
+            binding.chipLanguageGroup.check(it.key)
+        }
+        binding.chipLanguageGroup.setOnCheckedStateChangeListener { _, checkedIds ->
+            val language = checkedIds.firstOrNull()?.let { languageByChipId[it] } ?: return@setOnCheckedStateChangeListener
+            if (language == preferenceManager.getAppLanguage()) return@setOnCheckedStateChangeListener
+            VibrationManager.get().tap()
+            // The screen is recreated in the new language; keep the currency already picked
+            // (its chips have no ids, so their state would not survive recreation).
+            saveSelectedCurrency()
+            preferenceManager.setAppLanguage(language)
+            LocaleManager.applyAppLanguage(language)
         }
     }
 
