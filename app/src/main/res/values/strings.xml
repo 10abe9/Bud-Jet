@@ -394,4 +394,26 @@ and get smart financial insights.</string>
         <item quantity="one">%1$d notification with an amount · turn on to track</item>
         <item quantity="other">%1$d notifications with amounts · turn on to track</item>
     </plurals>
+
+    <!-- Automatic capture: troubleshooting -->
+    <string name="capture_test_title">Check a notification text</string>
+    <string name="capture_test_hint">Paste the notification text</string>
+    <string name="capture_test_button">Check</string>
+    <string name="capture_test_result_added">Would be added automatically:</string>
+    <string name="capture_test_result_confirm">Would go to \"To confirm\":</string>
+    <string name="capture_test_result_ignored">Does not look like a payment (no amount with a currency, or a code/promo) — would be skipped.</string>
+    <string name="capture_log_title">Event log</string>
+    <string name="capture_log_hint">Last 50 events, stored only on this device. Notification text is saved only for apps you track.</string>
+    <string name="capture_log_empty">No events yet. If this stays empty after a payment, Bud-Jet has no notification access or the system stopped it.</string>
+    <string name="capture_log_refresh">Refresh</string>
+    <string name="capture_log_clear">Clear</string>
+    <string name="capture_log_connected">Service connected</string>
+    <string name="capture_log_disconnected">Service disconnected by the system</string>
+    <string name="capture_log_added">Added as a transaction</string>
+    <string name="capture_log_to_confirm">Waiting for confirmation</string>
+    <string name="capture_log_duplicate">Repeat of an earlier notification — skipped</string>
+    <string name="capture_log_ignored">Not a payment — skipped</string>
+    <string name="capture_log_not_tracked">App is not tracked — turn it on in \"Apps\" above</string>
+    <string name="capture_source_notification_title">Track payments from %1$s?</string>
+    <string name="capture_source_notification_text">Tap to turn this app on in automatic tracking</string>
 </resources>

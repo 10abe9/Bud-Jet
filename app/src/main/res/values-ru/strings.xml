@@ -387,4 +387,26 @@ Bud-Jet не отправляет ваши операции, заметки, ц�
         <item quantity="many">%1$d уведомлений с суммой · включите, чтобы учитывать</item>
         <item quantity="other">%1$d уведомления с суммой · включите, чтобы учитывать</item>
     </plurals>
+
+    <!-- Automatic capture: troubleshooting -->
+    <string name="capture_test_title">Проверить текст уведомления</string>
+    <string name="capture_test_hint">Вставьте текст уведомления</string>
+    <string name="capture_test_button">Проверить</string>
+    <string name="capture_test_result_added">Будет добавлено автоматически:</string>
+    <string name="capture_test_result_confirm">Попадёт в «Нужно подтвердить»:</string>
+    <string name="capture_test_result_ignored">Не похоже на оплату (нет суммы с валютой, или это код/реклама) — будет пропущено.</string>
+    <string name="capture_log_title">Журнал событий</string>
+    <string name="capture_log_hint">Последние 50 событий, хранятся только на этом устройстве. Текст уведомлений сохраняется только для отслеживаемых приложений.</string>
+    <string name="capture_log_empty">Событий пока нет. Если после оплаты здесь пусто — у Bud-Jet нет доступа к уведомлениям или система его остановила.</string>
+    <string name="capture_log_refresh">Обновить</string>
+    <string name="capture_log_clear">Очистить</string>
+    <string name="capture_log_connected">Сервис подключён</string>
+    <string name="capture_log_disconnected">Сервис отключён системой</string>
+    <string name="capture_log_added">Добавлено как операция</string>
+    <string name="capture_log_to_confirm">Ждёт подтверждения</string>
+    <string name="capture_log_duplicate">Повтор уже обработанного уведомления — пропущено</string>
+    <string name="capture_log_ignored">Не оплата — пропущено</string>
+    <string name="capture_log_not_tracked">Приложение не отслеживается — включите его в списке «Приложения» выше</string>
+    <string name="capture_source_notification_title">Учитывать траты из %1$s?</string>
+    <string name="capture_source_notification_text">Нажмите, чтобы включить это приложение в автоучёте</string>
 </resources>

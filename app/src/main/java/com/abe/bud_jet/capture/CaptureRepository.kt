@@ -28,6 +28,15 @@ class CaptureRepository(
 
     enum class Outcome { ADDED, NEEDS_CONFIRMATION, DUPLICATE, IGNORED, SOURCE_SUGGESTED }
 
+    data class ProcessResult(
+        val outcome: Outcome,
+        val parsed: ParseResult,
+        /** The notification came from an app the user tracks. */
+        val trackedSource: Boolean,
+        /** The app sent its first payment-like notification and is not tracked yet. */
+        val newSourceDetected: Boolean = false
+    )
+
     data class CapturedNotification(
         val packageName: String,
         val appLabel: String,
@@ -49,7 +58,7 @@ class CaptureRepository(
         captureDao.setSourceEnabled(packageName, enabled)
     }
 
-    suspend fun process(notification: CapturedNotification, appCurrency: String): Outcome =
+    suspend fun process(notification: CapturedNotification, appCurrency: String): ProcessResult =
         withContext(ioDispatcher) {
             val result = NotificationParser.parse(notification.title, notification.text, appCurrency)
             val source = captureDao.getSource(notification.packageName)
@@ -57,7 +66,7 @@ class CaptureRepository(
             if (source == null || !source.enabled) {
                 // Not tracked: only remember that this app sends payment-like notifications,
                 // so the user can choose to track it. Its text is not stored.
-                if (result is ParseResult.Ignored) return@withContext Outcome.IGNORED
+                if (result is ParseResult.Ignored) return@withContext ProcessResult(Outcome.IGNORED, result, trackedSource = false)
                 captureDao.upsertSource(
                     CaptureSourceEntity(
                         packageName = notification.packageName,
@@ -67,15 +76,21 @@ class CaptureRepository(
                         lastSeenAt = notification.postedAt
                     )
                 )
-                return@withContext Outcome.SOURCE_SUGGESTED
+                return@withContext ProcessResult(
+                    Outcome.SOURCE_SUGGESTED,
+                    result,
+                    trackedSource = false,
+                    newSourceDetected = source == null
+                )
             }
 
             captureDao.upsertSource(source.copy(lastSeenAt = notification.postedAt))
-            when (result) {
+            val outcome = when (result) {
                 is ParseResult.Recognized -> addTransaction(notification, result)
                 is ParseResult.Uncertain -> addPending(notification, result)
                 ParseResult.Ignored -> Outcome.IGNORED
             }
+            ProcessResult(outcome, result, trackedSource = true)
         }
 
     private suspend fun addTransaction(

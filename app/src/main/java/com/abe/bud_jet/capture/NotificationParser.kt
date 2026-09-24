@@ -71,7 +71,7 @@ object NotificationParser {
     )
 
     private val incomeWords = Regex(
-        """зачислен|поступлен|пополнен|вам перевели|получен перевод|возврат|кэшбэк зачислен|received|deposit|credited|refund|sent you|incoming|wpływ|wplyw|uznanie|otrzyma|zwrot|recibid|abono|ingreso|reembolso|devoluci""",
+        """зачислен|поступлен|попол|вам перевели|получен перевод|перевод от|перевод из|входящий перевод|возврат|кэшбэк зачислен|received|deposit|credited|refund|sent you|incoming|wpływ|wplyw|uznanie|otrzyma|zwrot|recibid|abono|ingreso|reembolso|devoluci""",
         RegexOption.IGNORE_CASE
     )
 
@@ -97,6 +97,14 @@ object NotificationParser {
 
     private val upperCaseMerchant = Regex("""(?<![A-Za-z0-9])([A-Z][A-Z0-9&'*._\-]{2,}(?:\s+[A-Z0-9&'*._\-]{2,}){0,3})(?![A-Za-z0-9])""")
 
+    /**
+     * Capitalized name right after the amount. No IGNORE_CASE here: combined with \p{Lu} it
+     * behaves differently on the JVM and on Android, so both letter cases are spelled out.
+     */
+    private val counterpartyAfterAmount = Regex(
+        """^\s*(\p{Lu}[\p{L}\p{N}&'*._\-]*(?:\s[\p{Lu}\p{N}][\p{L}\p{N}&'*._\-]*){0,2})(?=\s+(?:[Бб]аланс|[Оо]статок|[Дд]оступно|[Bb]alance|[Aa]vailable|[Ss]aldo|[Dd]ostępne)|\s*[.,;]|\s*$)"""
+    )
+
     /** Card masks and account numbers such as "MIR-1234", "VISA4411", "*1234". */
     private val cardMask = Regex("""^[A-Z]{0,10}[-*•]?\d{2,}$""")
 
@@ -112,16 +120,20 @@ object NotificationParser {
         if (ignoreWords.containsMatchIn(full)) return ParseResult.Ignored
 
         val money = findTransactionAmount(full) ?: return ParseResult.Ignored
-        val (amount, currency, amountEnd) = money
+        val amount = money.amount
+        val currency = money.currency
         if (amount <= 0.0) return ParseResult.Ignored
 
         val isExpense = expenseWords.containsMatchIn(full)
         val isIncome = incomeWords.containsMatchIn(full)
         val direction: Boolean? = when {
+            // An explicit sign ("+50 ₽", "−450 ₽") is the most reliable hint.
+            money.sign != null -> money.sign > 0
             isIncome && !isExpense -> true
             isExpense && !isIncome -> false
             else -> null
         }
+        val amountEnd = money.end
         // The merchant usually follows the amount; the title often holds the card name.
         val merchant = extractMerchant(full.substring(amountEnd)) ?: extractMerchant(text.orEmpty())
 
@@ -134,8 +146,10 @@ object NotificationParser {
         }
     }
 
+    private class Money(val amount: Double, val currency: String?, val end: Int, val sign: Int?)
+
     /** First money amount that is not labeled as a balance/limit. Requires a currency marker. */
-    private fun findTransactionAmount(text: String): Triple<Double, String?, Int>? {
+    private fun findTransactionAmount(text: String): Money? {
         for (match in moneyRegex.findAll(text)) {
             val pre = match.groups[1]?.value
             val post = match.groups[3]?.value
@@ -143,7 +157,12 @@ object NotificationParser {
             val before = text.substring(0, match.range.first)
             if (balanceWords.containsMatchIn(before.takeLast(24))) continue
             val amount = AmountParser.parse(match.groupValues[2]) ?: continue
-            return Triple(amount, currencyCode(token), match.range.last + 1)
+            val sign = when (before.trimEnd().lastOrNull()) {
+                '+' -> 1
+                '-', '−', '–' -> -1
+                else -> null
+            }
+            return Money(amount, currencyCode(token), match.range.last + 1, sign)
         }
         return null
     }
@@ -154,6 +173,10 @@ object NotificationParser {
     fun extractMerchant(text: String): String? {
         merchantAfterPreposition.find(text)?.groupValues?.get(1)?.let { candidate ->
             clean(candidate)?.let { return it }
+        }
+        // SMS style: "перевод 50р Т-Банк Баланс: ..." - a capitalized name right after the amount.
+        counterpartyAfterAmount.find(text)?.groupValues?.get(1)?.let { candidate ->
+            if (!balanceWords.containsMatchIn(candidate)) clean(candidate)?.let { return it }
         }
         return upperCaseMerchant.findAll(text)
             .map { it.groupValues[1] }

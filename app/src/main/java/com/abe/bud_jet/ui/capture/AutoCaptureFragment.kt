@@ -10,7 +10,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.abe.bud_jet.R
 import com.abe.bud_jet.capture.CaptureAccess
+import com.abe.bud_jet.capture.CaptureLog
 import com.abe.bud_jet.capture.CaptureNotifier
+import com.abe.bud_jet.capture.NotificationParser
 import com.abe.bud_jet.database.FinanceRepositoryProvider
 import com.abe.bud_jet.database.entities.PendingCaptureEntity
 import com.abe.bud_jet.database.preferences.PreferenceManager
@@ -44,6 +46,12 @@ class AutoCaptureFragment : Fragment(R.layout.fragment_auto_capture) {
 
         binding.buttonBack.setOnClickListener { findNavController().popBackStack() }
         binding.btnBattery.setOnClickListener { CaptureAccess.openBatterySettings(requireContext()) }
+        binding.btnTest.setOnClickListener { runParserTest() }
+        binding.btnLogRefresh.setOnClickListener { renderLog() }
+        binding.btnLogClear.setOnClickListener {
+            CaptureLog.clear(requireContext())
+            renderLog()
+        }
 
         binding.rvPending.layoutManager = LinearLayoutManager(requireContext())
         binding.rvPending.adapter = pendingAdapter
@@ -65,6 +73,50 @@ class AutoCaptureFragment : Fragment(R.layout.fragment_auto_capture) {
         super.onResume()
         // Access and battery settings are changed outside the app; refresh on return.
         renderStatus()
+        renderLog()
+    }
+
+    /** Shows what the parser would do with a pasted notification text. */
+    private fun runParserTest() {
+        val text = binding.etTestText.text?.toString().orEmpty()
+        if (text.isBlank()) return
+        val result = NotificationParser.parse(null, text, preferences.getCurrencyCode())
+        val verdict = getString(
+            when (result) {
+                is NotificationParser.ParseResult.Recognized -> R.string.capture_test_result_added
+                is NotificationParser.ParseResult.Uncertain -> R.string.capture_test_result_confirm
+                NotificationParser.ParseResult.Ignored -> R.string.capture_test_result_ignored
+            }
+        )
+        binding.tvTestResult.visibility = View.VISIBLE
+        binding.tvTestResult.text = if (result is NotificationParser.ParseResult.Ignored) {
+            verdict
+        } else {
+            "$verdict\n${CaptureLog.describe(result)}"
+        }
+    }
+
+    private fun renderLog() {
+        val entries = CaptureLog.read(requireContext())
+        if (entries.isEmpty()) {
+            binding.tvLog.text = getString(R.string.capture_log_empty)
+            return
+        }
+        val timeFormat = java.text.SimpleDateFormat("dd.MM HH:mm:ss", java.util.Locale.getDefault())
+        binding.tvLog.text = entries.joinToString("\n\n") { entry ->
+            val header = "${timeFormat.format(java.util.Date(entry.time))} · ${entry.app}\n${getString(eventLabel(entry.event))}"
+            if (entry.detail.isBlank()) header else "$header\n${entry.detail}"
+        }
+    }
+
+    private fun eventLabel(event: CaptureLog.Event): Int = when (event) {
+        CaptureLog.Event.CONNECTED -> R.string.capture_log_connected
+        CaptureLog.Event.DISCONNECTED -> R.string.capture_log_disconnected
+        CaptureLog.Event.ADDED -> R.string.capture_log_added
+        CaptureLog.Event.TO_CONFIRM -> R.string.capture_log_to_confirm
+        CaptureLog.Event.DUPLICATE -> R.string.capture_log_duplicate
+        CaptureLog.Event.IGNORED -> R.string.capture_log_ignored
+        CaptureLog.Event.NOT_TRACKED -> R.string.capture_log_not_tracked
     }
 
     private fun renderStatus() {

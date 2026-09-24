@@ -31,11 +31,13 @@ class NotificationCaptureService : NotificationListenerService() {
     override fun onListenerConnected() {
         super.onListenerConnected()
         preferences.setCaptureListenerAliveAt(System.currentTimeMillis())
+        CaptureLog.add(applicationContext, "Bud-Jet", CaptureLog.Event.CONNECTED)
         scope.launch { repository.cleanupOldPending() }
     }
 
     override fun onListenerDisconnected() {
         super.onListenerDisconnected()
+        CaptureLog.add(applicationContext, "Bud-Jet", CaptureLog.Event.DISCONNECTED)
         CaptureAccess.requestRebind(applicationContext)
     }
 
@@ -67,18 +69,40 @@ class NotificationCaptureService : NotificationListenerService() {
             externalId = externalId(posted, title, text)
         )
         scope.launch {
-            val outcome = processing.withLock {
+            val result = processing.withLock {
                 repository.process(captured, preferences.getCurrencyCode())
             }
-            when (outcome) {
+            log(captured, result)
+            when (result.outcome) {
                 CaptureRepository.Outcome.ADDED -> preferences.setCaptureLastCapturedAt(now)
                 CaptureRepository.Outcome.NEEDS_CONFIRMATION -> {
                     preferences.setCaptureLastCapturedAt(now)
                     CaptureNotifier.showPendingReminder(applicationContext, repository.countPending())
                 }
+                CaptureRepository.Outcome.SOURCE_SUGGESTED -> if (result.newSourceDetected) {
+                    CaptureNotifier.showSourceSuggestion(applicationContext, captured.appLabel)
+                }
                 else -> Unit
             }
         }
+    }
+
+    /**
+     * Journal entry for the automatic-tracking screen. Notifications without an amount from
+     * untracked apps (chats etc.) are not logged at all; untracked apps are logged without text.
+     */
+    private fun log(captured: CaptureRepository.CapturedNotification, result: CaptureRepository.ProcessResult) {
+        val summary = CaptureLog.describe(result.parsed)
+        val preview = listOfNotNull(captured.title, captured.text).joinToString(" | ").take(160)
+        val (event, detail) = when (result.outcome) {
+            CaptureRepository.Outcome.ADDED -> CaptureLog.Event.ADDED to "$summary\n$preview"
+            CaptureRepository.Outcome.NEEDS_CONFIRMATION -> CaptureLog.Event.TO_CONFIRM to "$summary\n$preview"
+            CaptureRepository.Outcome.DUPLICATE -> CaptureLog.Event.DUPLICATE to summary
+            CaptureRepository.Outcome.IGNORED -> CaptureLog.Event.IGNORED to preview
+            CaptureRepository.Outcome.SOURCE_SUGGESTED -> CaptureLog.Event.NOT_TRACKED to summary
+        }
+        if (result.outcome == CaptureRepository.Outcome.IGNORED && !result.trackedSource) return
+        CaptureLog.add(applicationContext, captured.appLabel, event, detail)
     }
 
     override fun onDestroy() {

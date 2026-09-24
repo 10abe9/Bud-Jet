@@ -381,5 +381,27 @@ Bud-Jet no envía tus transacciones, notas, metas ni categorías a ningún servi
         <item quantity="one">%1$d notificación con importe · actívala para registrar</item>
         <item quantity="other">%1$d notificaciones con importe · actívalas para registrar</item>
     </plurals>
+
+    <!-- Automatic capture: troubleshooting -->
+    <string name="capture_test_title">Comprobar el texto de una notificación</string>
+    <string name="capture_test_hint">Pega el texto de la notificación</string>
+    <string name="capture_test_button">Comprobar</string>
+    <string name="capture_test_result_added">Se añadiría automáticamente:</string>
+    <string name="capture_test_result_confirm">Iría a «Por confirmar»:</string>
+    <string name="capture_test_result_ignored">No parece un pago (sin importe con moneda, o es un código/promoción): se omitiría.</string>
+    <string name="capture_log_title">Registro de eventos</string>
+    <string name="capture_log_hint">Últimos 50 eventos, guardados solo en este dispositivo. El texto solo se guarda para las apps que registras.</string>
+    <string name="capture_log_empty">Aún no hay eventos. Si sigue vacío tras un pago, Bud-Jet no tiene acceso a notificaciones o el sistema lo detuvo.</string>
+    <string name="capture_log_refresh">Actualizar</string>
+    <string name="capture_log_clear">Borrar</string>
+    <string name="capture_log_connected">Servicio conectado</string>
+    <string name="capture_log_disconnected">El sistema desconectó el servicio</string>
+    <string name="capture_log_added">Añadido como transacción</string>
+    <string name="capture_log_to_confirm">Pendiente de confirmar</string>
+    <string name="capture_log_duplicate">Repetición de una notificación anterior: omitida</string>
+    <string name="capture_log_ignored">No es un pago: omitido</string>
+    <string name="capture_log_not_tracked">La app no se registra: actívala en «Apps» arriba</string>
+    <string name="capture_source_notification_title">¿Registrar pagos de %1$s?</string>
+    <string name="capture_source_notification_text">Toca para activar esta app en el registro automático</string>
 </resources>
 

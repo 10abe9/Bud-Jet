@@ -95,4 +95,34 @@ class NotificationParserTest {
         // "товар 5" must not be read as "5 р."
         assertTrue(NotificationParser.parse(null, "Покупка: товар 5 шт", "RUB") is ParseResult.Ignored)
     }
+
+    @Test
+    fun topUpIsIncomeEvenWithTypo() {
+        assertEquals(true, recognized("Т-Банк", "Пополение 50 Р ...", "RUB").isIncome)
+        assertEquals(true, recognized("Т-Банк", "Пополнение 50 ₽ с карты Сбербанк", "RUB").isIncome)
+    }
+
+    @Test
+    fun explicitSignWins() {
+        assertEquals(true, recognized("Bank", "Операция +1 500 ₽ OZON", "RUB").isIncome)
+        assertEquals(false, recognized("Bank", "Операция −700 ₽ OZON", "RUB").isIncome)
+    }
+
+    @Test
+    fun smsTransferNeedsConfirmationButKeepsCounterparty() {
+        val result = NotificationParser.parse(
+            "900",
+            "Счет карты VISA1234 15:28 перевод 50р Т-Банк Баланс: 54.90р",
+            "RUB"
+        )
+        assertTrue(result is ParseResult.Uncertain)
+        result as ParseResult.Uncertain
+        assertEquals(50.0, result.amount, 0.0)
+        assertEquals("Т-Банк", result.merchant)
+    }
+
+    @Test
+    fun incomingTransfer() {
+        assertEquals(true, recognized(null, "Перевод от Иван И. 2 000 ₽", "RUB").isIncome)
+    }
 }

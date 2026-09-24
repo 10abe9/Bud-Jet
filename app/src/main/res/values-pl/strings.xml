@@ -388,5 +388,27 @@ Bud-Jet nie wysyła Twoich transakcji, notatek, celów ani kategorii na zdalny s
         <item quantity="many">%1$d powiadomień z kwotą · włącz, aby śledzić</item>
         <item quantity="other">%1$d powiadomienia z kwotą · włącz, aby śledzić</item>
     </plurals>
+
+    <!-- Automatic capture: troubleshooting -->
+    <string name="capture_test_title">Sprawdź treść powiadomienia</string>
+    <string name="capture_test_hint">Wklej treść powiadomienia</string>
+    <string name="capture_test_button">Sprawdź</string>
+    <string name="capture_test_result_added">Zostanie dodane automatycznie:</string>
+    <string name="capture_test_result_confirm">Trafi do „Do potwierdzenia”:</string>
+    <string name="capture_test_result_ignored">Nie wygląda na płatność (brak kwoty z walutą albo to kod/reklama) — zostanie pominięte.</string>
+    <string name="capture_log_title">Dziennik zdarzeń</string>
+    <string name="capture_log_hint">Ostatnie 50 zdarzeń, przechowywane tylko na tym urządzeniu. Treść jest zapisywana tylko dla śledzonych aplikacji.</string>
+    <string name="capture_log_empty">Brak zdarzeń. Jeśli po płatności nadal jest pusto, Bud-Jet nie ma dostępu do powiadomień albo system go zatrzymał.</string>
+    <string name="capture_log_refresh">Odśwież</string>
+    <string name="capture_log_clear">Wyczyść</string>
+    <string name="capture_log_connected">Usługa połączona</string>
+    <string name="capture_log_disconnected">System odłączył usługę</string>
+    <string name="capture_log_added">Dodano jako transakcję</string>
+    <string name="capture_log_to_confirm">Czeka na potwierdzenie</string>
+    <string name="capture_log_duplicate">Powtórzenie wcześniejszego powiadomienia — pominięto</string>
+    <string name="capture_log_ignored">To nie płatność — pominięto</string>
+    <string name="capture_log_not_tracked">Aplikacja nie jest śledzona — włącz ją w „Aplikacje” powyżej</string>
+    <string name="capture_source_notification_title">Śledzić płatności z %1$s?</string>
+    <string name="capture_source_notification_text">Dotknij, aby włączyć tę aplikację w automatycznym śledzeniu</string>
 </resources>
 
