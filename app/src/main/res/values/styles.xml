@@ -39,6 +39,9 @@
 
         <!-- ВАЖНО: убираем серый системный фон -->
         <item name="android:background">@android:color/transparent</item>
+        <!-- Material draws the sheet's own shape with backgroundTint (colorSurface): without
+             this a white/dark block shows below the card and under the navigation bar. -->
+        <item name="backgroundTint">@android:color/transparent</item>
 
         <!-- скругления контейнера -->
         <item name="shapeAppearanceOverlay">
