@@ -1,6 +1,9 @@
 package com.abe.bud_jet
 
+import android.content.Intent
 import android.os.Bundle
+import com.abe.bud_jet.capture.CaptureAccess
+import com.abe.bud_jet.capture.CaptureNotifier
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.enableEdgeToEdge
@@ -24,6 +27,15 @@ import com.abe.bud_jet.utils.VibrationManager
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
+
+    /** Screens shown without the top bar, bottom navigation and add button. */
+    private val fullScreenDestinations = setOf(
+        R.id.hello1Fragment,
+        R.id.hello2Fragment,
+        R.id.hello3Fragment,
+        R.id.navigation_profile,
+        R.id.navigation_auto_capture
+    )
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var preferenceManager: PreferenceManager
@@ -60,11 +72,31 @@ class MainActivity : AppCompatActivity() {
         // after recreation (e.g. language change), when the nav state is restored.
         if (savedInstanceState == null && preferenceManager.getIsFirstInit()) {
             navController.navigate(R.id.hello1Fragment)
+        } else if (savedInstanceState == null) {
+            openAutoCaptureIfRequested(intent)
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        openAutoCaptureIfRequested(intent)
+    }
+
+    /** The "payments to confirm" notification opens the automatic-capture screen. */
+    private fun openAutoCaptureIfRequested(intent: Intent?) {
+        if (intent == null || !intent.getBooleanExtra(CaptureNotifier.EXTRA_OPEN_CAPTURE, false)) return
+        intent.removeExtra(CaptureNotifier.EXTRA_OPEN_CAPTURE)
+        val navController = findNavController(R.id.nav_host_fragment_activity_main)
+        if (navController.currentDestination?.id != R.id.navigation_auto_capture) {
+            navController.navigate(R.id.navigation_auto_capture)
         }
     }
 
     override fun onResume() {
         super.onResume()
+        // Reconnects the notification listener if the system may have dropped it.
+        val silentFor = System.currentTimeMillis() - preferenceManager.getCaptureListenerAliveAt()
+        if (silentFor > 60 * 60 * 1000L) CaptureAccess.requestRebind(applicationContext)
         // Used by notification reminders to check whether the user opened the app today.
         preferenceManager.setLastDashboardVisitTime(System.currentTimeMillis())
     }
@@ -101,7 +133,7 @@ class MainActivity : AppCompatActivity() {
     private fun hideUiForHelloFragments(navController: NavController){
         navController.addOnDestinationChangedListener { _, destination, _ ->
 
-            if (destination.id == R.id.hello1Fragment || destination.id == R.id.hello2Fragment || destination.id == R.id.navigation_profile) {
+            if (destination.id in fullScreenDestinations) {
 
                 binding.navView.visibility = View.GONE
                 binding.topBar.root.visibility = View.GONE

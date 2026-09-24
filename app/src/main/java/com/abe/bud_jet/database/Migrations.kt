@@ -29,5 +29,41 @@ object Migrations {
         }
     }
 
-    val ALL: Array<Migration> = arrayOf(MIGRATION_2_3, MIGRATION_3_4)
+    /** Transactions captured from payment notifications and their supporting tables. */
+    val MIGRATION_4_5 = object : Migration(4, 5) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL("ALTER TABLE `transactions` ADD COLUMN `source` TEXT NOT NULL DEFAULT 'manual'")
+            db.execSQL("ALTER TABLE `transactions` ADD COLUMN `source_app` TEXT")
+            db.execSQL("ALTER TABLE `transactions` ADD COLUMN `merchant` TEXT")
+            db.execSQL("ALTER TABLE `transactions` ADD COLUMN `external_id` TEXT")
+            db.execSQL(
+                "CREATE UNIQUE INDEX IF NOT EXISTS `index_transactions_external_id` " +
+                    "ON `transactions` (`external_id`)"
+            )
+            db.execSQL(
+                "CREATE TABLE IF NOT EXISTS `pending_captures` (" +
+                    "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                    "`externalId` TEXT NOT NULL, `packageName` TEXT NOT NULL, `appLabel` TEXT, " +
+                    "`text` TEXT NOT NULL, `postedAt` INTEGER NOT NULL, `amount` REAL, " +
+                    "`currencyCode` TEXT, `isIncome` INTEGER, `merchant` TEXT)"
+            )
+            db.execSQL(
+                "CREATE UNIQUE INDEX IF NOT EXISTS `index_pending_captures_externalId` " +
+                    "ON `pending_captures` (`externalId`)"
+            )
+            db.execSQL(
+                "CREATE TABLE IF NOT EXISTS `capture_sources` (" +
+                    "`packageName` TEXT NOT NULL, `appLabel` TEXT NOT NULL, " +
+                    "`enabled` INTEGER NOT NULL, `detectedCount` INTEGER NOT NULL, " +
+                    "`lastSeenAt` INTEGER NOT NULL, PRIMARY KEY(`packageName`))"
+            )
+            db.execSQL(
+                "CREATE TABLE IF NOT EXISTS `merchant_rules` (" +
+                    "`merchantKey` TEXT NOT NULL, `categoryId` INTEGER NOT NULL, " +
+                    "PRIMARY KEY(`merchantKey`))"
+            )
+        }
+    }
+
+    val ALL: Array<Migration> = arrayOf(MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
 }

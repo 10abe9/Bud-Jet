@@ -68,7 +68,13 @@
     <string name="profile_restore_confirm_title">Восстановить резервную копию?</string>
     <string name="profile_restore_confirm_message">Это заменит текущие локальные транзакции, категории и цели.</string>
     <string name="profile_privacy_title">Конфиденциальность и данные</string>
-    <string name="profile_privacy_message">Bud-Jet хранит ваши финансовые записи локально на этом устройстве.\n\nПри экспорте или создании резервной копии файлы создаются только в выбранном вами месте.\n\nBud-Jet не отправляет ваши транзакции, заметки, цели и категории на удаленные серверы.</string>
+    <string name="profile_privacy_message">Bud-Jet хранит ваши финансовые записи только на этом устройстве.
+
+Если вы включите автоучёт, Bud-Jet будет читать уведомления об оплатах от выбранных вами приложений. Они обрабатываются только на этом устройстве, их текст никуда не отправляется.
+
+При экспорте или резервном копировании файлы создаются только там, где вы укажете.
+
+Bud-Jet не отправляет ваши операции, заметки, цели и категории на удалённый сервер.</string>
 
     <!-- Notifications -->
     <string name="notifications_reminder_channel_name">Напоминание о расходах</string>
@@ -325,4 +331,60 @@
     <string name="premium_feature_unlimited">Безлимитные категории и экспорт в CSV</string>
     <string name="premium_sheet_buy">По рукам — %1$s/мес</string>
     <string name="premium_sheet_buy_generic">Оформить Premium</string>
+
+    <!-- Automatic capture of payment notifications -->
+    <string name="capture_service_label">Bud-Jet: уведомления об оплатах</string>
+    <string name="capture_channel_name">Траты на подтверждение</string>
+    <string name="capture_pending_notification_title">Проверьте найденные траты</string>
+    <string name="capture_title">Автоучёт трат</string>
+    <string name="capture_back">Назад</string>
+    <string name="capture_explanation">Bud-Jet может сам добавлять траты из уведомлений банков и платёжных приложений: сумму, продавца и дату. Ручной ввод работает как и раньше.</string>
+    <string name="capture_access_label">Доступ к уведомлениям</string>
+    <string name="capture_access_on">Включён</string>
+    <string name="capture_access_off">Выключен</string>
+    <string name="capture_access_enable">Включить</string>
+    <string name="capture_access_manage">Настройки доступа</string>
+    <string name="capture_last_captured">Последняя трата найдена %1$s</string>
+    <string name="capture_nothing_captured_yet">Трат пока не найдено. Включите приложения ниже, когда они пришлют уведомление об оплате.</string>
+    <string name="capture_stale_warning">Bud-Jet больше суток не получал уведомлений. Возможно, система остановила его ради экономии батареи — отключите для Bud-Jet оптимизацию батареи ниже.</string>
+    <string name="capture_battery_title">Не пропускать траты в фоне</string>
+    <string name="capture_battery_text">На некоторых телефонах (Samsung, Xiaomi, Huawei и других) экономия батареи останавливает фоновые приложения. Разрешите Bud-Jet работать без оптимизации батареи, чтобы не пропускать траты.</string>
+    <string name="capture_battery_button">Открыть настройки батареи</string>
+    <string name="capture_pending_title">Нужно подтвердить</string>
+    <string name="capture_pending_empty">Подтверждать нечего. Здесь появятся траты, в которых Bud-Jet не уверен.</string>
+    <string name="capture_pending_dismiss">Пропустить</string>
+    <string name="capture_pending_confirm">Добавить</string>
+    <string name="capture_pending_no_amount">Сумма?</string>
+    <string name="capture_sources_title">Приложения</string>
+    <string name="capture_sources_hint">Приложения появятся здесь, когда пришлют уведомление с суммой. Читаются уведомления только тех приложений, которые вы включили.</string>
+    <string name="capture_source_tracked">Траты добавляются автоматически</string>
+    <string name="capture_privacy_note">Уведомления обрабатываются только на этом устройстве. Bud-Jet никуда не отправляет их текст. Для приложений, которые вы не включили, запоминается только название приложения.</string>
+    <string name="capture_rationale_title">Разрешить доступ к уведомлениям?</string>
+    <string name="capture_rationale_message">Чтобы добавлять траты автоматически, Bud-Jet читает уведомления об оплатах от выбранных вами банков и платёжных приложений.\n\n• Всё обрабатывается на этом устройстве, текст никуда не отправляется.\n• Читаются только приложения, которые вы включите.\n• Доступ можно отключить в любой момент.\n\nAndroid откроет настройки: найдите там Bud-Jet и включите доступ.</string>
+    <string name="capture_rationale_not_now">Не сейчас</string>
+    <string name="capture_rationale_open_settings">Открыть настройки</string>
+    <string name="capture_confirm_title">Подтвердите трату</string>
+    <string name="hello3_title">Считайте траты автоматически</string>
+    <string name="hello3_body">Bud-Jet может сам добавлять покупки из уведомлений банка — не придётся вводить их вручную.</string>
+    <string name="hello3_example">🔔 «Покупка 450 ₽ PYATEROCHKA»\n→ Еда · −450 ₽, добавлено автоматически</string>
+    <string name="hello3_privacy">Уведомления читаются только на вашем устройстве и никуда не отправляются. Включить это можно и позже в профиле.</string>
+    <string name="hello3_enable">Включить автоучёт</string>
+    <string name="hello3_manual">Пропустить — буду вводить вручную</string>
+    <string name="capture_promo_title">Считать траты автоматически</string>
+    <string name="capture_promo_body">Пусть Bud-Jet сам добавляет покупки из уведомлений банка. Всё остаётся на этом устройстве.</string>
+    <string name="recurring_title">Регулярные платежи</string>
+    <string name="recurring_next_charge">Следующее списание: %1$s</string>
+    <string name="transaction_auto_captured_suffix">%1$s · авто</string>
+    <plurals name="capture_pending_count">
+        <item quantity="one">%1$d трата ждёт подтверждения</item>
+        <item quantity="few">%1$d траты ждут подтверждения</item>
+        <item quantity="many">%1$d трат ждут подтверждения</item>
+        <item quantity="other">%1$d траты ждут подтверждения</item>
+    </plurals>
+    <plurals name="capture_source_detected">
+        <item quantity="one">%1$d уведомление с суммой · включите, чтобы учитывать</item>
+        <item quantity="few">%1$d уведомления с суммой · включите, чтобы учитывать</item>
+        <item quantity="many">%1$d уведомлений с суммой · включите, чтобы учитывать</item>
+        <item quantity="other">%1$d уведомления с суммой · включите, чтобы учитывать</item>
+    </plurals>
 </resources>

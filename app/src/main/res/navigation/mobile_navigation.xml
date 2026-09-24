@@ -52,5 +52,22 @@
         <action
             android:id="@+id/action_hello2Fragment_to_navigation_dashboard"
             app:destination="@id/navigation_dashboard" />
+        <action
+            android:id="@+id/action_hello2Fragment_to_hello3Fragment"
+            app:destination="@id/hello3Fragment" />
     </fragment>
+    <fragment
+        android:id="@+id/hello3Fragment"
+        android:name="com.abe.bud_jet.ui.hello.Hello3Fragment"
+        android:label="@string/hello3_title"
+        tools:layout="@layout/fragment_hello3" >
+        <action
+            android:id="@+id/action_hello3Fragment_to_navigation_dashboard"
+            app:destination="@id/navigation_dashboard" />
+    </fragment>
+    <fragment
+        android:id="@+id/navigation_auto_capture"
+        android:name="com.abe.bud_jet.ui.capture.AutoCaptureFragment"
+        android:label="@string/capture_title"
+        tools:layout="@layout/fragment_auto_capture" />
 </navigation>

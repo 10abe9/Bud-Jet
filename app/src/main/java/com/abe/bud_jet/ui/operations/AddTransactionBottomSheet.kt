@@ -31,6 +31,17 @@ class AddTransactionBottomSheet : BaseBottomSheetDialogFragment() {
     private var selectedCategoryId: Long? = null
     private var isSaving = false
 
+    /** Set when confirming a payment captured from a notification. */
+    private var pendingId: Long? = null
+
+    private fun prefillFromArguments() {
+        val args = arguments ?: return
+        args.getDouble(ARG_AMOUNT, 0.0).takeIf { it > 0.0 }?.let {
+            binding.etAmount.setText(AmountParser.toEditable(it))
+        }
+        args.getString(ARG_NOTE)?.let { binding.etNote.setText(it) }
+    }
+
     override fun getTheme(): Int = R.style.ThemeOverlay_BudJet_BottomSheet
 
     override fun onCreateView(
@@ -46,6 +57,9 @@ class AddTransactionBottomSheet : BaseBottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         selectedCategoryId = arguments?.getLong(ARG_CATEGORY_ID, -1L)?.takeIf { it >= 0L }
+        pendingId = arguments?.getLong(ARG_PENDING_ID, -1L)?.takeIf { it >= 0L }
+        if (pendingId != null) binding.tvTitle.text = getString(R.string.capture_confirm_title)
+        if (savedInstanceState == null) prefillFromArguments()
         setupTypeToggle()
         binding.chipGroupCategories.setOnCheckedStateChangeListener { group, _ ->
             selectedCategoryId = CategoryChips.selectedId(group)
@@ -116,8 +130,17 @@ class AddTransactionBottomSheet : BaseBottomSheetDialogFragment() {
 
             isSaving = true
             binding.btnSave.isEnabled = false
+            val pending = pendingId
             lifecycleScope.launch {
-                if (type == TransactionType.INCOME) {
+                if (pending != null) {
+                    FinanceRepositoryProvider.capture(requireContext()).confirmPending(
+                        pendingId = pending,
+                        amount = amount,
+                        isIncome = type == TransactionType.INCOME,
+                        categoryId = categoryId,
+                        note = note
+                    )
+                } else if (type == TransactionType.INCOME) {
                     repository.addIncome(
                         amount = amount,
                         categoryId = categoryId,
@@ -146,6 +169,26 @@ class AddTransactionBottomSheet : BaseBottomSheetDialogFragment() {
     companion object {
         private const val ARG_IS_INCOME_DEFAULT = "is_income_default"
         private const val ARG_CATEGORY_ID = "category_id"
+        private const val ARG_PENDING_ID = "pending_id"
+        private const val ARG_AMOUNT = "amount"
+        private const val ARG_NOTE = "note"
+
+        /** Opens the form prefilled from a captured notification the parser was unsure about. */
+        fun newPendingConfirmation(
+            pendingId: Long,
+            amount: Double?,
+            isIncome: Boolean,
+            categoryId: Long?,
+            note: String?
+        ): AddTransactionBottomSheet {
+            return newInstance(isIncomeDefault = isIncome, categoryId = categoryId).apply {
+                requireArguments().apply {
+                    putLong(ARG_PENDING_ID, pendingId)
+                    putDouble(ARG_AMOUNT, amount ?: 0.0)
+                    putString(ARG_NOTE, note)
+                }
+            }
+        }
 
         fun newInstance(isIncomeDefault: Boolean, categoryId: Long? = null): AddTransactionBottomSheet {
             return AddTransactionBottomSheet().apply {

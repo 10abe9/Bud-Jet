@@ -2,12 +2,28 @@ package com.abe.bud_jet.database
 
 import com.abe.bud_jet.R
 import android.content.Context
+import com.abe.bud_jet.capture.CaptureRepository
 import androidx.room.withTransaction
 
 object FinanceRepositoryProvider {
 
     @Volatile
     private var INSTANCE: FinanceRepository? = null
+
+    @Volatile
+    private var CAPTURE_INSTANCE: CaptureRepository? = null
+
+    fun capture(context: Context): CaptureRepository {
+        return CAPTURE_INSTANCE ?: synchronized(this) {
+            CAPTURE_INSTANCE ?: AppDatabase.getInstance(context).let { database ->
+                CaptureRepository(
+                    transactionsDao = database.transactionsDao(),
+                    categoryDao = database.categoryDao(),
+                    captureDao = database.captureDao()
+                )
+            }.also { CAPTURE_INSTANCE = it }
+        }
+    }
 
     fun get(context: Context): FinanceRepository {
         return INSTANCE ?: synchronized(this) {
@@ -34,6 +50,7 @@ object FinanceRepositoryProvider {
             transactionsDao = database.transactionsDao(),
             categoryDao = database.categoryDao(),
             goalsDao = database.goalsDao(),
+            captureDao = database.captureDao(),
             runInTransaction = { block -> database.withTransaction { block() } }
         )
     }

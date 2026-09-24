@@ -18,6 +18,22 @@ interface TransactionsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(transactions: List<TransactionEntity>)
 
+    /** Returns -1 when a transaction with the same external_id already exists. */
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertIgnoringDuplicate(transaction: TransactionEntity): Long
+
+    @Query("SELECT COUNT(*) FROM transactions WHERE external_id = :externalId")
+    suspend fun countByExternalId(externalId: String): Int
+
+    @Query("SELECT * FROM transactions WHERE id = :id LIMIT 1")
+    suspend fun getById(id: Long): TransactionEntity?
+
+    @Query(
+        "SELECT * FROM transactions WHERE type = 'EXPENSE' AND timestamp >= :from " +
+            "AND (merchant IS NOT NULL OR note IS NOT NULL) ORDER BY timestamp ASC"
+    )
+    fun observeExpensesWithPayeeSince(from: Long): Flow<List<TransactionEntity>>
+
     @Update
     suspend fun update(transaction: TransactionEntity)
 

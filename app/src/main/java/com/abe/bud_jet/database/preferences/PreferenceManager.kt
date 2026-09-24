@@ -33,6 +33,9 @@ class PreferenceManager private constructor(context: Context) {
         private const val KEY_INITIAL_BALANCE_PROMPT_SHOWN = "initial_balance_prompt_shown"
         private const val KEY_IS_PREMIUM = "is_premium"
         private const val KEY_ONBOARDING_GOALS = "onboarding_goals"
+        private const val KEY_CAPTURE_LISTENER_ALIVE_AT = "capture_listener_alive_at"
+        private const val KEY_CAPTURE_LAST_CAPTURED_AT = "capture_last_captured_at"
+        private const val KEY_CAPTURE_PROMO_DISMISSED = "capture_promo_dismissed"
         private const val KEY_PREMIUM_PROMO_DISMISS_COUNT = "premium_promo_dismiss_count"
         private const val KEY_PREMIUM_PROMO_SNOOZED_UNTIL = "premium_promo_snoozed_until"
         private const val KEY_CONVERSION_RATE_V2_PREFIX = "conversion_rate_v2_"
@@ -186,6 +189,26 @@ class PreferenceManager private constructor(context: Context) {
         }
     }
 
+    /** Last time the notification listener was connected or received any notification. */
+    fun getCaptureListenerAliveAt(): Long = preferences.getLong(KEY_CAPTURE_LISTENER_ALIVE_AT, 0L)
+
+    fun setCaptureListenerAliveAt(millis: Long) {
+        preferences.edit { putLong(KEY_CAPTURE_LISTENER_ALIVE_AT, millis) }
+    }
+
+    /** Last time a notification from a tracked app was turned into a transaction or a pending item. */
+    fun getCaptureLastCapturedAt(): Long = preferences.getLong(KEY_CAPTURE_LAST_CAPTURED_AT, 0L)
+
+    fun setCaptureLastCapturedAt(millis: Long) {
+        preferences.edit { putLong(KEY_CAPTURE_LAST_CAPTURED_AT, millis) }
+    }
+
+    fun isCapturePromoDismissed(): Boolean = preferences.getBoolean(KEY_CAPTURE_PROMO_DISMISSED, false)
+
+    fun setCapturePromoDismissed(dismissed: Boolean) {
+        preferences.edit { putBoolean(KEY_CAPTURE_PROMO_DISMISSED, dismissed) }
+    }
+
     fun getOnboardingGoals(): Set<String> {
         return preferences.getStringSet(KEY_ONBOARDING_GOALS, emptySet()).orEmpty()
     }
@@ -211,6 +234,8 @@ class PreferenceManager private constructor(context: Context) {
         editor.putBoolean(KEY_INITIAL_BALANCE_PROMPT_SHOWN, false)
         // Premium is tied to the purchase, not to local data, so it survives a data reset.
         editor.remove(KEY_ONBOARDING_GOALS)
+        editor.remove(KEY_CAPTURE_LAST_CAPTURED_AT)
+        editor.remove(KEY_CAPTURE_PROMO_DISMISSED)
         // Show onboarding again after data deletion.
         editor.putBoolean(KEY_IS_FIRST_INIT, true)
 

@@ -68,7 +68,13 @@
     <string name="profile_restore_confirm_title">Restore backup file?</string>
     <string name="profile_restore_confirm_message">This will replace your current local transactions, categories, and goals.</string>
     <string name="profile_privacy_title">Privacy and data</string>
-    <string name="profile_privacy_message">Bud-Jet stores your finance records locally on this device.\n\nWhen you export or backup data, files are created only in the location you choose.\n\nBud-Jet does not send your transactions, notes, goals, or categories to a remote server.</string>
+    <string name="profile_privacy_message">Bud-Jet stores your finance records locally on this device.
+
+If you turn on automatic tracking, Bud-Jet reads payment notifications from the apps you choose. They are processed only on this device; their text is not sent anywhere.
+
+When you export or backup data, files are created only in the location you choose.
+
+Bud-Jet does not send your transactions, notes, goals, or categories to a remote server.</string>
 
     <!-- Notifications -->
     <string name="notifications_reminder_channel_name">Spending reminder</string>
@@ -336,4 +342,56 @@ and get smart financial insights.</string>
     <string name="premium_feature_unlimited">Unlimited categories and CSV export</string>
     <string name="premium_sheet_buy">Deal — %1$s/mo</string>
     <string name="premium_sheet_buy_generic">Get Premium</string>
+
+    <!-- Automatic capture of payment notifications -->
+    <string name="capture_service_label">Bud-Jet: payment notifications</string>
+    <string name="capture_channel_name">Payments to confirm</string>
+    <string name="capture_pending_notification_title">Check captured payments</string>
+    <string name="capture_title">Automatic tracking</string>
+    <string name="capture_back">Back</string>
+    <string name="capture_explanation">Bud-Jet can add expenses by itself from your bank and payment app notifications: amount, merchant and date. Manual entry keeps working as before.</string>
+    <string name="capture_access_label">Notification access</string>
+    <string name="capture_access_on">On</string>
+    <string name="capture_access_off">Off</string>
+    <string name="capture_access_enable">Turn on</string>
+    <string name="capture_access_manage">Access settings</string>
+    <string name="capture_last_captured">Last payment captured %1$s</string>
+    <string name="capture_nothing_captured_yet">No payments captured yet. Turn on the apps below once they send a payment notification.</string>
+    <string name="capture_stale_warning">Bud-Jet has not received notifications for over a day. The system may have stopped it to save battery — exempt Bud-Jet from battery optimization below.</string>
+    <string name="capture_battery_title">Keep tracking in the background</string>
+    <string name="capture_battery_text">On some phones (Samsung, Xiaomi, Huawei and others) battery saving stops background apps. Allow Bud-Jet to run without battery optimization so no payment is missed.</string>
+    <string name="capture_battery_button">Open battery settings</string>
+    <string name="capture_pending_title">To confirm</string>
+    <string name="capture_pending_empty">Nothing to confirm. Payments Bud-Jet is not sure about will appear here.</string>
+    <string name="capture_pending_dismiss">Skip</string>
+    <string name="capture_pending_confirm">Add</string>
+    <string name="capture_pending_no_amount">Amount?</string>
+    <string name="capture_sources_title">Apps</string>
+    <string name="capture_sources_hint">Apps appear here after they send a notification with an amount. Only notifications from apps you turn on are read.</string>
+    <string name="capture_source_tracked">Payments are added automatically</string>
+    <string name="capture_privacy_note">Notifications are processed only on this device. Bud-Jet does not send their text anywhere. For apps you did not turn on, only the app name is remembered.</string>
+    <string name="capture_rationale_title">Allow notification access?</string>
+    <string name="capture_rationale_message">To add expenses automatically, Bud-Jet reads payment notifications from the bank and payment apps you choose.\n\n• Everything is processed on this device; the text is not sent anywhere.\n• Only apps you turn on are read.\n• You can turn access off at any time.\n\nAndroid will open its settings: find Bud-Jet there and turn access on.</string>
+    <string name="capture_rationale_not_now">Not now</string>
+    <string name="capture_rationale_open_settings">Open settings</string>
+    <string name="capture_confirm_title">Confirm payment</string>
+    <string name="hello3_title">Track expenses automatically</string>
+    <string name="hello3_body">Bud-Jet can add purchases from your bank notifications by itself, so you do not have to type them in.</string>
+    <string name="hello3_example">🔔 “Purchase 450 ₽ PYATEROCHKA”\n→ Food · −450 ₽, added automatically</string>
+    <string name="hello3_privacy">Notifications are read only on your device and never sent anywhere. You can turn this on later in Profile.</string>
+    <string name="hello3_enable">Turn on automatic tracking</string>
+    <string name="hello3_manual">Skip — I will add expenses manually</string>
+    <string name="capture_promo_title">Count expenses automatically</string>
+    <string name="capture_promo_body">Let Bud-Jet add purchases from your bank notifications. Everything stays on this device.</string>
+    <string name="recurring_title">Regular payments</string>
+    <string name="recurring_next_charge">Next charge: %1$s</string>
+    <string name="transaction_auto_captured_suffix">%1$s · auto</string>
+    <plurals name="capture_pending_count">
+        <item quantity="one">%1$d payment waits for confirmation</item>
+        <item quantity="other">%1$d payments wait for confirmation</item>
+    </plurals>
+    <plurals name="capture_source_detected">
+        <item quantity="one">%1$d notification with an amount · turn on to track</item>
+        <item quantity="other">%1$d notifications with amounts · turn on to track</item>
+    </plurals>
 </resources>

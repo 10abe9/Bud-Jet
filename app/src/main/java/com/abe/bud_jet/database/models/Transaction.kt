@@ -16,7 +16,10 @@ data class Transaction(
     val categoryColorHex: String? = null,
     val amount: Double,
     val isIncome: Boolean,
-    val date: String
+    val date: String,
+    /** Added from a payment notification rather than typed in. */
+    val isAutoCaptured: Boolean = false,
+    val merchant: String? = null
 )
 
 fun TransactionEntity.toUiModel(): Transaction {
@@ -34,7 +37,9 @@ fun TransactionEntity.toUiModel(): Transaction {
         categoryColorHex = null,
         amount = amount,
         isIncome = isIncome,
-        date = formattedDate
+        date = formattedDate,
+        isAutoCaptured = source == TransactionEntity.SOURCE_NOTIFICATION,
+        merchant = merchant
     )
 }
 
@@ -45,6 +50,7 @@ fun Transaction.withCategoryMeta(
     val displayTitle = when {
         !categoryName.isNullOrBlank() -> categoryName
         !note.isNullOrBlank() -> note
+        !merchant.isNullOrBlank() -> merchant
         else -> title
     }
     return copy(

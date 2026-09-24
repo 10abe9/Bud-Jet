@@ -26,6 +26,7 @@ import com.abe.bud_jet.database.entities.TransactionEntity
 import com.abe.bud_jet.database.entities.TransactionType
 import com.abe.bud_jet.database.preferences.PreferenceManager
 import com.abe.bud_jet.databinding.FragmentProfileBinding
+import com.abe.bud_jet.capture.CaptureAccess
 import com.abe.bud_jet.premium.PremiumOfferBottomSheet
 import com.abe.bud_jet.premium.SavingsOfferSource
 import com.abe.bud_jet.utils.AmountParser
@@ -159,6 +160,9 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
             CurrencyPickerBottomSheet.newInstance(currentCurrency)
                 .show(parentFragmentManager, "currency_picker_sheet")
         }
+        binding.rowAutoCapture.setOnClickListener {
+            findNavController().navigate(R.id.navigation_auto_capture)
+        }
         binding.rowLanguage.setOnClickListener {
             LanguagePickerBottomSheet
                 .newInstance(preferenceManager.getAppLanguage())
@@ -264,6 +268,13 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         binding.buttonBack.setOnClickListener {
             findNavController().popBackStack()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.tvAutoCaptureStatus.text = getString(
+            if (CaptureAccess.isAccessGranted(requireContext())) R.string.capture_access_on else R.string.capture_access_off
+        )
     }
 
     private fun observeCurrency() {
@@ -529,6 +540,10 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                             put("categoryId", tx.categoryId)
                             put("note", tx.note)
                             put("timestamp", tx.timestamp)
+                            put("source", tx.source)
+                            put("sourceApp", tx.sourceApp)
+                            put("merchant", tx.merchant)
+                            put("externalId", tx.externalId)
                         }
                     )
                 }
@@ -631,12 +646,19 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                         type = type,
                         categoryId = item.optLong("categoryId", 0L).takeIf { item.has("categoryId") && !item.isNull("categoryId") },
                         note = item.optString("note").takeIf { item.has("note") && !item.isNull("note") },
-                        timestamp = item.optLong("timestamp", System.currentTimeMillis())
+                        timestamp = item.optLong("timestamp", System.currentTimeMillis()),
+                        source = item.optString("source", TransactionEntity.SOURCE_MANUAL),
+                        sourceApp = item.optStringOrNull("sourceApp"),
+                        merchant = item.optStringOrNull("merchant"),
+                        externalId = item.optStringOrNull("externalId")
                     )
                 )
             }
         }
     }
+
+    private fun JSONObject.optStringOrNull(key: String): String? =
+        optString(key).takeIf { has(key) && !isNull(key) }
 
     private fun applyBackupPreferences(preferences: BackupPreferences) {
         preferenceManager.setCurrencyCode(preferences.currencyCode)

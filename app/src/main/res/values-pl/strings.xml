@@ -68,7 +68,13 @@
     <string name="profile_restore_confirm_title">Przywrócić kopię zapasową?</string>
     <string name="profile_restore_confirm_message">To zastąpi bieżące lokalne transakcje, kategorie i cele.</string>
     <string name="profile_privacy_title">Prywatność i dane</string>
-    <string name="profile_privacy_message">Bud-Jet przechowuje Twoje dane finansowe lokalnie na tym urządzeniu.\n\nPodczas eksportu lub tworzenia kopii zapasowej pliki są zapisywane tylko w wybranej przez Ciebie lokalizacji.\n\nBud-Jet nie wysyła Twoich transakcji, notatek, celów ani kategorii na zdalne serwery.</string>
+    <string name="profile_privacy_message">Bud-Jet przechowuje Twoje dane finansowe tylko na tym urządzeniu.
+
+Jeśli włączysz automatyczne śledzenie, Bud-Jet będzie czytać powiadomienia o płatnościach z wybranych aplikacji. Są one przetwarzane tylko na tym urządzeniu, ich treść nie jest nigdzie wysyłana.
+
+Przy eksporcie lub kopii zapasowej pliki są tworzone tylko tam, gdzie wskażesz.
+
+Bud-Jet nie wysyła Twoich transakcji, notatek, celów ani kategorii na zdalny serwer.</string>
 
     <!-- Notifications -->
     <string name="notifications_reminder_channel_name">Przypomnienie o wydatkach</string>
@@ -326,5 +332,61 @@
     <string name="premium_feature_unlimited">Nielimitowane kategorie i eksport do CSV</string>
     <string name="premium_sheet_buy">Umowa — %1$s/mies.</string>
     <string name="premium_sheet_buy_generic">Kup Premium</string>
+
+    <!-- Automatic capture of payment notifications -->
+    <string name="capture_service_label">Bud-Jet: powiadomienia o płatnościach</string>
+    <string name="capture_channel_name">Płatności do potwierdzenia</string>
+    <string name="capture_pending_notification_title">Sprawdź wykryte płatności</string>
+    <string name="capture_title">Automatyczne śledzenie</string>
+    <string name="capture_back">Wstecz</string>
+    <string name="capture_explanation">Bud-Jet może sam dodawać wydatki z powiadomień banków i aplikacji płatniczych: kwotę, sprzedawcę i datę. Ręczne dodawanie działa jak dotąd.</string>
+    <string name="capture_access_label">Dostęp do powiadomień</string>
+    <string name="capture_access_on">Włączony</string>
+    <string name="capture_access_off">Wyłączony</string>
+    <string name="capture_access_enable">Włącz</string>
+    <string name="capture_access_manage">Ustawienia dostępu</string>
+    <string name="capture_last_captured">Ostatnia płatność wykryta %1$s</string>
+    <string name="capture_nothing_captured_yet">Nie wykryto jeszcze płatności. Włącz aplikacje poniżej, gdy wyślą powiadomienie o płatności.</string>
+    <string name="capture_stale_warning">Bud-Jet nie otrzymał powiadomień od ponad doby. System mógł go zatrzymać, aby oszczędzać baterię — wyłącz optymalizację baterii dla Bud-Jet poniżej.</string>
+    <string name="capture_battery_title">Śledzenie w tle</string>
+    <string name="capture_battery_text">Na niektórych telefonach (Samsung, Xiaomi, Huawei i inne) oszczędzanie baterii zatrzymuje aplikacje w tle. Zezwól Bud-Jet działać bez optymalizacji baterii, aby nie przegapić płatności.</string>
+    <string name="capture_battery_button">Otwórz ustawienia baterii</string>
+    <string name="capture_pending_title">Do potwierdzenia</string>
+    <string name="capture_pending_empty">Nie ma nic do potwierdzenia. Tu pojawią się płatności, których Bud-Jet nie jest pewien.</string>
+    <string name="capture_pending_dismiss">Pomiń</string>
+    <string name="capture_pending_confirm">Dodaj</string>
+    <string name="capture_pending_no_amount">Kwota?</string>
+    <string name="capture_sources_title">Aplikacje</string>
+    <string name="capture_sources_hint">Aplikacje pojawią się tu, gdy wyślą powiadomienie z kwotą. Czytane są tylko powiadomienia z aplikacji, które włączysz.</string>
+    <string name="capture_source_tracked">Płatności są dodawane automatycznie</string>
+    <string name="capture_privacy_note">Powiadomienia są przetwarzane tylko na tym urządzeniu. Bud-Jet nigdzie nie wysyła ich treści. Z aplikacji, których nie włączysz, zapamiętywana jest tylko nazwa.</string>
+    <string name="capture_rationale_title">Zezwolić na dostęp do powiadomień?</string>
+    <string name="capture_rationale_message">Aby dodawać wydatki automatycznie, Bud-Jet czyta powiadomienia o płatnościach z wybranych przez Ciebie banków i aplikacji płatniczych.\n\n• Wszystko jest przetwarzane na tym urządzeniu, treść nie jest nigdzie wysyłana.\n• Czytane są tylko włączone przez Ciebie aplikacje.\n• Dostęp możesz wyłączyć w każdej chwili.\n\nAndroid otworzy ustawienia: znajdź tam Bud-Jet i włącz dostęp.</string>
+    <string name="capture_rationale_not_now">Nie teraz</string>
+    <string name="capture_rationale_open_settings">Otwórz ustawienia</string>
+    <string name="capture_confirm_title">Potwierdź płatność</string>
+    <string name="hello3_title">Śledź wydatki automatycznie</string>
+    <string name="hello3_body">Bud-Jet może sam dodawać zakupy z powiadomień banku — nie trzeba ich wpisywać ręcznie.</string>
+    <string name="hello3_example">🔔 „Transakcja kartą 89,99 PLN w BIEDRONKA”\n→ Jedzenie · −89,99 zł, dodane automatycznie</string>
+    <string name="hello3_privacy">Powiadomienia są czytane tylko na Twoim urządzeniu i nigdzie nie są wysyłane. Możesz włączyć to później w profilu.</string>
+    <string name="hello3_enable">Włącz automatyczne śledzenie</string>
+    <string name="hello3_manual">Pomiń — będę dodawać ręcznie</string>
+    <string name="capture_promo_title">Liczyć wydatki automatycznie</string>
+    <string name="capture_promo_body">Pozwól Bud-Jet dodawać zakupy z powiadomień banku. Wszystko zostaje na tym urządzeniu.</string>
+    <string name="recurring_title">Płatności cykliczne</string>
+    <string name="recurring_next_charge">Następne obciążenie: %1$s</string>
+    <string name="transaction_auto_captured_suffix">%1$s · auto</string>
+    <plurals name="capture_pending_count">
+        <item quantity="one">%1$d płatność czeka na potwierdzenie</item>
+        <item quantity="few">%1$d płatności czekają na potwierdzenie</item>
+        <item quantity="many">%1$d płatności czeka na potwierdzenie</item>
+        <item quantity="other">%1$d płatności czeka na potwierdzenie</item>
+    </plurals>
+    <plurals name="capture_source_detected">
+        <item quantity="one">%1$d powiadomienie z kwotą · włącz, aby śledzić</item>
+        <item quantity="few">%1$d powiadomienia z kwotą · włącz, aby śledzić</item>
+        <item quantity="many">%1$d powiadomień z kwotą · włącz, aby śledzić</item>
+        <item quantity="other">%1$d powiadomienia z kwotą · włącz, aby śledzić</item>
+    </plurals>
 </resources>
 

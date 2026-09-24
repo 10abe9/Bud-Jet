@@ -37,7 +37,11 @@ class TransactionsAdapter(
 
         fun bind(item: Transaction) {
             binding.tvCategory.text = displayTitle(item)
-            binding.tvDate.text = item.date
+            binding.tvDate.text = if (item.isAutoCaptured) {
+                binding.root.context.getString(R.string.transaction_auto_captured_suffix, item.date)
+            } else {
+                item.date
+            }
 
             val amountText = if (item.isIncome) {
                 "+${CurrencyFormatter.format(item.amount, currencyCode)}"
@@ -101,7 +105,8 @@ class TransactionsAdapter(
                 if (item.isIncome) R.string.common_income else R.string.common_expense
             )
             val category = item.title.ifBlank { fallback }
-            val note = item.note?.trim().orEmpty()
+            // Captured payments have a merchant instead of a typed note.
+            val note = (item.note ?: item.merchant)?.trim().orEmpty()
             if (note.isBlank() || note == category) return category
             val shortNote = if (note.length > 24) note.take(24) + "…" else note
             return "$category · $shortNote"

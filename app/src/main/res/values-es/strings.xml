@@ -68,7 +68,13 @@
     <string name="profile_restore_confirm_title">¿Restaurar copia de seguridad?</string>
     <string name="profile_restore_confirm_message">Esto reemplazará tus transacciones, categorías y objetivos locales actuales.</string>
     <string name="profile_privacy_title">Privacidad y datos</string>
-    <string name="profile_privacy_message">Bud-Jet almacena tus registros financieros localmente en este dispositivo.\n\nCuando exportas o creas una copia, los archivos se guardan solo en la ubicación que elijas.\n\nBud-Jet no envía tus transacciones, notas, objetivos ni categorías a servidores remotos.</string>
+    <string name="profile_privacy_message">Bud-Jet guarda tus registros financieros solo en este dispositivo.
+
+Si activas el registro automático, Bud-Jet lee las notificaciones de pago de las apps que elijas. Se procesan solo en este dispositivo; su texto no se envía a ningún sitio.
+
+Al exportar o hacer copia de seguridad, los archivos se crean solo donde tú elijas.
+
+Bud-Jet no envía tus transacciones, notas, metas ni categorías a ningún servidor.</string>
 
     <!-- Notifications -->
     <string name="notifications_reminder_channel_name">Recordatorio de gastos</string>
@@ -323,5 +329,57 @@
     <string name="premium_feature_unlimited">Categorías ilimitadas y exportación a CSV</string>
     <string name="premium_sheet_buy">Trato hecho — %1$s/mes</string>
     <string name="premium_sheet_buy_generic">Obtener Premium</string>
+
+    <!-- Automatic capture of payment notifications -->
+    <string name="capture_service_label">Bud-Jet: notificaciones de pagos</string>
+    <string name="capture_channel_name">Pagos por confirmar</string>
+    <string name="capture_pending_notification_title">Revisa los pagos detectados</string>
+    <string name="capture_title">Registro automático</string>
+    <string name="capture_back">Atrás</string>
+    <string name="capture_explanation">Bud-Jet puede añadir gastos por sí solo a partir de las notificaciones de tus bancos y apps de pago: importe, comercio y fecha. La entrada manual sigue funcionando igual.</string>
+    <string name="capture_access_label">Acceso a notificaciones</string>
+    <string name="capture_access_on">Activado</string>
+    <string name="capture_access_off">Desactivado</string>
+    <string name="capture_access_enable">Activar</string>
+    <string name="capture_access_manage">Ajustes de acceso</string>
+    <string name="capture_last_captured">Último pago detectado %1$s</string>
+    <string name="capture_nothing_captured_yet">Aún no se han detectado pagos. Activa las apps de abajo cuando envíen una notificación de pago.</string>
+    <string name="capture_stale_warning">Bud-Jet no recibe notificaciones desde hace más de un día. Es posible que el sistema lo haya detenido para ahorrar batería: excluye Bud-Jet de la optimización de batería abajo.</string>
+    <string name="capture_battery_title">Seguir registrando en segundo plano</string>
+    <string name="capture_battery_text">En algunos teléfonos (Samsung, Xiaomi, Huawei y otros) el ahorro de batería detiene las apps en segundo plano. Permite que Bud-Jet funcione sin optimización de batería para no perder pagos.</string>
+    <string name="capture_battery_button">Abrir ajustes de batería</string>
+    <string name="capture_pending_title">Por confirmar</string>
+    <string name="capture_pending_empty">Nada que confirmar. Aquí aparecerán los pagos de los que Bud-Jet no está seguro.</string>
+    <string name="capture_pending_dismiss">Omitir</string>
+    <string name="capture_pending_confirm">Añadir</string>
+    <string name="capture_pending_no_amount">¿Importe?</string>
+    <string name="capture_sources_title">Apps</string>
+    <string name="capture_sources_hint">Las apps aparecen aquí cuando envían una notificación con un importe. Solo se leen las notificaciones de las apps que actives.</string>
+    <string name="capture_source_tracked">Los pagos se añaden automáticamente</string>
+    <string name="capture_privacy_note">Las notificaciones se procesan solo en este dispositivo. Bud-Jet no envía su texto a ningún sitio. De las apps que no has activado solo se guarda el nombre.</string>
+    <string name="capture_rationale_title">¿Permitir acceso a notificaciones?</string>
+    <string name="capture_rationale_message">Para añadir gastos automáticamente, Bud-Jet lee las notificaciones de pago de los bancos y apps de pago que elijas.\n\n• Todo se procesa en este dispositivo; el texto no se envía a ningún sitio.\n• Solo se leen las apps que actives.\n• Puedes desactivar el acceso cuando quieras.\n\nAndroid abrirá sus ajustes: busca Bud-Jet y activa el acceso.</string>
+    <string name="capture_rationale_not_now">Ahora no</string>
+    <string name="capture_rationale_open_settings">Abrir ajustes</string>
+    <string name="capture_confirm_title">Confirma el pago</string>
+    <string name="hello3_title">Registra gastos automáticamente</string>
+    <string name="hello3_body">Bud-Jet puede añadir las compras de las notificaciones de tu banco por sí solo, sin que tengas que escribirlas.</string>
+    <string name="hello3_example">🔔 «Compra de 23,40 € en MERCADONA»\n→ Comida · −23,40 €, añadido automáticamente</string>
+    <string name="hello3_privacy">Las notificaciones se leen solo en tu dispositivo y nunca se envían. Puedes activarlo más tarde en el perfil.</string>
+    <string name="hello3_enable">Activar registro automático</string>
+    <string name="hello3_manual">Omitir: añadiré los gastos a mano</string>
+    <string name="capture_promo_title">Registrar gastos automáticamente</string>
+    <string name="capture_promo_body">Deja que Bud-Jet añada las compras de las notificaciones de tu banco. Todo se queda en este dispositivo.</string>
+    <string name="recurring_title">Pagos recurrentes</string>
+    <string name="recurring_next_charge">Próximo cargo: %1$s</string>
+    <string name="transaction_auto_captured_suffix">%1$s · auto</string>
+    <plurals name="capture_pending_count">
+        <item quantity="one">%1$d pago pendiente de confirmar</item>
+        <item quantity="other">%1$d pagos pendientes de confirmar</item>
+    </plurals>
+    <plurals name="capture_source_detected">
+        <item quantity="one">%1$d notificación con importe · actívala para registrar</item>
+        <item quantity="other">%1$d notificaciones con importe · actívalas para registrar</item>
+    </plurals>
 </resources>
 

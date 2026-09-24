@@ -7,6 +7,7 @@ import com.abe.bud_jet.database.FinanceRepository
 import com.abe.bud_jet.database.DashboardSummary
 import com.abe.bud_jet.database.entities.TransactionType
 import com.abe.bud_jet.utils.CategoryPalette
+import com.abe.bud_jet.capture.RecurringDetector
 import com.abe.bud_jet.premium.SavingsOffer
 import com.abe.bud_jet.premium.SavingsOfferSource
 import kotlinx.coroutines.flow.Flow
@@ -51,6 +52,10 @@ class DashboardViewModel(
     val premiumOffer: StateFlow<SavingsOffer?> =
         SavingsOfferSource.observe(repository, currencyCode)
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
+
+    val recurringPayments: StateFlow<List<RecurringDetector.RecurringPayment>> =
+        repository.observeRecurringPayments()
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     val uiState: StateFlow<DashboardUiState> =
         combine(

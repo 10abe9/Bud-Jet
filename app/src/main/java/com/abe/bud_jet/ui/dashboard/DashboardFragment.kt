@@ -21,6 +21,9 @@ import com.abe.bud_jet.database.FinanceRepository
 import com.abe.bud_jet.database.preferences.PreferenceManager
 import com.abe.bud_jet.databinding.FragmentDashboardBinding
 import com.abe.bud_jet.R
+import com.abe.bud_jet.capture.CaptureAccess
+import com.abe.bud_jet.capture.RecurringDetector
+import com.abe.bud_jet.databinding.ItemRecurringPaymentBinding
 import com.abe.bud_jet.premium.PremiumOfferBottomSheet
 import com.abe.bud_jet.premium.PremiumPromoPolicy
 import com.abe.bud_jet.premium.SavingsOffer
@@ -39,6 +42,7 @@ import kotlinx.coroutines.flow.combine
 class DashboardFragment : Fragment() {
     companion object {
         const val KEY_PROMPT_NOTIFICATIONS_AFTER_ONBOARDING = "prompt_notifications_after_onboarding"
+        private const val MAX_RECURRING_ROWS = 5
     }
 
     private var _binding: FragmentDashboardBinding? = null
@@ -96,6 +100,68 @@ class DashboardFragment : Fragment() {
         setupButtons()
         observeCurrency()
         observePremiumOffer()
+        observeAutoCapture()
+        observeRecurringPayments()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Notification access is granted in system settings; refresh when coming back.
+        renderCapturePromo()
+    }
+
+    private fun observeAutoCapture() {
+        FinanceRepositoryProvider.capture(requireContext()).observePending()
+            .collectWithLifecycle(viewLifecycleOwner) { pending ->
+                binding.cardCapturePending.visibility = if (pending.isEmpty()) View.GONE else View.VISIBLE
+                binding.tvCapturePending.text = resources.getQuantityString(
+                    R.plurals.capture_pending_count,
+                    pending.size,
+                    pending.size
+                )
+            }
+        binding.cardCapturePending.setOnClickListener { openAutoCapture() }
+        binding.btnCapturePromoEnable.setOnClickListener {
+            vibrator.tap()
+            openAutoCapture()
+        }
+        binding.btnCapturePromoDismiss.setOnClickListener {
+            preferenceManager.setCapturePromoDismissed(true)
+            binding.cardCapturePromo.visibility = View.GONE
+        }
+    }
+
+    private fun renderCapturePromo() {
+        val show = !preferenceManager.isCapturePromoDismissed() &&
+            !CaptureAccess.isAccessGranted(requireContext())
+        binding.cardCapturePromo.visibility = if (show) View.VISIBLE else View.GONE
+    }
+
+    private fun openAutoCapture() {
+        findNavController().navigate(R.id.navigation_auto_capture)
+    }
+
+    private fun observeRecurringPayments() {
+        dashboardViewModel.recurringPayments.collectWithLifecycle(viewLifecycleOwner) { payments ->
+            renderRecurringPayments(payments)
+        }
+    }
+
+    private fun renderRecurringPayments(payments: List<RecurringDetector.RecurringPayment>) {
+        val container = binding.layoutRecurringRows
+        container.removeAllViews()
+        binding.cardRecurring.visibility = if (payments.isEmpty()) View.GONE else View.VISIBLE
+        val dateFormat = java.text.DateFormat.getDateInstance(java.text.DateFormat.MEDIUM)
+        payments.take(MAX_RECURRING_ROWS).forEach { payment ->
+            val row = ItemRecurringPaymentBinding.inflate(layoutInflater, container, false)
+            row.tvMerchant.text = payment.merchant
+            row.tvNextCharge.text = getString(
+                R.string.recurring_next_charge,
+                dateFormat.format(java.util.Date(payment.nextChargeAt))
+            )
+            row.tvAmount.text = CurrencyFormatter.format(payment.lastAmount, currencyCode)
+            container.addView(row.root)
+        }
     }
 
     private fun observePremiumOffer() {

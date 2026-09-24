@@ -1,6 +1,10 @@
 package com.abe.bud_jet.database
 
+import com.abe.bud_jet.capture.MerchantCategorizer
+import com.abe.bud_jet.capture.RecurringDetector
+import com.abe.bud_jet.database.dao.CaptureDao
 import com.abe.bud_jet.database.dao.CategoryDao
+import com.abe.bud_jet.database.entities.MerchantRuleEntity
 import com.abe.bud_jet.database.dao.GoalsDao
 import com.abe.bud_jet.database.dao.TransactionsDao
 import com.abe.bud_jet.database.entities.CategoryEntity
@@ -18,6 +22,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 /**
@@ -29,6 +34,7 @@ class FinanceRepository(
     private val transactionsDao: TransactionsDao,
     private val categoryDao: CategoryDao,
     private val goalsDao: GoalsDao,
+    private val captureDao: CaptureDao,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     /** Runs the block atomically (Room transaction in production). */
     private val runInTransaction: suspend (suspend () -> Unit) -> Unit = { block -> block() }
@@ -38,6 +44,7 @@ class FinanceRepository(
         const val MAX_EXPENSE_CATEGORIES = 5
         const val MAX_INCOME_CATEGORIES = 3
         private val CATEGORY_COLOR_PALETTE = CategoryPalette.colors
+        private const val RECURRING_LOOKBACK_MILLIS = 400L * 24 * 60 * 60 * 1000
     }
 
     enum class AddCategoryResult {
@@ -78,6 +85,23 @@ class FinanceRepository(
         observeCurrentMonthRange().flatMapLatest { range ->
             transactionsDao.observeInPeriod(range.from, range.to)
         }
+
+    /**
+     * Regular payments (subscriptions) found in the last ~13 months of expenses that have a
+     * merchant (captured) or a note (manual entries). Derived on the fly, so the result always
+     * reflects edits and deletions.
+     */
+    fun observeRecurringPayments(): Flow<List<RecurringDetector.RecurringPayment>> {
+        val from = System.currentTimeMillis() - RECURRING_LOOKBACK_MILLIS
+        return transactionsDao.observeExpensesWithPayeeSince(from).map { expenses ->
+            RecurringDetector.detect(
+                expenses.mapNotNull { tx ->
+                    val payee = tx.merchant ?: tx.note ?: return@mapNotNull null
+                    RecurringDetector.Payment(tx.timestamp, tx.amount, payee)
+                }
+            )
+        }
+    }
 
     /** Income minus expenses recorded at or after [from]. */
     fun observeNetSince(from: Long): Flow<Double> =
@@ -136,6 +160,7 @@ class FinanceRepository(
             deleted = categoryDao.deleteById(categoryId)
             if (deleted > 0) {
                 transactionsDao.clearCategoryReferences(categoryId)
+                captureDao.deleteRulesForCategory(categoryId)
                 // A limit for a deleted category can no longer be tracked.
                 goalsDao.getLimitByCategoryId(categoryId)?.let { goalsDao.deleteById(it.id) }
             }
@@ -186,15 +211,23 @@ class FinanceRepository(
         note: String?,
         timestamp: Long
     ) = withContext(ioDispatcher) {
-        val entity = TransactionEntity(
-            id = id,
-            amount = amount,
-            type = if (isIncome) TransactionType.INCOME else TransactionType.EXPENSE,
-            categoryId = categoryId,
-            note = note,
-            timestamp = timestamp
+        val existing = transactionsDao.getById(id) ?: return@withContext
+        // copy() keeps the capture fields (source, app, merchant) of auto-added transactions.
+        transactionsDao.update(
+            existing.copy(
+                amount = amount,
+                type = if (isIncome) TransactionType.INCOME else TransactionType.EXPENSE,
+                categoryId = categoryId,
+                note = note,
+                timestamp = timestamp
+            )
         )
-        transactionsDao.update(entity)
+        // Remember the choice so the next payment at this merchant gets the same category.
+        val merchant = existing.merchant
+        if (merchant != null && categoryId != null) {
+            val key = MerchantCategorizer.merchantKey(merchant)
+            if (key.isNotEmpty()) captureDao.upsertRule(MerchantRuleEntity(key, categoryId))
+        }
     }
 
     suspend fun deleteTransaction(id: Long): Boolean = withContext(ioDispatcher) {
@@ -226,6 +259,8 @@ class FinanceRepository(
     }
 
     private suspend fun restoreBackupSnapshotInternal(snapshot: BackupSnapshot) {
+        // Rules point at category ids, which the backup may reuse differently.
+        captureDao.deleteAllRules()
         transactionsDao.deleteAll()
         goalsDao.deleteAll()
         categoryDao.deleteAll()
@@ -296,6 +331,9 @@ class FinanceRepository(
             transactionsDao.deleteAll()
             goalsDao.deleteAll()
             categoryDao.deleteAll()
+            captureDao.deleteAllPending()
+            captureDao.deleteAllSources()
+            captureDao.deleteAllRules()
         }
         // Starter categories are re-seeded by syncDefaultCategories when the app restarts.
     }
@@ -381,6 +419,7 @@ class FinanceRepository(
             .forEach { category ->
                 categoryDao.deleteById(category.id)
                 transactionsDao.clearCategoryReferences(category.id)
+                captureDao.deleteRulesForCategory(category.id)
                 goalsDao.getLimitByCategoryId(category.id)?.let { goalsDao.deleteById(it.id) }
             }
     }
