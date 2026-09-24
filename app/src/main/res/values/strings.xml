@@ -38,7 +38,7 @@
     <string name="profile_reset_dialog_message">This permanently deletes your transactions, categories, and goals stored on this device.</string>
     <string name="profile_reset_success_toast">All data has been reset.</string>
     <string name="profile_premium_title">Get Premium</string>
-    <string name="profile_premium_subtitle">AI insights • Smart goals • Predictions</string>
+    <string name="profile_premium_subtitle">Automatic tracking • AI assistant • First month free</string>
     <string name="profile_notifications_on">Notifications ON</string>
     <string name="profile_notifications_off">Notifications OFF</string>
     <string name="profile_export_coming_soon">Export coming soon</string>
@@ -328,7 +328,7 @@ and get smart financial insights.</string>
     <string name="premium_offer_cta">Make a deal</string>
     <string name="premium_offer_not_now">Not now</string>
     <string name="premium_sheet_title">A deal that pays for itself</string>
-    <string name="premium_sheet_generic_body">Premium turns your records into savings: an AI assistant, monthly tips, forecasts and smart limits.</string>
+    <string name="premium_sheet_generic_body">Premium records expenses for you from bank notifications, and on request adds an AI assistant that reviews your spending with your consent.</string>
     <string name="premium_sheet_spend_label">Your spending</string>
     <string name="premium_sheet_savings_label" formatted="false">Spending 5% less</string>
     <string name="premium_sheet_price_label">Premium</string>
@@ -336,10 +336,6 @@ and get smart financial insights.</string>
     <string name="premium_per_month">%1$s/mo</string>
     <string name="premium_sheet_disclaimer">Estimate based on your last 30 days. Actual savings depend on your habits.</string>
     <string name="premium_sheet_features_title">What you get</string>
-    <string name="premium_feature_ai_chat">AI assistant: ask anything about your budget</string>
-    <string name="premium_feature_ai_report">Monthly AI report with personal saving tips</string>
-    <string name="premium_feature_smart_limits">Smart limits and overspending forecasts</string>
-    <string name="premium_feature_unlimited">Unlimited categories and CSV export</string>
     <string name="premium_sheet_buy">Deal — %1$s/mo</string>
     <string name="premium_sheet_buy_generic">Get Premium</string>
 
@@ -375,12 +371,12 @@ and get smart financial insights.</string>
     <string name="capture_rationale_not_now">Not now</string>
     <string name="capture_rationale_open_settings">Open settings</string>
     <string name="capture_confirm_title">Confirm payment</string>
-    <string name="hello3_title">Track expenses automatically</string>
-    <string name="hello3_body">Bud-Jet can add purchases from your bank notifications by itself, so you do not have to type them in.</string>
+    <string name="hello3_title">Stop typing in every expense</string>
+    <string name="hello3_body">With Bud-Jet Premium, purchases are recorded automatically from your bank notifications: amount, store and date.</string>
     <string name="hello3_example">🔔 “Purchase 450 ₽ PYATEROCHKA”\n→ Food · −450 ₽, added automatically</string>
     <string name="hello3_privacy">Notifications are read only on your device and never sent anywhere. You can turn this on later in Profile.</string>
-    <string name="hello3_enable">Turn on automatic tracking</string>
-    <string name="hello3_manual">Skip — I will add expenses manually</string>
+    <string name="hello3_enable">Try for free</string>
+    <string name="hello3_manual">Continue for free — I will add expenses manually</string>
     <string name="capture_promo_title">Count expenses automatically</string>
     <string name="capture_promo_body">Let Bud-Jet add purchases from your bank notifications. Everything stays on this device.</string>
     <string name="recurring_title">Regular payments</string>
@@ -416,4 +412,34 @@ and get smart financial insights.</string>
     <string name="capture_log_not_tracked">App is not tracked — turn it on in \"Apps\" above</string>
     <string name="capture_source_notification_title">Track payments from %1$s?</string>
     <string name="capture_source_notification_text">Tap to turn this app on in automatic tracking</string>
+
+    <!-- Premium subscription and AI assistant -->
+    <string name="ai_assistant_title">AI assistant</string>
+    <string name="ai_assistant_subtitle_premium">Available in Premium</string>
+    <string name="ai_assistant_subtitle_on">On · analyzes a summary of your spending</string>
+    <string name="ai_assistant_subtitle_off">Off · your data stays on this device</string>
+    <string name="ai_assistant_premium_only">The AI assistant is part of Premium</string>
+    <string name="ai_assistant_consent_title">Turn on the AI assistant?</string>
+    <string name="ai_assistant_consent_message">To give advice, the assistant sends a summary of your spending to our AI service: totals by category and month, limits and goals.\n\nNot sent: notes, notification texts, bank or card details.\n\nYou can turn it off at any time — then nothing is sent.</string>
+    <string name="ai_assistant_consent_accept">Turn on</string>
+    <string name="ai_assistant_disabled_toast">OK, your data stays only on this device — we will not send it for AI analysis.</string>
+    <string name="capture_premium_required">Automatic tracking is part of Premium. The first month is free.</string>
+    <string name="capture_get_premium">Try Premium for free</string>
+    <string name="hello3_ai">Optionally, turn on the AI assistant: with your consent it reviews your spending and suggests how to manage money wisely.</string>
+    <string name="hello3_terms_trial">First month free, then %1$s per month. Cancel anytime in Google Play.</string>
+    <string name="hello3_terms_paid">%1$s per month. Cancel anytime in Google Play.</string>
+    <string name="hello3_terms_generic">First month free. The price is shown in Google Play before you pay.</string>
+    <string name="premium_feature_auto_capture">Expenses recorded automatically from bank notifications</string>
+    <string name="premium_feature_ai_assistant">AI assistant on request: with your consent it reviews spending and gives tips (coming soon)</string>
+    <string name="premium_feature_export">Export transactions to CSV</string>
+    <string name="premium_trial_terms">Free until %1$s, then %2$s per month unless you cancel before that date. Cancel anytime in Google Play.</string>
+    <string name="premium_terms">%1$s per month, renews automatically. Cancel anytime in Google Play.</string>
+    <string name="premium_try_free">Try free for %1$d days</string>
+    <string name="premium_unavailable">The subscription is unavailable right now: Google Play could not be reached or does not sell it in your region.</string>
+    <string name="premium_active_terms">Premium is active. Manage or cancel the subscription in Google Play.</string>
+    <string name="premium_manage_subscription">Manage subscription</string>
+    <string name="premium_debug_on">Test Premium on (debug build)</string>
+    <string name="premium_debug_off">Test Premium off</string>
+    <string name="profile_premium_active">Premium is active</string>
+    <string name="profile_premium_active_subtitle">Automatic tracking • AI assistant • Manage subscription</string>
 </resources>

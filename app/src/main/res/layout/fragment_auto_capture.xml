@@ -96,6 +96,16 @@
                     android:textSize="13sp"
                     android:visibility="gone" />
 
+                <TextView
+                    android:id="@+id/tvPremiumRequired"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/capture_premium_required"
+                    android:textColor="@color/ai_accent"
+                    android:textSize="13sp"
+                    android:visibility="gone" />
+
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnAccess"
                     android:layout_width="match_parent"

@@ -135,25 +135,30 @@
 
             <TextView
                 style="@style/BudJet.PremiumFeature"
-                android:text="@string/premium_feature_ai_chat" />
+                android:text="@string/premium_feature_auto_capture" />
 
             <TextView
                 style="@style/BudJet.PremiumFeature"
-                android:text="@string/premium_feature_ai_report" />
+                android:text="@string/premium_feature_ai_assistant" />
 
             <TextView
                 style="@style/BudJet.PremiumFeature"
-                android:text="@string/premium_feature_smart_limits" />
+                android:text="@string/premium_feature_export" />
 
+            <!-- Trial and billing terms, shown before the user agrees -->
             <TextView
-                style="@style/BudJet.PremiumFeature"
-                android:text="@string/premium_feature_unlimited" />
+                android:id="@+id/tvTerms"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnBuy"
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="12dp"
                 android:textColor="@color/white"
                 app:backgroundTint="@color/ai_accent"
                 app:cornerRadius="16dp" />

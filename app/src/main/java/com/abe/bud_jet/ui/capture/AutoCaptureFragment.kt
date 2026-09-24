@@ -17,6 +17,8 @@ import com.abe.bud_jet.database.FinanceRepositoryProvider
 import com.abe.bud_jet.database.entities.PendingCaptureEntity
 import com.abe.bud_jet.database.preferences.PreferenceManager
 import com.abe.bud_jet.databinding.FragmentAutoCaptureBinding
+import com.abe.bud_jet.premium.PremiumManager
+import com.abe.bud_jet.premium.PremiumOfferBottomSheet
 import com.abe.bud_jet.ui.operations.AddTransactionBottomSheet
 import com.abe.bud_jet.utils.collectWithLifecycle
 import kotlinx.coroutines.launch
@@ -67,6 +69,8 @@ class AutoCaptureFragment : Fragment(R.layout.fragment_auto_capture) {
         repository.observeSources().collectWithLifecycle(viewLifecycleOwner) { sources ->
             sourceAdapter.submit(sources)
         }
+        // A purchase made from this screen unlocks it right away.
+        PremiumManager.isPremium.collectWithLifecycle(viewLifecycleOwner) { renderStatus() }
     }
 
     override fun onResume() {
@@ -126,9 +130,23 @@ class AutoCaptureFragment : Fragment(R.layout.fragment_auto_capture) {
         binding.tvAccessStatus.setTextColor(
             ContextCompat.getColor(context, if (granted) R.color.finance_income else R.color.text_secondary)
         )
-        binding.btnAccess.text = getString(if (granted) R.string.capture_access_manage else R.string.capture_access_enable)
+        // Automatic tracking is part of Premium: without it the button opens the paywall.
+        val premium = PremiumManager.isPremium.value
+        binding.tvPremiumRequired.visibility = if (premium) View.GONE else View.VISIBLE
+        binding.btnAccess.text = getString(
+            when {
+                !premium -> R.string.capture_get_premium
+                granted -> R.string.capture_access_manage
+                else -> R.string.capture_access_enable
+            }
+        )
         binding.btnAccess.setOnClickListener {
-            if (granted) CaptureAccess.openAccessSettings(context) else CaptureRationale.show(context)
+            when {
+                !premium -> PremiumOfferBottomSheet.newInstance(preferences.getCurrencyCode(), null)
+                    .show(parentFragmentManager, "premium_offer")
+                granted -> CaptureAccess.openAccessSettings(context)
+                else -> CaptureRationale.show(context)
+            }
         }
 
         val now = System.currentTimeMillis()

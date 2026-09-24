@@ -2,6 +2,7 @@ package com.abe.bud_jet.ui.profile
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.content.pm.PackageManager
@@ -27,7 +28,9 @@ import com.abe.bud_jet.database.entities.TransactionType
 import com.abe.bud_jet.database.preferences.PreferenceManager
 import com.abe.bud_jet.databinding.FragmentProfileBinding
 import com.abe.bud_jet.capture.CaptureAccess
+import com.abe.bud_jet.premium.PremiumManager
 import com.abe.bud_jet.premium.PremiumOfferBottomSheet
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.abe.bud_jet.premium.SavingsOfferSource
 import com.abe.bud_jet.utils.AmountParser
 import com.abe.bud_jet.utils.DateRanges
@@ -107,6 +110,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         setupClicks()
         observeCurrency()
         observeLanguage()
+        setupPremium()
     }
 
     private fun setupUI() {
@@ -209,6 +213,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                     getString(R.string.profile_export_premium_required),
                     Toast.LENGTH_SHORT
                 ).show()
+                showPaywall()
                 return@setOnClickListener
             }
             val fileName = "bud-jet-transactions-${fileNameFormatter.format(System.currentTimeMillis())}.csv"
@@ -256,6 +261,10 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         }
 
         binding.cardPremium.setOnClickListener {
+            if (PremiumManager.isPremium.value) {
+                openUrl(PremiumManager.manageSubscriptionUrl(requireContext().packageName))
+                return@setOnClickListener
+            }
             viewLifecycleOwner.lifecycleScope.launch {
                 val offer = SavingsOfferSource
                     .observe(repository, flowOf(currentCurrency))
@@ -277,6 +286,86 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         )
     }
 
+    private var renderingPremium = false
+
+    private fun setupPremium() {
+        PremiumManager.isPremium.collectWithLifecycle(viewLifecycleOwner) { renderPremium() }
+
+        // Debug builds only: long-press the Premium card to test Premium without a purchase.
+        binding.cardPremium.setOnLongClickListener {
+            if (!PremiumManager.isDebugBuild()) return@setOnLongClickListener false
+            val enable = !preferenceManager.isDebugPremium()
+            PremiumManager.setDebugPremium(enable)
+            Toast.makeText(
+                requireContext(),
+                getString(if (enable) R.string.premium_debug_on else R.string.premium_debug_off),
+                Toast.LENGTH_SHORT
+            ).show()
+            true
+        }
+
+        binding.switchAiAssistant.setOnCheckedChangeListener { switch, checked ->
+            if (renderingPremium) return@setOnCheckedChangeListener
+            when {
+                !checked -> {
+                    preferenceManager.setAiAssistantEnabled(false)
+                    Toast.makeText(requireContext(), R.string.ai_assistant_disabled_toast, Toast.LENGTH_LONG).show()
+                    renderPremium()
+                }
+                !PremiumManager.isPremium.value -> {
+                    switch.isChecked = false
+                    Toast.makeText(requireContext(), R.string.ai_assistant_premium_only, Toast.LENGTH_SHORT).show()
+                    showPaywall()
+                }
+                else -> showAiConsent()
+            }
+        }
+    }
+
+    /** Explicit consent before any spending data may be sent for AI analysis. */
+    private fun showAiConsent() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.ai_assistant_consent_title)
+            .setMessage(R.string.ai_assistant_consent_message)
+            .setNegativeButton(R.string.common_cancel) { _, _ -> renderPremium() }
+            .setPositiveButton(R.string.ai_assistant_consent_accept) { _, _ ->
+                preferenceManager.setAiAssistantEnabled(true)
+                renderPremium()
+            }
+            .setOnCancelListener { renderPremium() }
+            .show()
+    }
+
+    private fun renderPremium() {
+        val premium = PremiumManager.isPremium.value
+        binding.tvPremiumTitle.text = getString(if (premium) R.string.profile_premium_active else R.string.profile_premium_title)
+        binding.tvPremiumSubtitle.text = getString(
+            if (premium) R.string.profile_premium_active_subtitle else R.string.profile_premium_subtitle
+        )
+        val aiActive = premium && preferenceManager.isAiAssistantEnabled()
+        // Programmatic update: must not trigger the consent or "turned off" flows.
+        renderingPremium = true
+        binding.switchAiAssistant.isChecked = aiActive
+        renderingPremium = false
+        binding.tvAiAssistantSubtitle.text = getString(
+            when {
+                !premium -> R.string.ai_assistant_subtitle_premium
+                aiActive -> R.string.ai_assistant_subtitle_on
+                else -> R.string.ai_assistant_subtitle_off
+            }
+        )
+        updateExportAvailabilityUi()
+    }
+
+    private fun showPaywall() {
+        PremiumOfferBottomSheet.newInstance(currentCurrency, null)
+            .show(parentFragmentManager, "premium_offer")
+    }
+
+    private fun openUrl(url: String) {
+        runCatching { startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) }
+    }
+
     private fun observeCurrency() {
         preferenceManager.observeCurrencyCode().collectWithLifecycle(viewLifecycleOwner) { code ->
             currentCurrency = code
@@ -292,9 +381,8 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
     }
 
     private fun updateExportAvailabilityUi() {
+        // Stays clickable without Premium so the tap can explain it and open the paywall.
         val isPremium = preferenceManager.isPremiumEnabled()
-        binding.btnExport.isEnabled = isPremium
-        binding.btnExport.isClickable = isPremium
         binding.btnExport.alpha = if (isPremium) 1f else 0.55f
     }
 

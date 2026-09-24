@@ -44,6 +44,8 @@ class NotificationCaptureService : NotificationListenerService() {
     override fun onNotificationPosted(sbn: StatusBarNotification?) {
         val posted = sbn ?: return
         if (posted.packageName == packageName) return
+        // Automatic tracking is a Premium feature; without it nothing is read.
+        if (!preferences.isPremiumEnabled()) return
         val notification = posted.notification ?: return
         if (notification.flags and Notification.FLAG_GROUP_SUMMARY != 0) return
         if (posted.isOngoing) return

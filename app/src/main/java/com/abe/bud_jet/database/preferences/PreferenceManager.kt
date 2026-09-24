@@ -33,6 +33,8 @@ class PreferenceManager private constructor(context: Context) {
         private const val KEY_INITIAL_BALANCE_PROMPT_SHOWN = "initial_balance_prompt_shown"
         private const val KEY_IS_PREMIUM = "is_premium"
         private const val KEY_ONBOARDING_GOALS = "onboarding_goals"
+        private const val KEY_AI_ASSISTANT_ENABLED = "ai_assistant_enabled"
+        private const val KEY_DEBUG_PREMIUM = "debug_premium"
         private const val KEY_CAPTURE_LISTENER_ALIVE_AT = "capture_listener_alive_at"
         private const val KEY_CAPTURE_LAST_CAPTURED_AT = "capture_last_captured_at"
         private const val KEY_CAPTURE_PROMO_DISMISSED = "capture_promo_dismissed"
@@ -166,6 +168,24 @@ class PreferenceManager private constructor(context: Context) {
         preferences.edit { putBoolean(KEY_INITIAL_BALANCE_PROMPT_SHOWN, shown) }
     }
 
+    /** User's choice; the assistant is active only while Premium is (see PremiumManager). */
+    fun isAiAssistantEnabled(): Boolean = preferences.getBoolean(KEY_AI_ASSISTANT_ENABLED, false)
+
+    fun setAiAssistantEnabled(enabled: Boolean) {
+        preferences.edit { putBoolean(KEY_AI_ASSISTANT_ENABLED, enabled) }
+    }
+
+    /** The assistant may send data only when the user enabled it and Premium is active. */
+    fun isAiAssistantActive(): Boolean = isAiAssistantEnabled() && isPremiumEnabled()
+
+    /** Test-only Premium switch, honored only in debuggable builds. */
+    fun isDebugPremium(): Boolean = preferences.getBoolean(KEY_DEBUG_PREMIUM, false)
+
+    fun setDebugPremium(enabled: Boolean) {
+        preferences.edit { putBoolean(KEY_DEBUG_PREMIUM, enabled) }
+    }
+
+    /** Cached Premium entitlement, kept in sync with Google Play by PremiumManager. */
     fun isPremiumEnabled(): Boolean {
         return preferences.getBoolean(KEY_IS_PREMIUM, false)
     }
@@ -234,6 +254,7 @@ class PreferenceManager private constructor(context: Context) {
         editor.putBoolean(KEY_INITIAL_BALANCE_PROMPT_SHOWN, false)
         // Premium is tied to the purchase, not to local data, so it survives a data reset.
         editor.remove(KEY_ONBOARDING_GOALS)
+        editor.remove(KEY_AI_ASSISTANT_ENABLED)
         editor.remove(KEY_CAPTURE_LAST_CAPTURED_AT)
         editor.remove(KEY_CAPTURE_PROMO_DISMISSED)
         // Show onboarding again after data deletion.

@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import com.abe.bud_jet.capture.CaptureAccess
 import com.abe.bud_jet.capture.CaptureNotifier
+import com.abe.bud_jet.premium.PremiumManager
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.enableEdgeToEdge
@@ -49,6 +50,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         registerVibrationManager()   // ← ПЕРЕНЕСТИ СЮДА
+        PremiumManager.init(applicationContext)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -94,6 +96,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        // Picks up purchases, renewals and cancellations made outside the app.
+        PremiumManager.refresh()
         // Reconnects the notification listener if the system may have dropped it.
         val silentFor = System.currentTimeMillis() - preferenceManager.getCaptureListenerAliveAt()
         if (silentFor > 60 * 60 * 1000L) CaptureAccess.requestRebind(applicationContext)

@@ -38,7 +38,7 @@
     <string name="profile_reset_dialog_message">Esto elimina permanentemente tus transacciones, categorías y metas guardadas en este dispositivo.</string>
     <string name="profile_reset_success_toast">Todos los datos se han restablecido.</string>
     <string name="profile_premium_title">Obtener Premium</string>
-    <string name="profile_premium_subtitle">Información IA • Objetivos inteligentes • Predicciones</string>
+    <string name="profile_premium_subtitle">Registro automático • Asistente de IA • Primer mes gratis</string>
     <string name="profile_notifications_on">Notificaciones activadas</string>
     <string name="profile_notifications_off">Notificaciones desactivadas</string>
     <string name="profile_export_coming_soon">La exportación estará disponible pronto</string>
@@ -315,7 +315,7 @@ Bud-Jet no envía tus transacciones, notas, metas ni categorías a ningún servi
     <string name="premium_offer_cta">¿Trato hecho?</string>
     <string name="premium_offer_not_now">Ahora no</string>
     <string name="premium_sheet_title">Un trato que se paga solo</string>
-    <string name="premium_sheet_generic_body">Premium convierte tus registros en ahorro: asistente con IA, consejos mensuales, previsiones y límites inteligentes.</string>
+    <string name="premium_sheet_generic_body">Premium registra tus gastos a partir de las notificaciones del banco y, si quieres, añade un asistente de IA que los analiza con tu consentimiento.</string>
     <string name="premium_sheet_spend_label">Tus gastos</string>
     <string name="premium_sheet_savings_label" formatted="false">Gastando un 5% menos</string>
     <string name="premium_sheet_price_label">Premium</string>
@@ -323,10 +323,6 @@ Bud-Jet no envía tus transacciones, notas, metas ni categorías a ningún servi
     <string name="premium_per_month">%1$s/mes</string>
     <string name="premium_sheet_disclaimer">Estimación basada en tus últimos 30 días. El ahorro real depende de tus hábitos.</string>
     <string name="premium_sheet_features_title">Qué incluye</string>
-    <string name="premium_feature_ai_chat">Asistente con IA: pregunta lo que quieras sobre tu presupuesto</string>
-    <string name="premium_feature_ai_report">Informe mensual con IA y consejos de ahorro personales</string>
-    <string name="premium_feature_smart_limits">Límites inteligentes y previsión de gastos excesivos</string>
-    <string name="premium_feature_unlimited">Categorías ilimitadas y exportación a CSV</string>
     <string name="premium_sheet_buy">Trato hecho — %1$s/mes</string>
     <string name="premium_sheet_buy_generic">Obtener Premium</string>
 
@@ -362,12 +358,12 @@ Bud-Jet no envía tus transacciones, notas, metas ni categorías a ningún servi
     <string name="capture_rationale_not_now">Ahora no</string>
     <string name="capture_rationale_open_settings">Abrir ajustes</string>
     <string name="capture_confirm_title">Confirma el pago</string>
-    <string name="hello3_title">Registra gastos automáticamente</string>
-    <string name="hello3_body">Bud-Jet puede añadir las compras de las notificaciones de tu banco por sí solo, sin que tengas que escribirlas.</string>
+    <string name="hello3_title">Deja de anotar cada gasto</string>
+    <string name="hello3_body">Con Bud-Jet Premium, las compras se registran solas a partir de las notificaciones del banco: importe, tienda y fecha.</string>
     <string name="hello3_example">🔔 «Compra de 23,40 € en MERCADONA»\n→ Comida · −23,40 €, añadido automáticamente</string>
     <string name="hello3_privacy">Las notificaciones se leen solo en tu dispositivo y nunca se envían. Puedes activarlo más tarde en el perfil.</string>
-    <string name="hello3_enable">Activar registro automático</string>
-    <string name="hello3_manual">Omitir: añadiré los gastos a mano</string>
+    <string name="hello3_enable">Probar gratis</string>
+    <string name="hello3_manual">Continuar gratis: añadiré los gastos a mano</string>
     <string name="capture_promo_title">Registrar gastos automáticamente</string>
     <string name="capture_promo_body">Deja que Bud-Jet añada las compras de las notificaciones de tu banco. Todo se queda en este dispositivo.</string>
     <string name="recurring_title">Pagos recurrentes</string>
@@ -403,5 +399,35 @@ Bud-Jet no envía tus transacciones, notas, metas ni categorías a ningún servi
     <string name="capture_log_not_tracked">La app no se registra: actívala en «Apps» arriba</string>
     <string name="capture_source_notification_title">¿Registrar pagos de %1$s?</string>
     <string name="capture_source_notification_text">Toca para activar esta app en el registro automático</string>
+
+    <!-- Premium subscription and AI assistant -->
+    <string name="ai_assistant_title">Asistente de IA</string>
+    <string name="ai_assistant_subtitle_premium">Disponible en Premium</string>
+    <string name="ai_assistant_subtitle_on">Activado · analiza un resumen de tus gastos</string>
+    <string name="ai_assistant_subtitle_off">Desactivado · tus datos se quedan en el dispositivo</string>
+    <string name="ai_assistant_premium_only">El asistente de IA forma parte de Premium</string>
+    <string name="ai_assistant_consent_title">¿Activar el asistente de IA?</string>
+    <string name="ai_assistant_consent_message">Para darte consejos, el asistente envía a nuestro servicio de IA un resumen de tus gastos: totales por categoría y mes, límites y metas.\n\nNo se envían: notas, textos de notificaciones ni datos bancarios o de tarjetas.\n\nPuedes desactivarlo cuando quieras; entonces no se envía nada.</string>
+    <string name="ai_assistant_consent_accept">Activar</string>
+    <string name="ai_assistant_disabled_toast">De acuerdo: tus datos se quedan solo en este dispositivo y no los enviaremos para análisis con IA.</string>
+    <string name="capture_premium_required">El registro automático forma parte de Premium. El primer mes es gratis.</string>
+    <string name="capture_get_premium">Probar Premium gratis</string>
+    <string name="hello3_ai">Si quieres, activa el asistente de IA: con tu consentimiento revisará tus gastos y te sugerirá cómo administrar mejor el dinero.</string>
+    <string name="hello3_terms_trial">Primer mes gratis, luego %1$s al mes. Cancela cuando quieras en Google Play.</string>
+    <string name="hello3_terms_paid">%1$s al mes. Cancela cuando quieras en Google Play.</string>
+    <string name="hello3_terms_generic">Primer mes gratis. El precio se muestra en Google Play antes de pagar.</string>
+    <string name="premium_feature_auto_capture">Gastos registrados automáticamente desde las notificaciones del banco</string>
+    <string name="premium_feature_ai_assistant">Asistente de IA opcional: con tu consentimiento revisa gastos y da consejos (próximamente)</string>
+    <string name="premium_feature_export">Exportar transacciones a CSV</string>
+    <string name="premium_trial_terms">Gratis hasta el %1$s; después, %2$s al mes salvo que canceles antes. Cancela cuando quieras en Google Play.</string>
+    <string name="premium_terms">%1$s al mes, se renueva automáticamente. Cancela cuando quieras en Google Play.</string>
+    <string name="premium_try_free">Probar gratis %1$d días</string>
+    <string name="premium_unavailable">La suscripción no está disponible ahora: no se pudo contactar con Google Play o no se vende en tu región.</string>
+    <string name="premium_active_terms">Premium está activo. Gestiona o cancela la suscripción en Google Play.</string>
+    <string name="premium_manage_subscription">Gestionar suscripción</string>
+    <string name="premium_debug_on">Premium de prueba activado (compilación de depuración)</string>
+    <string name="premium_debug_off">Premium de prueba desactivado</string>
+    <string name="profile_premium_active">Premium activo</string>
+    <string name="profile_premium_active_subtitle">Registro automático • Asistente de IA • Gestionar suscripción</string>
 </resources>
 

@@ -3,26 +3,35 @@ package com.abe.bud_jet.premium
 import kotlin.math.floor
 
 /**
- * Monthly Premium price shown in the app currency.
+ * Monthly Premium price in the app currency for the savings pitch.
  *
- * Placeholder until Google Play Billing is connected: then the price comes from
- * ProductDetails (already localized by Play) and this table is only a fallback.
+ * The real price comes from Google Play (PremiumManager.offer) and is used when Play's currency
+ * matches the app currency; this table is only a fallback (no Play connection, other currency).
+ * Keep it close to the prices set in Play Console.
  */
 object PremiumPricing {
 
     private val monthlyByCurrency = mapOf(
-        "USD" to 2.99,
-        "EUR" to 2.99,
-        "PLN" to 12.99,
-        "RUB" to 249.0,
-        "KZT" to 1490.0,
-        "INR" to 199.0,
-        "BRL" to 14.90,
-        "MXN" to 59.0
+        "USD" to 9.99,
+        "EUR" to 9.99,
+        "PLN" to 39.99,
+        "RUB" to 899.0,
+        "KZT" to 4990.0,
+        "INR" to 799.0,
+        "BRL" to 49.90,
+        "MXN" to 179.0
     )
 
-    fun monthlyPrice(currencyCode: String): Double =
-        monthlyByCurrency[currencyCode.uppercase()] ?: monthlyByCurrency.getValue("USD")
+    /** Price reported by Google Play: amount and ISO currency code. */
+    @Volatile
+    var playPrice: Pair<Double, String>? = null
+
+    fun monthlyPrice(currencyCode: String): Double {
+        playPrice?.let { (amount, currency) ->
+            if (currency.equals(currencyCode, ignoreCase = true) && amount > 0.0) return amount
+        }
+        return monthlyByCurrency[currencyCode.uppercase()] ?: monthlyByCurrency.getValue("USD")
+    }
 }
 
 /** What the user could save per month compared to the Premium price. */
@@ -108,5 +117,16 @@ object PremiumPromoPolicy {
     fun snoozeUntil(dismissCountAfter: Int, nowMillis: Long = System.currentTimeMillis()): Long {
         val days = if (dismissCountAfter <= 1) 14 else 30
         return nowMillis + days * DAY_MILLIS
+    }
+}
+
+/** Parses ISO-8601 billing periods used by Play ("P1M", "P30D", "P1W", "P1Y"). */
+object BillingPeriod {
+    fun toDays(period: String): Int? {
+        val match = Regex("""^P(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)W)?(?:(\d+)D)?$""").matchEntire(period) ?: return null
+        val (years, months, weeks, days) = match.destructured
+        val total = (years.toIntOrNull() ?: 0) * 365 + (months.toIntOrNull() ?: 0) * 30 +
+            (weeks.toIntOrNull() ?: 0) * 7 + (days.toIntOrNull() ?: 0)
+        return total.takeIf { it > 0 }
     }
 }

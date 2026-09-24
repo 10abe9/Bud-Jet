@@ -38,7 +38,7 @@
     <string name="profile_reset_dialog_message">Spowoduje to trwałe usunięcie transakcji, kategorii i celów zapisanych na tym urządzeniu.</string>
     <string name="profile_reset_success_toast">Wszystkie dane zostały zresetowane.</string>
     <string name="profile_premium_title">Uzyskaj Premium</string>
-    <string name="profile_premium_subtitle">Wnioski AI • Inteligentne cele • Prognozy</string>
+    <string name="profile_premium_subtitle">Automatyczne śledzenie • Asystent AI • Pierwszy miesiąc za darmo</string>
     <string name="profile_notifications_on">Powiadomienia włączone</string>
     <string name="profile_notifications_off">Powiadomienia wyłączone</string>
     <string name="profile_export_coming_soon">Eksport wkrótce</string>
@@ -318,7 +318,7 @@ Bud-Jet nie wysyła Twoich transakcji, notatek, celów ani kategorii na zdalny s
     <string name="premium_offer_cta">Umowa stoi?</string>
     <string name="premium_offer_not_now">Nie teraz</string>
     <string name="premium_sheet_title">Umowa, która się zwraca</string>
-    <string name="premium_sheet_generic_body">Premium zamienia Twoje wpisy w oszczędności: asystent AI, comiesięczne porady, prognozy i inteligentne limity.</string>
+    <string name="premium_sheet_generic_body">Premium sam zapisuje wydatki z powiadomień banku, a na życzenie dodaje asystenta AI, który za Twoją zgodą analizuje wydatki.</string>
     <string name="premium_sheet_spend_label">Twoje wydatki</string>
     <string name="premium_sheet_savings_label" formatted="false">Wydając o 5% mniej</string>
     <string name="premium_sheet_price_label">Premium</string>
@@ -326,10 +326,6 @@ Bud-Jet nie wysyła Twoich transakcji, notatek, celów ani kategorii na zdalny s
     <string name="premium_per_month">%1$s/mies.</string>
     <string name="premium_sheet_disclaimer">Szacunek na podstawie ostatnich 30 dni. Rzeczywiste oszczędności zależą od Twoich nawyków.</string>
     <string name="premium_sheet_features_title">Co zyskujesz</string>
-    <string name="premium_feature_ai_chat">Asystent AI: zapytaj o cokolwiek w swoim budżecie</string>
-    <string name="premium_feature_ai_report">Comiesięczny raport AI z osobistymi poradami</string>
-    <string name="premium_feature_smart_limits">Inteligentne limity i prognoza przekroczeń</string>
-    <string name="premium_feature_unlimited">Nielimitowane kategorie i eksport do CSV</string>
     <string name="premium_sheet_buy">Umowa — %1$s/mies.</string>
     <string name="premium_sheet_buy_generic">Kup Premium</string>
 
@@ -365,12 +361,12 @@ Bud-Jet nie wysyła Twoich transakcji, notatek, celów ani kategorii na zdalny s
     <string name="capture_rationale_not_now">Nie teraz</string>
     <string name="capture_rationale_open_settings">Otwórz ustawienia</string>
     <string name="capture_confirm_title">Potwierdź płatność</string>
-    <string name="hello3_title">Śledź wydatki automatycznie</string>
-    <string name="hello3_body">Bud-Jet może sam dodawać zakupy z powiadomień banku — nie trzeba ich wpisywać ręcznie.</string>
+    <string name="hello3_title">Nie wpisuj wydatków ręcznie</string>
+    <string name="hello3_body">Z Bud-Jet Premium zakupy zapisują się same z powiadomień banku: kwota, sklep i data.</string>
     <string name="hello3_example">🔔 „Transakcja kartą 89,99 PLN w BIEDRONKA”\n→ Jedzenie · −89,99 zł, dodane automatycznie</string>
     <string name="hello3_privacy">Powiadomienia są czytane tylko na Twoim urządzeniu i nigdzie nie są wysyłane. Możesz włączyć to później w profilu.</string>
-    <string name="hello3_enable">Włącz automatyczne śledzenie</string>
-    <string name="hello3_manual">Pomiń — będę dodawać ręcznie</string>
+    <string name="hello3_enable">Wypróbuj za darmo</string>
+    <string name="hello3_manual">Kontynuuj za darmo — będę dodawać ręcznie</string>
     <string name="capture_promo_title">Liczyć wydatki automatycznie</string>
     <string name="capture_promo_body">Pozwól Bud-Jet dodawać zakupy z powiadomień banku. Wszystko zostaje na tym urządzeniu.</string>
     <string name="recurring_title">Płatności cykliczne</string>
@@ -410,5 +406,35 @@ Bud-Jet nie wysyła Twoich transakcji, notatek, celów ani kategorii na zdalny s
     <string name="capture_log_not_tracked">Aplikacja nie jest śledzona — włącz ją w „Aplikacje” powyżej</string>
     <string name="capture_source_notification_title">Śledzić płatności z %1$s?</string>
     <string name="capture_source_notification_text">Dotknij, aby włączyć tę aplikację w automatycznym śledzeniu</string>
+
+    <!-- Premium subscription and AI assistant -->
+    <string name="ai_assistant_title">Asystent AI</string>
+    <string name="ai_assistant_subtitle_premium">Dostępny w Premium</string>
+    <string name="ai_assistant_subtitle_on">Włączony · analizuje podsumowanie wydatków</string>
+    <string name="ai_assistant_subtitle_off">Wyłączony · dane zostają na urządzeniu</string>
+    <string name="ai_assistant_premium_only">Asystent AI jest częścią Premium</string>
+    <string name="ai_assistant_consent_title">Włączyć asystenta AI?</string>
+    <string name="ai_assistant_consent_message">Aby doradzać, asystent wysyła do naszej usługi AI podsumowanie wydatków: sumy według kategorii i miesięcy, limity i cele.\n\nNie są wysyłane: notatki, treści powiadomień, dane banku i kart.\n\nMożesz go wyłączyć w każdej chwili — wtedy nic nie jest wysyłane.</string>
+    <string name="ai_assistant_consent_accept">Włącz</string>
+    <string name="ai_assistant_disabled_toast">Dobrze, dane zostają tylko na urządzeniu — nie będziemy ich wysyłać do analizy AI.</string>
+    <string name="capture_premium_required">Automatyczne śledzenie jest częścią Premium. Pierwszy miesiąc za darmo.</string>
+    <string name="capture_get_premium">Wypróbuj Premium za darmo</string>
+    <string name="hello3_ai">Opcjonalnie włącz asystenta AI: za Twoją zgodą przeanalizuje wydatki i podpowie, jak rozsądniej zarządzać pieniędzmi.</string>
+    <string name="hello3_terms_trial">Pierwszy miesiąc za darmo, potem %1$s miesięcznie. Anuluj w dowolnej chwili w Google Play.</string>
+    <string name="hello3_terms_paid">%1$s miesięcznie. Anuluj w dowolnej chwili w Google Play.</string>
+    <string name="hello3_terms_generic">Pierwszy miesiąc za darmo. Cena zostanie pokazana w Google Play przed płatnością.</string>
+    <string name="premium_feature_auto_capture">Wydatki zapisywane automatycznie z powiadomień banku</string>
+    <string name="premium_feature_ai_assistant">Asystent AI na życzenie: za Twoją zgodą analizuje wydatki i doradza (wkrótce)</string>
+    <string name="premium_feature_export">Eksport transakcji do CSV</string>
+    <string name="premium_trial_terms">Za darmo do %1$s, potem %2$s miesięcznie, jeśli nie anulujesz wcześniej. Anuluj w dowolnej chwili w Google Play.</string>
+    <string name="premium_terms">%1$s miesięcznie, odnawia się automatycznie. Anuluj w dowolnej chwili w Google Play.</string>
+    <string name="premium_try_free">Wypróbuj za darmo — %1$d dni</string>
+    <string name="premium_unavailable">Subskrypcja jest teraz niedostępna: brak połączenia z Google Play lub nie jest sprzedawana w Twoim regionie.</string>
+    <string name="premium_active_terms">Premium jest aktywne. Zarządzaj subskrypcją lub anuluj ją w Google Play.</string>
+    <string name="premium_manage_subscription">Zarządzaj subskrypcją</string>
+    <string name="premium_debug_on">Testowe Premium włączone (wersja debug)</string>
+    <string name="premium_debug_off">Testowe Premium wyłączone</string>
+    <string name="profile_premium_active">Premium aktywne</string>
+    <string name="profile_premium_active_subtitle">Automatyczne śledzenie • Asystent AI • Zarządzanie subskrypcją</string>
 </resources>
 

@@ -24,6 +24,7 @@ import com.abe.bud_jet.R
 import com.abe.bud_jet.capture.CaptureAccess
 import com.abe.bud_jet.capture.RecurringDetector
 import com.abe.bud_jet.databinding.ItemRecurringPaymentBinding
+import com.abe.bud_jet.premium.PremiumManager
 import com.abe.bud_jet.premium.PremiumOfferBottomSheet
 import com.abe.bud_jet.premium.PremiumPromoPolicy
 import com.abe.bud_jet.premium.SavingsOffer
@@ -123,7 +124,12 @@ class DashboardFragment : Fragment() {
         binding.cardCapturePending.setOnClickListener { openAutoCapture() }
         binding.btnCapturePromoEnable.setOnClickListener {
             vibrator.tap()
-            openAutoCapture()
+            if (PremiumManager.isPremium.value) {
+                openAutoCapture()
+            } else {
+                PremiumOfferBottomSheet.newInstance(currencyCode, dashboardViewModel.premiumOffer.value)
+                    .show(parentFragmentManager, "premium_offer")
+            }
         }
         binding.btnCapturePromoDismiss.setOnClickListener {
             preferenceManager.setCapturePromoDismissed(true)

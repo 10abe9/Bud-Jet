@@ -31,7 +31,6 @@ class PremiumOfferBottomSheet : BaseBottomSheetDialogFragment() {
         val args = requireArguments()
         val currency = args.getString(ARG_CURRENCY).orEmpty()
         val price = PremiumPricing.monthlyPrice(currency)
-        val priceText = getString(R.string.premium_per_month, CurrencyFormatter.format(price, currency))
 
         if (args.getBoolean(ARG_HAS_OFFER)) {
             val spend = args.getDouble(ARG_SPEND)
@@ -46,22 +45,51 @@ class PremiumOfferBottomSheet : BaseBottomSheetDialogFragment() {
                 getString(R.string.premium_per_month, CurrencyFormatter.formatDelta(-price, currency))
             binding.tvBenefitValue.text =
                 getString(R.string.premium_per_month, CurrencyFormatter.formatDelta(savings - price, currency))
-            binding.btnBuy.text = getString(R.string.premium_sheet_buy, CurrencyFormatter.format(price, currency))
-        } else {
-            binding.btnBuy.text = "${getString(R.string.premium_sheet_buy_generic)} · $priceText"
         }
 
+        renderPurchase(PremiumManager.offer.value)
+        binding.btnNotNow.setOnClickListener { dismissAllowingStateLoss() }
+    }
+
+    /** Button and terms follow the live Play offer; Premium users get "manage" instead. */
+    private fun renderPurchase(offer: PremiumManager.SubscriptionOffer?) {
+        if (PremiumManager.isPremium.value) {
+            binding.tvTerms.text = getString(R.string.premium_active_terms)
+            binding.btnBuy.text = getString(R.string.premium_manage_subscription)
+            binding.btnBuy.setOnClickListener {
+                openUrl(PremiumManager.manageSubscriptionUrl(requireContext().packageName))
+                dismissAllowingStateLoss()
+            }
+            return
+        }
+        val trialDays = offer?.trialDays
+        binding.tvTerms.text = when {
+            offer == null -> getString(R.string.premium_unavailable)
+            trialDays != null -> {
+                val firstCharge = java.text.DateFormat.getDateInstance(java.text.DateFormat.LONG)
+                    .format(java.util.Date(System.currentTimeMillis() + trialDays * DAY_MILLIS))
+                getString(R.string.premium_trial_terms, firstCharge, offer.formattedPrice)
+            }
+            else -> getString(R.string.premium_terms, offer.formattedPrice)
+        }
+        binding.btnBuy.text = when {
+            offer == null -> getString(R.string.premium_sheet_buy_generic)
+            trialDays != null -> getString(R.string.premium_try_free, trialDays)
+            else -> getString(R.string.premium_sheet_buy, offer.formattedPrice)
+        }
         binding.btnBuy.setOnClickListener {
             VibrationManager.get().success()
-            // Google Play Billing purchase flow plugs in here (next step).
-            Toast.makeText(
-                requireContext(),
-                getString(R.string.profile_premium_coming_soon),
-                Toast.LENGTH_SHORT
-            ).show()
+            if (!PremiumManager.launchPurchase(requireActivity())) {
+                Toast.makeText(requireContext(), getString(R.string.premium_unavailable), Toast.LENGTH_LONG).show()
+            }
             dismissAllowingStateLoss()
         }
-        binding.btnNotNow.setOnClickListener { dismissAllowingStateLoss() }
+    }
+
+    private fun openUrl(url: String) {
+        runCatching {
+            startActivity(android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse(url)))
+        }
     }
 
     override fun onDestroyView() {
@@ -70,6 +98,7 @@ class PremiumOfferBottomSheet : BaseBottomSheetDialogFragment() {
     }
 
     companion object {
+        private const val DAY_MILLIS = 24L * 60 * 60 * 1000
         private const val ARG_CURRENCY = "arg_currency"
         private const val ARG_HAS_OFFER = "arg_has_offer"
         private const val ARG_SPEND = "arg_spend"

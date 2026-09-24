@@ -68,8 +68,20 @@ class PremiumOfferTest {
 
     @Test
     fun pricingFallsBackToUsd() {
-        assertEquals(249.0, PremiumPricing.monthlyPrice("rub"), 0.0)
-        assertEquals(2.99, PremiumPricing.monthlyPrice("XYZ"), 0.0)
+        PremiumPricing.playPrice = null
+        assertEquals(899.0, PremiumPricing.monthlyPrice("rub"), 0.0)
+        assertEquals(9.99, PremiumPricing.monthlyPrice("XYZ"), 0.0)
+    }
+
+    @Test
+    fun playPriceWinsWhenCurrencyMatches() {
+        PremiumPricing.playPrice = 9.49 to "EUR"
+        try {
+            assertEquals(9.49, PremiumPricing.monthlyPrice("EUR"), 0.0)
+            assertEquals(899.0, PremiumPricing.monthlyPrice("RUB"), 0.0)
+        } finally {
+            PremiumPricing.playPrice = null
+        }
     }
 
     @Test
