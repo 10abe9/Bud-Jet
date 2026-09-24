@@ -297,4 +297,32 @@
     <string name="common_category">Категория</string>
     <string name="common_save">Сохранить</string>
     <string name="goals_deadline_passed">Срок прошёл: осталось накопить %1$s</string>
+
+    <!-- Premium offer -->
+    <string name="premium_badge">PREMIUM</string>
+    <string name="premium_offer_title">Вы можете экономить около %1$s в месяц</string>
+    <string name="premium_offer_body">Вы тратите около %1$s в месяц. Если тратить всего на 5%% меньше, освободится %2$s — это %3$s. Совершим сделку?</string>
+    <plurals name="premium_payback">
+        <item quantity="one">в %1$d раз больше цены Premium (%2$s/мес)</item>
+        <item quantity="few">в %1$d раза больше цены Premium (%2$s/мес)</item>
+        <item quantity="many">в %1$d раз больше цены Premium (%2$s/мес)</item>
+        <item quantity="other">в %1$d раза больше цены Premium (%2$s/мес)</item>
+    </plurals>
+    <string name="premium_offer_cta">Совершим сделку?</string>
+    <string name="premium_offer_not_now">Не сейчас</string>
+    <string name="premium_sheet_title">Сделка, которая окупается</string>
+    <string name="premium_sheet_generic_body">Premium превращает ваши записи в экономию: ИИ-помощник, советы каждый месяц, прогнозы и умные лимиты.</string>
+    <string name="premium_sheet_spend_label">Ваши расходы</string>
+    <string name="premium_sheet_savings_label" formatted="false">Если тратить на 5% меньше</string>
+    <string name="premium_sheet_price_label">Premium</string>
+    <string name="premium_sheet_benefit_label">Ваша выгода</string>
+    <string name="premium_per_month">%1$s/мес</string>
+    <string name="premium_sheet_disclaimer">Оценка по вашим расходам за последние 30 дней. Реальная экономия зависит от ваших привычек.</string>
+    <string name="premium_sheet_features_title">Что входит</string>
+    <string name="premium_feature_ai_chat">ИИ-помощник: спросите что угодно о своём бюджете</string>
+    <string name="premium_feature_ai_report">Ежемесячный ИИ-отчёт с личными советами по экономии</string>
+    <string name="premium_feature_smart_limits">Умные лимиты и прогноз перерасхода</string>
+    <string name="premium_feature_unlimited">Безлимитные категории и экспорт в CSV</string>
+    <string name="premium_sheet_buy">По рукам — %1$s/мес</string>
+    <string name="premium_sheet_buy_generic">Оформить Premium</string>
 </resources>

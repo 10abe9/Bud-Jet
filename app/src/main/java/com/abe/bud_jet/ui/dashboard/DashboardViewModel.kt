@@ -7,6 +7,9 @@ import com.abe.bud_jet.database.FinanceRepository
 import com.abe.bud_jet.database.DashboardSummary
 import com.abe.bud_jet.database.entities.TransactionType
 import com.abe.bud_jet.utils.CategoryPalette
+import com.abe.bud_jet.premium.SavingsOffer
+import com.abe.bud_jet.premium.SavingsOfferSource
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -40,8 +43,14 @@ data class DashboardCategoryChip(
 )
 
 class DashboardViewModel(
-    private val repository: FinanceRepository
+    private val repository: FinanceRepository,
+    currencyCode: Flow<String>
 ) : ViewModel() {
+
+    /** Personal savings pitch for the Premium card; null when there is not enough data. */
+    val premiumOffer: StateFlow<SavingsOffer?> =
+        SavingsOfferSource.observe(repository, currencyCode)
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
     val uiState: StateFlow<DashboardUiState> =
         combine(
@@ -116,12 +125,13 @@ class DashboardViewModel(
 }
 
 class DashboardViewModelFactory(
-    private val repository: FinanceRepository
+    private val repository: FinanceRepository,
+    private val currencyCode: Flow<String>
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(DashboardViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return DashboardViewModel(repository) as T
+            return DashboardViewModel(repository, currencyCode) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

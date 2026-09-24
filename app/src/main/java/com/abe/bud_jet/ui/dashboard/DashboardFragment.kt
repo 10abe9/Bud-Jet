@@ -21,6 +21,9 @@ import com.abe.bud_jet.database.FinanceRepository
 import com.abe.bud_jet.database.preferences.PreferenceManager
 import com.abe.bud_jet.databinding.FragmentDashboardBinding
 import com.abe.bud_jet.R
+import com.abe.bud_jet.premium.PremiumOfferBottomSheet
+import com.abe.bud_jet.premium.PremiumPromoPolicy
+import com.abe.bud_jet.premium.SavingsOffer
 import com.abe.bud_jet.utils.CategoryPalette
 import com.abe.bud_jet.utils.CurrencyFormatter
 import com.abe.bud_jet.ui.operations.AddTransactionBottomSheet
@@ -49,7 +52,8 @@ class DashboardFragment : Fragment() {
     private val repository by lazy { FinanceRepositoryProvider.get(requireContext()) }
     private val dashboardViewModel: DashboardViewModel by viewModels {
         DashboardViewModelFactory(
-            repository
+            repository,
+            PreferenceManager.getInstance(requireContext()).observeCurrencyCode()
         )
     }
 
@@ -91,6 +95,53 @@ class DashboardFragment : Fragment() {
         setupUi()
         setupButtons()
         observeCurrency()
+        observePremiumOffer()
+    }
+
+    private fun observePremiumOffer() {
+        dashboardViewModel.premiumOffer.collectWithLifecycle(viewLifecycleOwner) { offer ->
+            renderPremiumOffer(offer)
+        }
+        binding.btnPremiumOfferCta.setOnClickListener {
+            vibrator.tap()
+            PremiumOfferBottomSheet
+                .newInstance(currencyCode, dashboardViewModel.premiumOffer.value)
+                .show(parentFragmentManager, "premium_offer")
+        }
+        binding.btnPremiumOfferDismiss.setOnClickListener {
+            val dismissCount = preferenceManager.getPremiumPromoDismissCount() + 1
+            preferenceManager.snoozePremiumPromo(
+                dismissCount = dismissCount,
+                snoozedUntil = PremiumPromoPolicy.snoozeUntil(dismissCount)
+            )
+            binding.cardPremiumOffer.visibility = View.GONE
+        }
+    }
+
+    private fun renderPremiumOffer(offer: SavingsOffer?) {
+        val visible = PremiumPromoPolicy.shouldShow(
+            isPremium = preferenceManager.isPremiumEnabled(),
+            hasOffer = offer != null,
+            dismissCount = preferenceManager.getPremiumPromoDismissCount(),
+            snoozedUntil = preferenceManager.getPremiumPromoSnoozedUntil()
+        )
+        binding.cardPremiumOffer.visibility = if (visible) View.VISIBLE else View.GONE
+        if (!visible || offer == null) return
+
+        val savings = CurrencyFormatter.format(offer.monthlySavings, currencyCode)
+        val price = CurrencyFormatter.format(offer.monthlyPrice, currencyCode)
+        binding.tvPremiumOfferTitle.text = getString(R.string.premium_offer_title, savings)
+        binding.tvPremiumOfferBody.text = getString(
+            R.string.premium_offer_body,
+            CurrencyFormatter.format(offer.monthlySpend, currencyCode),
+            savings,
+            resources.getQuantityString(
+                R.plurals.premium_payback,
+                offer.paybackMultiple,
+                offer.paybackMultiple,
+                price
+            )
+        )
     }
 
     private fun setupResults() {

@@ -298,5 +298,33 @@
     <string name="common_category">Kategoria</string>
     <string name="common_save">Zapisz</string>
     <string name="goals_deadline_passed">Termin minął: zostało do odłożenia %1$s</string>
+
+    <!-- Premium offer -->
+    <string name="premium_badge">PREMIUM</string>
+    <string name="premium_offer_title">Możesz oszczędzać około %1$s miesięcznie</string>
+    <string name="premium_offer_body">Wydajesz około %1$s miesięcznie. Wydając tylko o 5%% mniej, zyskujesz %2$s — %3$s. Umowa stoi?</string>
+    <plurals name="premium_payback">
+        <item quantity="one">%1$d raz więcej niż cena Premium (%2$s/mies.)</item>
+        <item quantity="few">%1$d razy więcej niż cena Premium (%2$s/mies.)</item>
+        <item quantity="many">%1$d razy więcej niż cena Premium (%2$s/mies.)</item>
+        <item quantity="other">%1$d razy więcej niż cena Premium (%2$s/mies.)</item>
+    </plurals>
+    <string name="premium_offer_cta">Umowa stoi?</string>
+    <string name="premium_offer_not_now">Nie teraz</string>
+    <string name="premium_sheet_title">Umowa, która się zwraca</string>
+    <string name="premium_sheet_generic_body">Premium zamienia Twoje wpisy w oszczędności: asystent AI, comiesięczne porady, prognozy i inteligentne limity.</string>
+    <string name="premium_sheet_spend_label">Twoje wydatki</string>
+    <string name="premium_sheet_savings_label" formatted="false">Wydając o 5% mniej</string>
+    <string name="premium_sheet_price_label">Premium</string>
+    <string name="premium_sheet_benefit_label">Twój zysk netto</string>
+    <string name="premium_per_month">%1$s/mies.</string>
+    <string name="premium_sheet_disclaimer">Szacunek na podstawie ostatnich 30 dni. Rzeczywiste oszczędności zależą od Twoich nawyków.</string>
+    <string name="premium_sheet_features_title">Co zyskujesz</string>
+    <string name="premium_feature_ai_chat">Asystent AI: zapytaj o cokolwiek w swoim budżecie</string>
+    <string name="premium_feature_ai_report">Comiesięczny raport AI z osobistymi poradami</string>
+    <string name="premium_feature_smart_limits">Inteligentne limity i prognoza przekroczeń</string>
+    <string name="premium_feature_unlimited">Nielimitowane kategorie i eksport do CSV</string>
+    <string name="premium_sheet_buy">Umowa — %1$s/mies.</string>
+    <string name="premium_sheet_buy_generic">Kup Premium</string>
 </resources>
 

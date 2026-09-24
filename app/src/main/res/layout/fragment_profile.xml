@@ -321,6 +321,8 @@
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardPremium"
         android:layout_width="0dp"
+        android:clickable="true"
+        android:focusable="true"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         app:cardBackgroundColor="@color/card"
@@ -335,9 +337,6 @@
         <LinearLayout
             android:padding="16dp"
             android:orientation="vertical"
-            android:background="?attr/selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 

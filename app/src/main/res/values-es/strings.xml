@@ -297,5 +297,31 @@
     <string name="common_category">Categoría</string>
     <string name="common_save">Guardar</string>
     <string name="goals_deadline_passed">Plazo vencido: faltan %1$s por ahorrar</string>
+
+    <!-- Premium offer -->
+    <string name="premium_badge">PREMIUM</string>
+    <string name="premium_offer_title">Podrías ahorrar unos %1$s al mes</string>
+    <string name="premium_offer_body">Gastas unos %1$s al mes. Gastando solo un 5%% menos liberas %2$s: %3$s. ¿Trato hecho?</string>
+    <plurals name="premium_payback">
+        <item quantity="one">%1$d vez el precio de Premium (%2$s/mes)</item>
+        <item quantity="other">%1$d veces el precio de Premium (%2$s/mes)</item>
+    </plurals>
+    <string name="premium_offer_cta">¿Trato hecho?</string>
+    <string name="premium_offer_not_now">Ahora no</string>
+    <string name="premium_sheet_title">Un trato que se paga solo</string>
+    <string name="premium_sheet_generic_body">Premium convierte tus registros en ahorro: asistente con IA, consejos mensuales, previsiones y límites inteligentes.</string>
+    <string name="premium_sheet_spend_label">Tus gastos</string>
+    <string name="premium_sheet_savings_label" formatted="false">Gastando un 5% menos</string>
+    <string name="premium_sheet_price_label">Premium</string>
+    <string name="premium_sheet_benefit_label">Tu beneficio neto</string>
+    <string name="premium_per_month">%1$s/mes</string>
+    <string name="premium_sheet_disclaimer">Estimación basada en tus últimos 30 días. El ahorro real depende de tus hábitos.</string>
+    <string name="premium_sheet_features_title">Qué incluye</string>
+    <string name="premium_feature_ai_chat">Asistente con IA: pregunta lo que quieras sobre tu presupuesto</string>
+    <string name="premium_feature_ai_report">Informe mensual con IA y consejos de ahorro personales</string>
+    <string name="premium_feature_smart_limits">Límites inteligentes y previsión de gastos excesivos</string>
+    <string name="premium_feature_unlimited">Categorías ilimitadas y exportación a CSV</string>
+    <string name="premium_sheet_buy">Trato hecho — %1$s/mes</string>
+    <string name="premium_sheet_buy_generic">Obtener Premium</string>
 </resources>
 

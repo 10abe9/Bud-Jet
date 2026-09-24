@@ -26,6 +26,8 @@ import com.abe.bud_jet.database.entities.TransactionEntity
 import com.abe.bud_jet.database.entities.TransactionType
 import com.abe.bud_jet.database.preferences.PreferenceManager
 import com.abe.bud_jet.databinding.FragmentProfileBinding
+import com.abe.bud_jet.premium.PremiumOfferBottomSheet
+import com.abe.bud_jet.premium.SavingsOfferSource
 import com.abe.bud_jet.utils.AmountParser
 import com.abe.bud_jet.utils.DateRanges
 import com.abe.bud_jet.utils.LocaleManager
@@ -35,6 +37,8 @@ import com.abe.bud_jet.utils.collectWithLifecycle
 import com.abe.bud_jet.notifications.NotificationReminderScheduler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
@@ -251,7 +255,13 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         }
 
         binding.cardPremium.setOnClickListener {
-            Toast.makeText(requireContext(), getString(R.string.profile_premium_coming_soon), Toast.LENGTH_SHORT).show()
+            viewLifecycleOwner.lifecycleScope.launch {
+                val offer = SavingsOfferSource
+                    .observe(repository, flowOf(currentCurrency))
+                    .first()
+                PremiumOfferBottomSheet.newInstance(currentCurrency, offer)
+                    .show(parentFragmentManager, "premium_offer")
+            }
         }
 
         binding.buttonBack.setOnClickListener {

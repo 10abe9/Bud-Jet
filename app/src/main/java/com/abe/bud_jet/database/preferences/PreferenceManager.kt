@@ -33,6 +33,8 @@ class PreferenceManager private constructor(context: Context) {
         private const val KEY_INITIAL_BALANCE_PROMPT_SHOWN = "initial_balance_prompt_shown"
         private const val KEY_IS_PREMIUM = "is_premium"
         private const val KEY_ONBOARDING_GOALS = "onboarding_goals"
+        private const val KEY_PREMIUM_PROMO_DISMISS_COUNT = "premium_promo_dismiss_count"
+        private const val KEY_PREMIUM_PROMO_SNOOZED_UNTIL = "premium_promo_snoozed_until"
         private const val KEY_CONVERSION_RATE_V2_PREFIX = "conversion_rate_v2_"
 
         private var instance: PreferenceManager? = null
@@ -167,6 +169,21 @@ class PreferenceManager private constructor(context: Context) {
 
     fun setPremiumEnabled(enabled: Boolean) {
         preferences.edit { putBoolean(KEY_IS_PREMIUM, enabled) }
+    }
+
+    fun getPremiumPromoDismissCount(): Int {
+        return preferences.getInt(KEY_PREMIUM_PROMO_DISMISS_COUNT, 0)
+    }
+
+    fun getPremiumPromoSnoozedUntil(): Long {
+        return preferences.getLong(KEY_PREMIUM_PROMO_SNOOZED_UNTIL, 0L)
+    }
+
+    fun snoozePremiumPromo(dismissCount: Int, snoozedUntil: Long) {
+        preferences.edit {
+            putInt(KEY_PREMIUM_PROMO_DISMISS_COUNT, dismissCount)
+            putLong(KEY_PREMIUM_PROMO_SNOOZED_UNTIL, snoozedUntil)
+        }
     }
 
     fun getOnboardingGoals(): Set<String> {

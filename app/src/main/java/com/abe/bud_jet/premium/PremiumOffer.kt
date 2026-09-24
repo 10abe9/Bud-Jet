@@ -1,0 +1,112 @@
+package com.abe.bud_jet.premium
+
+import kotlin.math.floor
+
+/**
+ * Monthly Premium price shown in the app currency.
+ *
+ * Placeholder until Google Play Billing is connected: then the price comes from
+ * ProductDetails (already localized by Play) and this table is only a fallback.
+ */
+object PremiumPricing {
+
+    private val monthlyByCurrency = mapOf(
+        "USD" to 2.99,
+        "EUR" to 2.99,
+        "PLN" to 12.99,
+        "RUB" to 249.0,
+        "KZT" to 1490.0,
+        "INR" to 199.0,
+        "BRL" to 14.90,
+        "MXN" to 59.0
+    )
+
+    fun monthlyPrice(currencyCode: String): Double =
+        monthlyByCurrency[currencyCode.uppercase()] ?: monthlyByCurrency.getValue("USD")
+}
+
+/** What the user could save per month compared to the Premium price. */
+data class SavingsOffer(
+    val monthlySpend: Double,
+    val monthlySavings: Double,
+    val monthlyPrice: Double,
+    /** How many times the savings cover the price (rounded down). */
+    val paybackMultiple: Int
+) {
+    val netBenefit: Double get() = monthlySavings - monthlyPrice
+}
+
+object SavingsOfferCalculator {
+
+    /** Conservative cut the pitch talks about ("just 5% less"). */
+    const val SAVINGS_RATE = 0.05
+
+    /** Less history than this gives an unreliable monthly estimate. */
+    const val MIN_HISTORY_DAYS = 14
+    const val MIN_EXPENSE_COUNT = 10
+
+    /** Only pitch when the savings clearly exceed the price. */
+    const val MIN_PAYBACK_MULTIPLE = 2
+
+    private const val DAY_MILLIS = 24L * 60 * 60 * 1000
+    private const val WINDOW_DAYS = 30
+
+    /**
+     * @param expenses expense transactions as (timestamp, amount)
+     * @param firstTransactionAt timestamp of the very first recorded transaction
+     * @return null when there is not enough data or the offer would not be worth it
+     */
+    fun calculate(
+        expenses: List<Pair<Long, Double>>,
+        firstTransactionAt: Long?,
+        monthlyPrice: Double,
+        nowMillis: Long = System.currentTimeMillis()
+    ): SavingsOffer? {
+        if (firstTransactionAt == null || monthlyPrice <= 0.0) return null
+        val historyDays = ((nowMillis - firstTransactionAt) / DAY_MILLIS).toInt()
+        if (historyDays < MIN_HISTORY_DAYS) return null
+
+        val windowStart = nowMillis - WINDOW_DAYS * DAY_MILLIS
+        val recent = expenses.filter { (timestamp, amount) -> timestamp in windowStart..nowMillis && amount > 0.0 }
+        if (recent.size < MIN_EXPENSE_COUNT) return null
+
+        // With less than 30 days of history, extrapolate what was recorded to a month.
+        val coveredDays = historyDays.coerceAtMost(WINDOW_DAYS)
+        val monthlySpend = recent.sumOf { it.second } * WINDOW_DAYS / coveredDays
+        val savings = monthlySpend * SAVINGS_RATE
+        val multiple = floor(savings / monthlyPrice).toInt()
+        if (multiple < MIN_PAYBACK_MULTIPLE) return null
+
+        return SavingsOffer(
+            monthlySpend = monthlySpend,
+            monthlySavings = savings,
+            monthlyPrice = monthlyPrice,
+            paybackMultiple = multiple
+        )
+    }
+}
+
+/** Decides when the dashboard promo may appear, so it stays unobtrusive. */
+object PremiumPromoPolicy {
+
+    const val MAX_DISMISSALS = 3
+    private const val DAY_MILLIS = 24L * 60 * 60 * 1000
+
+    fun shouldShow(
+        isPremium: Boolean,
+        hasOffer: Boolean,
+        dismissCount: Int,
+        snoozedUntil: Long,
+        nowMillis: Long = System.currentTimeMillis()
+    ): Boolean {
+        if (isPremium || !hasOffer) return false
+        if (dismissCount >= MAX_DISMISSALS) return false
+        return nowMillis >= snoozedUntil
+    }
+
+    /** Each "Not now" hides the card longer: 14, then 30 days; the third one hides it for good. */
+    fun snoozeUntil(dismissCountAfter: Int, nowMillis: Long = System.currentTimeMillis()): Long {
+        val days = if (dismissCountAfter <= 1) 14 else 30
+        return nowMillis + days * DAY_MILLIS
+    }
+}

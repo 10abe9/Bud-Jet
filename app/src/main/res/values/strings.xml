@@ -310,4 +310,30 @@ and get smart financial insights.</string>
     <string name="default_category_gift">Gift</string>
     <string name="default_category_freelance">Freelance</string>
     <string name="goals_deadline_passed">Deadline passed: %1$s left to save</string>
+
+    <!-- Premium offer -->
+    <string name="premium_badge">PREMIUM</string>
+    <string name="premium_offer_title">You could save about %1$s a month</string>
+    <string name="premium_offer_body">You spend about %1$s a month. Spending just 5%% less frees %2$s — %3$s. Shall we make a deal?</string>
+    <plurals name="premium_payback">
+        <item quantity="one">%1$d× the price of Premium (%2$s/mo)</item>
+        <item quantity="other">%1$d× the price of Premium (%2$s/mo)</item>
+    </plurals>
+    <string name="premium_offer_cta">Make a deal</string>
+    <string name="premium_offer_not_now">Not now</string>
+    <string name="premium_sheet_title">A deal that pays for itself</string>
+    <string name="premium_sheet_generic_body">Premium turns your records into savings: an AI assistant, monthly tips, forecasts and smart limits.</string>
+    <string name="premium_sheet_spend_label">Your spending</string>
+    <string name="premium_sheet_savings_label" formatted="false">Spending 5% less</string>
+    <string name="premium_sheet_price_label">Premium</string>
+    <string name="premium_sheet_benefit_label">Your net benefit</string>
+    <string name="premium_per_month">%1$s/mo</string>
+    <string name="premium_sheet_disclaimer">Estimate based on your last 30 days. Actual savings depend on your habits.</string>
+    <string name="premium_sheet_features_title">What you get</string>
+    <string name="premium_feature_ai_chat">AI assistant: ask anything about your budget</string>
+    <string name="premium_feature_ai_report">Monthly AI report with personal saving tips</string>
+    <string name="premium_feature_smart_limits">Smart limits and overspending forecasts</string>
+    <string name="premium_feature_unlimited">Unlimited categories and CSV export</string>
+    <string name="premium_sheet_buy">Deal — %1$s/mo</string>
+    <string name="premium_sheet_buy_generic">Get Premium</string>
 </resources>
