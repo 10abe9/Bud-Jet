@@ -3,6 +3,10 @@ package com.abe.bud_jet
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.enableEdgeToEdge
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -27,12 +31,16 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         preferenceManager = PreferenceManager.getInstance(applicationContext)
         LocaleManager.applyAppLanguage(preferenceManager.getAppLanguage())
+        // Android 15 (SDK 35) always draws edge-to-edge; opt in on older versions too so
+        // the layout is identical everywhere. Insets are applied in applySystemBarInsets().
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
         registerVibrationManager()   // ← ПЕРЕНЕСТИ СЮДА
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        applySystemBarInsets()
 
         val navView: BottomNavigationView = binding.navView
 
@@ -59,6 +67,32 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         // Used by notification reminders to check whether the user opened the app today.
         preferenceManager.setLastDashboardVisitTime(System.currentTimeMillis())
+    }
+
+    /**
+     * Keeps content out from under the status bar, navigation bar, display cutout and
+     * keyboard by padding the root. Insets are consumed here, so the bottom navigation
+     * does not add its own padding on top.
+     */
+    private fun applySystemBarInsets() {
+        val root = binding.root
+        val initialLeft = root.paddingLeft
+        val initialTop = root.paddingTop
+        val initialRight = root.paddingRight
+        val initialBottom = root.paddingBottom
+        ViewCompat.setOnApplyWindowInsetsListener(root) { view, insets ->
+            val bars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+            )
+            val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
+            view.updatePadding(
+                left = initialLeft + bars.left,
+                top = initialTop + bars.top,
+                right = initialRight + bars.right,
+                bottom = initialBottom + maxOf(bars.bottom, ime.bottom)
+            )
+            WindowInsetsCompat.CONSUMED
+        }
     }
 
     private fun hideUiForHelloFragments(navController: NavController){

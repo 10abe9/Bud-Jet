@@ -2,7 +2,6 @@ package com.abe.bud_jet.ui.common
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.os.Build
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
@@ -21,10 +20,9 @@ abstract class BaseBottomSheetDialogFragment : BottomSheetDialogFragment() {
             WindowCompat.setDecorFitsSystemWindows(window, false)
             window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
             window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            window.navigationBarColor = Color.TRANSPARENT
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                window.isNavigationBarContrastEnforced = false
-            }
+            // The transparent navigation bar comes from the sheet theme
+            // (ThemeOverlay.BudJet.BottomSheet): Window.setNavigationBarColor is deprecated
+            // and ignored on Android 15.
         }
 
         val bottomSheet =

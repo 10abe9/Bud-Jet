@@ -23,6 +23,11 @@
         <!-- затемнение фона -->
         <item name="android:backgroundDimAmount">0.4</item>
 
+        <!-- Sheet draws behind a transparent navigation bar (set via theme, not deprecated
+             Window API calls). Ignored on Android 15+, where this is the default. -->
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="enableEdgeToEdge">true</item>
+
     </style>
 
     <!-- ========================= -->
