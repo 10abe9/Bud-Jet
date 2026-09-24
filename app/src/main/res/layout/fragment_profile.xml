@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<!-- Scrollable: the settings no longer fit on one screen on typical phones. -->
+<androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/background"
+    android:clipToPadding="false"
+    android:fillViewport="true"
+    android:paddingBottom="24dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
     <!-- Title -->
     <TextView
@@ -380,7 +388,7 @@
                 android:id="@+id/btnReset"
                 android:text="@string/profile_reset_data"
                 android:layout_marginTop="6dp"
-                android:textColor="#FF5252"
+                android:textColor="@color/finance_expense"
                 android:background="?attr/selectableItemBackground"
                 android:clickable="true"
                 android:focusable="true"
@@ -454,3 +462,5 @@
         app:tint="@color/text_primary" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

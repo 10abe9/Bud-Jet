@@ -604,7 +604,7 @@
                             android:layout_marginStart="8dp"
                             android:text="@string/premium_offer_cta"
                             android:textColor="@color/white"
-                            app:backgroundTint="@color/ai_accent"
+                            app:backgroundTint="@color/premium_button"
                             app:cornerRadius="16dp" />
                     </LinearLayout>
                 </LinearLayout>

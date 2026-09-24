@@ -8,10 +8,13 @@
 
     <!-- AI accent -->
     <color name="ai_accent">#8B5CF6</color>
+    <!-- Filled Premium buttons: white text stays readable in both themes. -->
+    <color name="premium_button">#7C3AED</color>
 
     <!-- Finance colors -->
-    <color name="finance_income">#22C55E</color>
-    <color name="finance_expense">#EF4444</color>
+    <!-- Darker shades keep text readable on light backgrounds (contrast). -->
+    <color name="finance_income">#16A34A</color>
+    <color name="finance_expense">#DC2626</color>
 
     <!-- Neutral -->
     <color name="background">#F8FAFC</color>
