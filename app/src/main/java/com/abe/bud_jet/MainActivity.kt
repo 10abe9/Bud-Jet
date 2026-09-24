@@ -87,7 +87,10 @@ class MainActivity : AppCompatActivity() {
             val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
             view.updatePadding(
                 left = initialLeft + bars.left,
-                top = initialTop + bars.top,
+                // The layout's own top padding already leaves room for the status bar
+                // (the app was drawn edge-to-edge on Android 15 before), so only grow it
+                // when the status bar or cutout is taller, instead of adding both.
+                top = maxOf(initialTop, bars.top),
                 right = initialRight + bars.right,
                 bottom = initialBottom + maxOf(bars.bottom, ime.bottom)
             )
