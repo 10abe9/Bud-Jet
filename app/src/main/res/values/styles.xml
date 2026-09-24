@@ -161,13 +161,83 @@
         <item name="android:textSize">15sp</item>
     </style>
 
-    <!-- Soft tonal button (light tinted background, colored text). -->
-    <style name="Widget.BudJet.Button.Tonal" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+    <!-- ========================= -->
+    <!-- BUTTONS                   -->
+    <!-- One filled button per screen for the main action; everything else is tonal or text.
+         Height 52dp = 40dp visible + default 6dp touch insets (Material 3 proportions). -->
+    <!-- ========================= -->
+
+    <!-- Filled: the main action (Save, Continue, Apply). -->
+    <style name="Widget.BudJet.Button" parent="Widget.MaterialComponents.Button.UnelevatedButton">
         <item name="android:layout_height">52dp</item>
         <item name="cornerRadius">16dp</item>
+        <item name="backgroundTint">@color/btn_primary_bg</item>
+        <item name="android:textColor">@color/btn_primary_content</item>
+        <item name="iconTint">@color/btn_primary_content</item>
         <item name="iconGravity">textStart</item>
         <item name="iconPadding">6dp</item>
         <item name="iconSize">18dp</item>
+    </style>
+
+    <!-- Tonal: secondary actions (soft brand tint). -->
+    <style name="Widget.BudJet.Button.Tonal">
+        <item name="backgroundTint">@color/btn_tonal_bg</item>
+        <item name="android:textColor">@color/btn_tonal_content</item>
+        <item name="iconTint">@color/btn_tonal_content</item>
+    </style>
+
+    <!-- Neutral tonal: Cancel and other "back out" actions. -->
+    <style name="Widget.BudJet.Button.Tonal.Neutral">
+        <item name="backgroundTint">@color/btn_neutral_bg</item>
+        <item name="android:textColor">@color/btn_neutral_content</item>
+        <item name="iconTint">@color/btn_neutral_content</item>
+    </style>
+
+    <!-- Expense tonal: add expense, and destructive confirmations (Delete). -->
+    <style name="Widget.BudJet.Button.Tonal.Expense">
+        <item name="backgroundTint">@color/btn_expense_bg</item>
+        <item name="android:textColor">@color/btn_expense_content</item>
+        <item name="iconTint">@color/btn_expense_content</item>
+    </style>
+
+    <!-- Income tonal: add income. -->
+    <style name="Widget.BudJet.Button.Tonal.Income">
+        <item name="backgroundTint">@color/btn_income_bg</item>
+        <item name="android:textColor">@color/btn_income_content</item>
+        <item name="iconTint">@color/btn_income_content</item>
+    </style>
+
+    <!-- Premium purchase: filled violet. -->
+    <style name="Widget.BudJet.Button.Premium">
+        <item name="backgroundTint">@color/btn_premium_bg</item>
+        <item name="android:textColor">@color/btn_premium_content</item>
+        <item name="iconTint">@color/btn_premium_content</item>
+    </style>
+
+    <!-- Text: low-emphasis actions in cards and lists. -->
+    <style name="Widget.BudJet.Button.Text" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="cornerRadius">16dp</item>
+        <item name="android:textColor">@color/btn_text_content</item>
+        <item name="iconTint">@color/btn_text_content</item>
+    </style>
+
+    <!-- Expense / income segmented toggle: the selected half gets the soft tint. -->
+    <style name="Widget.BudJet.Button.Segment" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:layout_height">52dp</item>
+        <item name="cornerRadius">16dp</item>
+        <item name="strokeWidth">1dp</item>
+    </style>
+
+    <style name="Widget.BudJet.Button.Segment.Expense">
+        <item name="backgroundTint">@color/segment_expense_bg</item>
+        <item name="android:textColor">@color/segment_expense_content</item>
+        <item name="strokeColor">@color/segment_expense_stroke</item>
+    </style>
+
+    <style name="Widget.BudJet.Button.Segment.Income">
+        <item name="backgroundTint">@color/segment_income_bg</item>
+        <item name="android:textColor">@color/segment_income_content</item>
+        <item name="strokeColor">@color/segment_income_stroke</item>
     </style>
 
 </resources>

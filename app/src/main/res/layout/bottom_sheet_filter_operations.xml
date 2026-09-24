@@ -109,12 +109,10 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnClear"
+                style="@style/Widget.BudJet.Button.Tonal.Neutral"
                 android:layout_width="0dp"
-                android:layout_height="48dp"
                 android:layout_weight="1"
-            android:text="@string/common_clear"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                app:cornerRadius="14dp" />
+            android:text="@string/common_clear" />
 
             <Space
                 android:layout_width="10dp"
@@ -122,13 +120,10 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnApply"
+                style="@style/Widget.BudJet.Button"
                 android:layout_width="0dp"
-                android:layout_height="48dp"
                 android:layout_weight="1"
-            android:text="@string/common_apply"
-                android:backgroundTint="@color/brand_primary"
-                android:textColor="@android:color/white"
-                app:cornerRadius="14dp" />
+            android:text="@string/common_apply" />
         </LinearLayout>
     </LinearLayout>
 

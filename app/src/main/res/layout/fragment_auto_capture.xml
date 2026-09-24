@@ -108,11 +108,9 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnAccess"
+                    style="@style/Widget.BudJet.Button"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    app:backgroundTint="@color/brand_primary"
-                    app:cornerRadius="16dp" />
+                    android:layout_marginTop="12dp" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -145,13 +143,10 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnBattery"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    style="@style/Widget.BudJet.Button.Tonal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="@string/capture_battery_button"
-                    android:textColor="@color/brand_primary"
-                    app:cornerRadius="16dp" />
+                    android:text="@string/capture_battery_button" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -255,13 +250,10 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnTest"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    style="@style/Widget.BudJet.Button.Tonal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="@string/capture_test_button"
-                    android:textColor="@color/brand_primary"
-                    app:cornerRadius="16dp" />
+                    android:text="@string/capture_test_button" />
 
                 <TextView
                     android:id="@+id/tvTestResult"
@@ -300,15 +292,14 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnLogRefresh"
-                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        style="@style/Widget.BudJet.Button.Text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/capture_log_refresh"
-                        android:textColor="@color/brand_primary" />
+                        android:text="@string/capture_log_refresh" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnLogClear"
-                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        style="@style/Widget.BudJet.Button.Text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/capture_log_clear"

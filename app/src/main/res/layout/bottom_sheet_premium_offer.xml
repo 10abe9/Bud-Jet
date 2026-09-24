@@ -156,16 +156,13 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnBuy"
+                style="@style/Widget.BudJet.Button.Premium"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:layout_marginTop="12dp"
-                android:textColor="@color/white"
-                app:backgroundTint="@color/premium_button"
-                app:cornerRadius="16dp" />
+                android:layout_marginTop="12dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnNotNow"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
+                style="@style/Widget.BudJet.Button.Text"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:text="@string/premium_offer_not_now"

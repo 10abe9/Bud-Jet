@@ -41,9 +41,8 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnCancel"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                style="@style/Widget.BudJet.Button.Tonal.Neutral"
                 android:layout_width="0dp"
-                android:layout_height="48dp"
                 android:layout_weight="1"
             android:text="@string/common_cancel" />
 
@@ -53,13 +52,10 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnDelete"
+                style="@style/Widget.BudJet.Button.Tonal.Expense"
                 android:layout_width="0dp"
-                android:layout_height="48dp"
                 android:layout_weight="1"
-            android:text="@string/common_delete"
-                android:backgroundTint="@color/finance_expense"
-                android:textColor="@android:color/white"
-                app:cornerRadius="14dp" />
+            android:text="@string/common_delete" />
         </LinearLayout>
     </LinearLayout>
 

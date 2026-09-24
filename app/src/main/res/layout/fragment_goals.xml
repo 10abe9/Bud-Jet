@@ -76,16 +76,15 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnEditSavingGoal"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
+                style="@style/Widget.BudJet.Button.Text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                android:text="@string/goals_set_goal"
-                android:textColor="@color/brand_primary" />
+                android:text="@string/goals_set_goal" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnDeleteSavingGoal"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
+                style="@style/Widget.BudJet.Button.Text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/goals_delete_goal"
@@ -136,22 +135,18 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_onboarding_create_savings"
+                style="@style/Widget.BudJet.Button.Tonal"
+                app:icon="@drawable/ic_add"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:text="@string/onboarding_goals_savings_cta"
-                app:backgroundTint="@color/brand_primary"
-                app:cornerRadius="16dp" />
+                android:text="@string/onboarding_goals_savings_cta" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_onboarding_add_category_limit"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                style="@style/Widget.BudJet.Button.Tonal.Neutral"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="@string/onboarding_goals_limit_cta"
-                app:cornerRadius="16dp"
-                app:strokeColor="@color/border" />
+                android:text="@string/onboarding_goals_limit_cta" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
@@ -185,12 +180,11 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnAddLimit"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
+        style="@style/Widget.BudJet.Button.Text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:text="@string/goals_add_limit"
-        android:textColor="@color/brand_primary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBaseline_toBaselineOf="@id/tvLimits" />
 

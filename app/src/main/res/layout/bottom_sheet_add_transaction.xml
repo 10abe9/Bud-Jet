@@ -53,21 +53,17 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnExpense"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    style="@style/Widget.BudJet.Button.Segment.Expense"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/bottomsheet_expense"
-                    android:textColor="@color/finance_expense" />
+                    android:text="@string/bottomsheet_expense" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnIncome"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    style="@style/Widget.BudJet.Button.Segment.Income"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/bottomsheet_income"
-                    android:textColor="@color/finance_income" />
+                    android:text="@string/bottomsheet_income" />
             </com.google.android.material.button.MaterialButtonToggleGroup>
 
             <!-- Categories chips (scrollable: a single-line group would clip extra categories) -->
@@ -104,18 +100,15 @@
             <!-- Save button -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSave"
+                style="@style/Widget.BudJet.Button"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
                 android:layout_marginTop="20dp"
-                android:text="@string/bottomsheet_add_transaction_save"
-                app:cornerRadius="16dp"
-                android:backgroundTint="@color/brand_primary"
-                android:textColor="@android:color/white" />
+                android:text="@string/bottomsheet_add_transaction_save" />
 
             <!-- Delete (edit mode only) -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnDelete"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
+                style="@style/Widget.BudJet.Button.Text"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginTop="8dp"

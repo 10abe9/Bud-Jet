@@ -42,9 +42,8 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnCancelLanguage"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                style="@style/Widget.BudJet.Button.Tonal.Neutral"
                 android:layout_width="0dp"
-                android:layout_height="48dp"
                 android:layout_weight="1"
                 android:text="@string/common_cancel" />
 
@@ -54,13 +53,10 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSaveLanguage"
+                style="@style/Widget.BudJet.Button"
                 android:layout_width="0dp"
-                android:layout_height="48dp"
                 android:layout_weight="1"
-                android:backgroundTint="@color/brand_primary"
-                android:text="@string/common_apply"
-                android:textColor="@android:color/white"
-                app:cornerRadius="14dp" />
+                android:text="@string/common_apply" />
         </LinearLayout>
     </LinearLayout>
 

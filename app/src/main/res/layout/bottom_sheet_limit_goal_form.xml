@@ -69,12 +69,9 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSaveCategoryLimit"
+            style="@style/Widget.BudJet.Button"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
             android:layout_marginTop="16dp"
-            android:backgroundTint="@color/brand_primary"
-            android:text="@string/bottomsheet_save_limit"
-            android:textColor="@android:color/white"
-            app:cornerRadius="14dp" />
+            android:text="@string/bottomsheet_save_limit" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

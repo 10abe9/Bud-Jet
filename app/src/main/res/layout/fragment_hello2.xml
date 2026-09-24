@@ -314,15 +314,11 @@
     <!-- BUTTON -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button_continue"
+        style="@style/Widget.BudJet.Button"
         android:layout_width="0dp"
-        android:layout_height="56dp"
         android:text="@string/hello2_continue"
-        android:textAllCaps="false"
-        android:textSize="16sp"
         android:layout_marginTop="24dp"
         android:layout_marginBottom="32dp"
-        app:cornerRadius="20dp"
-        android:backgroundTint="@color/brand_primary"
         app:layout_constraintVertical_bias="1"
         app:layout_constraintTop_toBottomOf="@id/text_selected_goals"
         app:layout_constraintBottom_toBottomOf="parent"

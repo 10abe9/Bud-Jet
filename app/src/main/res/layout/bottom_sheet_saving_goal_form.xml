@@ -55,9 +55,8 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnPickDeadline"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                style="@style/Widget.BudJet.Button.Tonal"
                 android:layout_width="0dp"
-                android:layout_height="48dp"
                 android:layout_weight="1"
                 android:text="@string/bottomsheet_pick_date" />
 
@@ -67,7 +66,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnClearDeadline"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
+                style="@style/Widget.BudJet.Button.Text"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
                 android:text="@string/common_clear" />
@@ -75,12 +74,9 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSaveSavingGoal"
+            style="@style/Widget.BudJet.Button"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
             android:layout_marginTop="16dp"
-            android:backgroundTint="@color/brand_primary"
-            android:text="@string/bottomsheet_save_goal"
-            android:textColor="@android:color/white"
-            app:cornerRadius="14dp" />
+            android:text="@string/bottomsheet_save_goal" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

@@ -123,16 +123,14 @@
                     </LinearLayout>
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_set_initial_balance"
-                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        style="@style/Widget.BudJet.Button.Text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center|bottom"
                         android:layout_marginTop="2dp"
                         android:minHeight="0dp"
                         android:text="@string/dashboard_set_initial_balance"
-                        android:textSize="14sp"
-                        android:textColor="@color/brand_primary"
-                        app:cornerRadius="16dp" />
+                        android:textSize="14sp" />
                 </LinearLayout>
 
 
@@ -150,16 +148,13 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/add_expence_button"
-                    style="@style/Widget.BudJet.Button.Tonal"
+                    style="@style/Widget.BudJet.Button.Tonal.Expense"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:text="@string/dashboard_add_expense"
-                    android:textColor="@color/on_expense_container"
                     android:maxLines="1"
                     android:ellipsize="end"
-                    app:backgroundTint="@color/expense_container"
                     app:icon="@drawable/ic_add"
-                    app:iconTint="@color/on_expense_container"
                     app:autoSizeTextType="uniform"
                     app:autoSizeMinTextSize="11sp"
                     app:autoSizeMaxTextSize="15sp"
@@ -171,16 +166,13 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/add_income_button"
-                    style="@style/Widget.BudJet.Button.Tonal"
+                    style="@style/Widget.BudJet.Button.Tonal.Income"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:text="@string/dashboard_add_income"
-                    android:textColor="@color/on_income_container"
                     android:maxLines="1"
                     android:ellipsize="end"
-                    app:backgroundTint="@color/income_container"
                     app:icon="@drawable/ic_add"
-                    app:iconTint="@color/on_income_container"
                     app:autoSizeTextType="uniform"
                     app:autoSizeMinTextSize="11sp"
                     app:autoSizeMaxTextSize="15sp"
@@ -321,13 +313,11 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_recent_add"
+                            style="@style/Widget.BudJet.Button.Text"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="@string/dashboard_add_expense_income"
-                            app:cornerRadius="16dp"
-                            style="@style/Widget.MaterialComponents.Button.TextButton"
-                            android:textColor="@color/brand_primary" />
+                            android:text="@string/dashboard_add_expense_income" />
 
                     </LinearLayout>
 
@@ -408,13 +398,11 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_add_category_dashboard"
-                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        style="@style/Widget.BudJet.Button.Text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="@string/dashboard_add_category"
-                        android:textColor="@color/brand_primary"
-                        app:cornerRadius="16dp" />
+                        android:text="@string/dashboard_add_category" />
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
@@ -511,7 +499,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_premium_offer_dismiss"
-                            style="@style/Widget.MaterialComponents.Button.TextButton"
+                            style="@style/Widget.BudJet.Button.Text"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/premium_offer_not_now"
@@ -519,13 +507,10 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_premium_offer_cta"
+                            style="@style/Widget.BudJet.Button.Premium"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
-                            android:text="@string/premium_offer_cta"
-                            android:textColor="@color/white"
-                            app:backgroundTint="@color/premium_button"
-                            app:cornerRadius="16dp" />
+                            android:text="@string/premium_offer_cta" />
                     </LinearLayout>
                 </LinearLayout>
 

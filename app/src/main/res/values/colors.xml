@@ -41,6 +41,12 @@
 
     <!-- states -->
     <color name="primary_pressed">#4338CA</color>
+    <!-- Filled primary buttons: white text needs ≥4.5:1 in both themes. -->
+    <color name="primary_button">#4F46E5</color>
+    <!-- Brand-colored text (text buttons, links) readable on card/background. -->
+    <color name="brand_text">#4F46E5</color>
+    <!-- Text/icons on primary_container (tonal buttons). -->
+    <color name="on_primary_container">#3730A3</color>
     <color name="primary_container">#EEF2FF</color>
 
     <!-- navigation -->

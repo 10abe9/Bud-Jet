@@ -102,26 +102,21 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/buttonEnable"
+        style="@style/Widget.BudJet.Button"
         android:layout_width="0dp"
-        android:layout_height="56dp"
         android:layout_marginBottom="8dp"
-        android:backgroundTint="@color/brand_primary"
         android:text="@string/hello3_enable"
-        android:textAllCaps="false"
-        android:textSize="16sp"
-        app:cornerRadius="20dp"
         app:layout_constraintBottom_toTopOf="@id/buttonManual"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/buttonManual"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
+        style="@style/Widget.BudJet.Button.Text"
         android:layout_width="0dp"
         android:layout_height="56dp"
         android:layout_marginBottom="24dp"
         android:text="@string/hello3_manual"
-        android:textAllCaps="false"
         android:textColor="@color/text_secondary"
         android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="parent"
