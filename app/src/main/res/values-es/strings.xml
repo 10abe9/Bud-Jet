@@ -354,7 +354,7 @@ Bud-Jet no envía tus transacciones, notas, metas ni categorías a ningún servi
     <string name="capture_source_tracked">Los pagos se añaden automáticamente</string>
     <string name="capture_privacy_note">Las notificaciones se procesan solo en este dispositivo. Bud-Jet no envía su texto a ningún sitio. De las apps que no has activado solo se guarda el nombre.</string>
     <string name="capture_rationale_title">¿Permitir acceso a notificaciones?</string>
-    <string name="capture_rationale_message">Para añadir gastos automáticamente, Bud-Jet lee las notificaciones de pago de los bancos y apps de pago que elijas.\n\n• Todo se procesa en este dispositivo; el texto no se envía a ningún sitio.\n• Solo se leen las apps que actives.\n• Puedes desactivar el acceso cuando quieras.\n\nAndroid abrirá sus ajustes: busca Bud-Jet y activa el acceso.</string>
+    <string name="capture_rationale_message">Bud-Jet leerá las notificaciones de pago de los bancos que elijas y registrará los gastos por ti.</string>
     <string name="capture_rationale_not_now">Ahora no</string>
     <string name="capture_rationale_open_settings">Abrir ajustes</string>
     <string name="capture_confirm_title">Confirma el pago</string>
@@ -364,8 +364,8 @@ Bud-Jet no envía tus transacciones, notas, metas ni categorías a ningún servi
     <string name="hello3_privacy">Las notificaciones se leen solo en tu dispositivo y nunca se envían. Puedes activarlo más tarde en el perfil.</string>
     <string name="hello3_enable">Probar gratis</string>
     <string name="hello3_manual">Continuar gratis: añadiré los gastos a mano</string>
-    <string name="capture_promo_title">Registrar gastos automáticamente</string>
-    <string name="capture_promo_body">Deja que Bud-Jet añada las compras de las notificaciones de tu banco. Todo se queda en este dispositivo.</string>
+    <string name="capture_promo_title">¿Registrar gastos automáticamente?</string>
+    <string name="capture_promo_body">Bud-Jet puede registrar las compras a partir de las notificaciones del banco, sin que tengas que escribirlas. El primer mes de Premium es gratis.</string>
     <string name="recurring_title">Pagos recurrentes</string>
     <string name="recurring_next_charge">Próximo cargo: %1$s</string>
     <string name="transaction_auto_captured_suffix">%1$s · auto</string>
@@ -429,5 +429,14 @@ Bud-Jet no envía tus transacciones, notas, metas ni categorías a ningún servi
     <string name="premium_debug_off">Premium de prueba desactivado</string>
     <string name="profile_premium_active">Premium activo</string>
     <string name="profile_premium_active_subtitle">Registro automático • Asistente de IA • Gestionar suscripción</string>
+
+    <!-- Theme and prompts -->
+    <string name="theme_label">Tema</string>
+    <string name="theme_system">Como el sistema</string>
+    <string name="theme_light">Clara</string>
+    <string name="theme_dark">Oscura</string>
+    <string name="theme_picker_title">Tema de la app</string>
+    <string name="capture_rationale_note">Todo se procesa en tu teléfono y no se envía a ningún sitio. Android abrirá sus ajustes: activa Bud-Jet allí.</string>
+    <string name="capture_promo_try">Probar</string>
 </resources>
 

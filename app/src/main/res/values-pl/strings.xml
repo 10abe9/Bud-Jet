@@ -357,7 +357,7 @@ Bud-Jet nie wysyła Twoich transakcji, notatek, celów ani kategorii na zdalny s
     <string name="capture_source_tracked">Płatności są dodawane automatycznie</string>
     <string name="capture_privacy_note">Powiadomienia są przetwarzane tylko na tym urządzeniu. Bud-Jet nigdzie nie wysyła ich treści. Z aplikacji, których nie włączysz, zapamiętywana jest tylko nazwa.</string>
     <string name="capture_rationale_title">Zezwolić na dostęp do powiadomień?</string>
-    <string name="capture_rationale_message">Aby dodawać wydatki automatycznie, Bud-Jet czyta powiadomienia o płatnościach z wybranych przez Ciebie banków i aplikacji płatniczych.\n\n• Wszystko jest przetwarzane na tym urządzeniu, treść nie jest nigdzie wysyłana.\n• Czytane są tylko włączone przez Ciebie aplikacje.\n• Dostęp możesz wyłączyć w każdej chwili.\n\nAndroid otworzy ustawienia: znajdź tam Bud-Jet i włącz dostęp.</string>
+    <string name="capture_rationale_message">Bud-Jet będzie czytać powiadomienia o płatnościach z wybranych banków i sam zapisywać wydatki.</string>
     <string name="capture_rationale_not_now">Nie teraz</string>
     <string name="capture_rationale_open_settings">Otwórz ustawienia</string>
     <string name="capture_confirm_title">Potwierdź płatność</string>
@@ -367,8 +367,8 @@ Bud-Jet nie wysyła Twoich transakcji, notatek, celów ani kategorii na zdalny s
     <string name="hello3_privacy">Powiadomienia są czytane tylko na Twoim urządzeniu i nigdzie nie są wysyłane. Możesz włączyć to później w profilu.</string>
     <string name="hello3_enable">Wypróbuj za darmo</string>
     <string name="hello3_manual">Kontynuuj za darmo — będę dodawać ręcznie</string>
-    <string name="capture_promo_title">Liczyć wydatki automatycznie</string>
-    <string name="capture_promo_body">Pozwól Bud-Jet dodawać zakupy z powiadomień banku. Wszystko zostaje na tym urządzeniu.</string>
+    <string name="capture_promo_title">Liczyć wydatki automatycznie?</string>
+    <string name="capture_promo_body">Bud-Jet może sam zapisywać zakupy z powiadomień banku — nie trzeba ich wpisywać. Pierwszy miesiąc Premium za darmo.</string>
     <string name="recurring_title">Płatności cykliczne</string>
     <string name="recurring_next_charge">Następne obciążenie: %1$s</string>
     <string name="transaction_auto_captured_suffix">%1$s · auto</string>
@@ -436,5 +436,14 @@ Bud-Jet nie wysyła Twoich transakcji, notatek, celów ani kategorii na zdalny s
     <string name="premium_debug_off">Testowe Premium wyłączone</string>
     <string name="profile_premium_active">Premium aktywne</string>
     <string name="profile_premium_active_subtitle">Automatyczne śledzenie • Asystent AI • Zarządzanie subskrypcją</string>
+
+    <!-- Theme and prompts -->
+    <string name="theme_label">Motyw</string>
+    <string name="theme_system">Systemowy</string>
+    <string name="theme_light">Jasny</string>
+    <string name="theme_dark">Ciemny</string>
+    <string name="theme_picker_title">Motyw aplikacji</string>
+    <string name="capture_rationale_note">Wszystko jest przetwarzane na telefonie i nigdzie nie jest wysyłane. Android otworzy ustawienia — włącz tam Bud-Jet.</string>
+    <string name="capture_promo_try">Wypróbuj</string>
 </resources>
 

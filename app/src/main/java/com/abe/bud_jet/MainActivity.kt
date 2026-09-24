@@ -24,6 +24,7 @@ import com.abe.bud_jet.database.preferences.PreferenceManager
 import com.abe.bud_jet.databinding.ActivityMainBinding
 import com.abe.bud_jet.ui.operations.AddTransactionBottomSheet
 import com.abe.bud_jet.utils.LocaleManager
+import com.abe.bud_jet.utils.ThemeManager
 import com.abe.bud_jet.utils.VibrationManager
 import kotlinx.coroutines.launch
 
@@ -44,6 +45,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         preferenceManager = PreferenceManager.getInstance(applicationContext)
         LocaleManager.applyAppLanguage(preferenceManager.getAppLanguage())
+        // Before super.onCreate, so the activity starts in the chosen theme without recreating.
+        ThemeManager.apply(preferenceManager.getAppTheme())
         // Android 15 (SDK 35) always draws edge-to-edge; opt in on older versions too so
         // the layout is identical everywhere. Insets are applied in applySystemBarInsets().
         enableEdgeToEdge()

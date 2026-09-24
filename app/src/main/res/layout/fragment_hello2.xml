@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<!-- Scrolls on short screens: language, theme, currency and goals no longer always fit. -->
+<androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
+    android:fillViewport="true">
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:padding="24dp">
 
     <!-- TITLE -->
@@ -25,7 +31,7 @@
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="72dp"
+        android:layout_marginTop="40dp"
         android:text="@string/hello2_lets_set_up"
         android:fontFamily="@font/aldrich"
         android:textColor="@color/brand_primary"
@@ -103,6 +109,54 @@
             android:text="@string/language_endonym_pl" />
     </com.google.android.material.chip.ChipGroup>
 
+    <!-- THEME -->
+    <TextView
+        android:id="@+id/theme_label"
+        android:text="@string/theme_label"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textColor="@color/text_primary"
+        android:fontFamily="@font/aldrich"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toBottomOf="@id/chip_language_group"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chip_theme_group"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:chipSpacing="8dp"
+        app:selectionRequired="true"
+        app:singleSelection="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/theme_label">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_theme_system"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/theme_system" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_theme_light"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/theme_light" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_theme_dark"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/theme_dark" />
+    </com.google.android.material.chip.ChipGroup>
+
     <!-- CURRENCY -->
     <TextView
         android:id="@+id/currency_label"
@@ -112,7 +166,7 @@
         android:textColor="@color/text_primary"
         android:fontFamily="@font/aldrich"
         android:layout_marginTop="20dp"
-        app:layout_constraintTop_toBottomOf="@id/chip_language_group"
+        app:layout_constraintTop_toBottomOf="@id/chip_theme_group"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
@@ -265,11 +319,16 @@
         android:text="@string/hello2_continue"
         android:textAllCaps="false"
         android:textSize="16sp"
+        android:layout_marginTop="24dp"
         android:layout_marginBottom="32dp"
         app:cornerRadius="20dp"
         android:backgroundTint="@color/brand_primary"
+        app:layout_constraintVertical_bias="1"
+        app:layout_constraintTop_toBottomOf="@id/text_selected_goals"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

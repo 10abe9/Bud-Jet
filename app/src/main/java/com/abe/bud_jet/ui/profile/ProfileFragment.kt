@@ -35,6 +35,7 @@ import com.abe.bud_jet.premium.SavingsOfferSource
 import com.abe.bud_jet.utils.AmountParser
 import com.abe.bud_jet.utils.DateRanges
 import com.abe.bud_jet.utils.LocaleManager
+import com.abe.bud_jet.utils.ThemeManager
 import com.abe.bud_jet.utils.CurrencyFormatter
 import com.abe.bud_jet.utils.CurrencyRateProvider
 import com.abe.bud_jet.utils.collectWithLifecycle
@@ -121,6 +122,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
             requireContext(),
             preferenceManager.getAppLanguage()
         )
+        binding.tvTheme.text = getString(ThemePickerBottomSheet.labelFor(preferenceManager.getAppTheme()))
         notificationsEnabled = preferenceManager.isNotificationsEnabled()
         binding.switchNotifications.isChecked = notificationsEnabled
         updateExportAvailabilityUi()
@@ -147,6 +149,13 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
             LocaleManager.applyAppLanguage(language)
             // AppCompatDelegate applies locale and recreates activities when needed.
         }
+        setFragmentResultListener(ThemePickerBottomSheet.RESULT_KEY) { _, bundle ->
+            val mode = bundle.getString(ThemePickerBottomSheet.RESULT_THEME) ?: return@setFragmentResultListener
+            if (mode == preferenceManager.getAppTheme()) return@setFragmentResultListener
+            preferenceManager.setAppTheme(mode)
+            // AppCompat recreates the activity in the new theme.
+            ThemeManager.apply(mode)
+        }
         setFragmentResultListener(CurrentBalanceBottomSheet.RESULT_KEY) { _, bundle ->
             val balance = bundle.getDouble(CurrentBalanceBottomSheet.RESULT_BALANCE, currentInitialBalance)
             currentInitialBalance = balance
@@ -163,6 +172,10 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         binding.rowCurrency.setOnClickListener {
             CurrencyPickerBottomSheet.newInstance(currentCurrency)
                 .show(parentFragmentManager, "currency_picker_sheet")
+        }
+        binding.rowTheme.setOnClickListener {
+            ThemePickerBottomSheet.newInstance(preferenceManager.getAppTheme())
+                .show(parentFragmentManager, "theme_picker_sheet")
         }
         binding.rowAutoCapture.setOnClickListener {
             findNavController().navigate(R.id.navigation_auto_capture)

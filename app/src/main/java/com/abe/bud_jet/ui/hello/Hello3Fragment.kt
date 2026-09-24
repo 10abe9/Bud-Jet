@@ -56,6 +56,7 @@ class Hello3Fragment : Fragment(R.layout.fragment_hello3) {
                 Toast.makeText(requireContext(), R.string.premium_unavailable, Toast.LENGTH_LONG).show()
             }
         }
+        CaptureRationale.listen(this, onDeclined = ::finishOnboarding)
         binding.buttonManual.setOnClickListener {
             VibrationManager.get().tap()
             finishOnboarding()
@@ -67,7 +68,7 @@ class Hello3Fragment : Fragment(R.layout.fragment_hello3) {
             finishOnboarding()
         } else {
             openedSettings = true
-            CaptureRationale.show(requireContext(), onDeclined = ::finishOnboarding)
+            CaptureRationale.show(this)
         }
     }
 

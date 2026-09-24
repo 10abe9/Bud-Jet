@@ -47,6 +47,7 @@ class AutoCaptureFragment : Fragment(R.layout.fragment_auto_capture) {
         _binding = FragmentAutoCaptureBinding.bind(view)
 
         binding.buttonBack.setOnClickListener { findNavController().popBackStack() }
+        CaptureRationale.listen(this)
         binding.btnBattery.setOnClickListener { CaptureAccess.openBatterySettings(requireContext()) }
         binding.btnTest.setOnClickListener { runParserTest() }
         binding.btnLogRefresh.setOnClickListener { renderLog() }
@@ -145,7 +146,7 @@ class AutoCaptureFragment : Fragment(R.layout.fragment_auto_capture) {
                 !premium -> PremiumOfferBottomSheet.newInstance(preferences.getCurrencyCode(), null)
                     .show(parentFragmentManager, "premium_offer")
                 granted -> CaptureAccess.openAccessSettings(context)
-                else -> CaptureRationale.show(context)
+                else -> CaptureRationale.show(this)
             }
         }
 

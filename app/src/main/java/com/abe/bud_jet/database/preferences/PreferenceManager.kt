@@ -4,6 +4,7 @@ package com.abe.bud_jet.database.preferences
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.LocaleList
+import com.abe.bud_jet.utils.ThemeManager
 import androidx.core.content.edit
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -34,6 +35,7 @@ class PreferenceManager private constructor(context: Context) {
         private const val KEY_IS_PREMIUM = "is_premium"
         private const val KEY_ONBOARDING_GOALS = "onboarding_goals"
         private const val KEY_AI_ASSISTANT_ENABLED = "ai_assistant_enabled"
+        private const val KEY_APP_THEME = "app_theme"
         private const val KEY_DEBUG_PREMIUM = "debug_premium"
         private const val KEY_CAPTURE_LISTENER_ALIVE_AT = "capture_listener_alive_at"
         private const val KEY_CAPTURE_LAST_CAPTURED_AT = "capture_last_captured_at"
@@ -166,6 +168,13 @@ class PreferenceManager private constructor(context: Context) {
 
     fun setInitialBalancePromptShown(shown: Boolean) {
         preferences.edit { putBoolean(KEY_INITIAL_BALANCE_PROMPT_SHOWN, shown) }
+    }
+
+    /** "system", "light" or "dark" (see ThemeManager). */
+    fun getAppTheme(): String = preferences.getString(KEY_APP_THEME, null) ?: ThemeManager.SYSTEM
+
+    fun setAppTheme(mode: String) {
+        preferences.edit { putString(KEY_APP_THEME, mode) }
     }
 
     /** User's choice; the assistant is active only while Premium is (see PremiumManager). */

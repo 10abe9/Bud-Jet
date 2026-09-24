@@ -11,6 +11,7 @@ import com.abe.bud_jet.R
 import com.abe.bud_jet.databinding.FragmentHello2Binding
 import com.abe.bud_jet.database.preferences.PreferenceManager
 import com.abe.bud_jet.utils.LocaleManager
+import com.abe.bud_jet.utils.ThemeManager
 import com.abe.bud_jet.utils.VibrationManager
 import com.google.android.material.chip.Chip
 
@@ -37,6 +38,7 @@ class Hello2Fragment : Fragment() {
         preferenceManager = PreferenceManager.getInstance(requireContext())
         preselectSavedCurrency()
         setupLanguage()
+        setupTheme()
         setupCurrency()
         setupGoals()
         updateContinueAction(hasCurrencySelected())
@@ -97,6 +99,30 @@ class Hello2Fragment : Fragment() {
             saveSelectedCurrency()
             preferenceManager.setAppLanguage(language)
             LocaleManager.applyAppLanguage(language)
+        }
+    }
+
+    private val themeByChipId by lazy {
+        mapOf(
+            R.id.chip_theme_system to ThemeManager.SYSTEM,
+            R.id.chip_theme_light to ThemeManager.LIGHT,
+            R.id.chip_theme_dark to ThemeManager.DARK
+        )
+    }
+
+    private fun setupTheme() {
+        val current = preferenceManager.getAppTheme()
+        themeByChipId.entries.firstOrNull { it.value == current }?.let {
+            binding.chipThemeGroup.check(it.key)
+        }
+        binding.chipThemeGroup.setOnCheckedStateChangeListener { _, checkedIds ->
+            val mode = checkedIds.firstOrNull()?.let { themeByChipId[it] } ?: return@setOnCheckedStateChangeListener
+            if (mode == preferenceManager.getAppTheme()) return@setOnCheckedStateChangeListener
+            VibrationManager.get().tap()
+            // Like the language, this recreates the screen: keep the currency already picked.
+            saveSelectedCurrency()
+            preferenceManager.setAppTheme(mode)
+            ThemeManager.apply(mode)
         }
     }
 

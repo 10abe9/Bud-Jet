@@ -356,7 +356,7 @@ Bud-Jet не отправляет ваши операции, заметки, ц�
     <string name="capture_source_tracked">Траты добавляются автоматически</string>
     <string name="capture_privacy_note">Уведомления обрабатываются только на этом устройстве. Bud-Jet никуда не отправляет их текст. Для приложений, которые вы не включили, запоминается только название приложения.</string>
     <string name="capture_rationale_title">Разрешить доступ к уведомлениям?</string>
-    <string name="capture_rationale_message">Чтобы добавлять траты автоматически, Bud-Jet читает уведомления об оплатах от выбранных вами банков и платёжных приложений.\n\n• Всё обрабатывается на этом устройстве, текст никуда не отправляется.\n• Читаются только приложения, которые вы включите.\n• Доступ можно отключить в любой момент.\n\nAndroid откроет настройки: найдите там Bud-Jet и включите доступ.</string>
+    <string name="capture_rationale_message">Bud-Jet будет читать уведомления об оплатах от выбранных вами банков и сам записывать траты.</string>
     <string name="capture_rationale_not_now">Не сейчас</string>
     <string name="capture_rationale_open_settings">Открыть настройки</string>
     <string name="capture_confirm_title">Подтвердите трату</string>
@@ -366,8 +366,8 @@ Bud-Jet не отправляет ваши операции, заметки, ц�
     <string name="hello3_privacy">Уведомления читаются только на вашем устройстве и никуда не отправляются. Включить это можно и позже в профиле.</string>
     <string name="hello3_enable">Попробовать бесплатно</string>
     <string name="hello3_manual">Продолжить бесплатно — буду вводить вручную</string>
-    <string name="capture_promo_title">Считать траты автоматически</string>
-    <string name="capture_promo_body">Пусть Bud-Jet сам добавляет покупки из уведомлений банка. Всё остаётся на этом устройстве.</string>
+    <string name="capture_promo_title">Считать траты автоматически?</string>
+    <string name="capture_promo_body">Bud-Jet может сам записывать покупки из уведомлений банка — вводить вручную не придётся. Первый месяц Premium — бесплатно.</string>
     <string name="recurring_title">Регулярные платежи</string>
     <string name="recurring_next_charge">Следующее списание: %1$s</string>
     <string name="transaction_auto_captured_suffix">%1$s · авто</string>
@@ -435,4 +435,13 @@ Bud-Jet не отправляет ваши операции, заметки, ц�
     <string name="premium_debug_off">Тестовый Premium выключен</string>
     <string name="profile_premium_active">Premium активен</string>
     <string name="profile_premium_active_subtitle">Автоучёт трат • ИИ-помощник • Управление подпиской</string>
+
+    <!-- Theme and prompts -->
+    <string name="theme_label">Тема</string>
+    <string name="theme_system">Как в системе</string>
+    <string name="theme_light">Светлая</string>
+    <string name="theme_dark">Тёмная</string>
+    <string name="theme_picker_title">Тема оформления</string>
+    <string name="capture_rationale_note">Всё обрабатывается на телефоне и никуда не отправляется. Android откроет настройки — включите там Bud-Jet.</string>
+    <string name="capture_promo_try">Попробовать</string>
 </resources>

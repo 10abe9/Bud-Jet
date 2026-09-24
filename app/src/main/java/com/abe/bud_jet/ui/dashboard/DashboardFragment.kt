@@ -25,6 +25,7 @@ import com.abe.bud_jet.capture.CaptureAccess
 import com.abe.bud_jet.capture.RecurringDetector
 import com.abe.bud_jet.databinding.ItemRecurringPaymentBinding
 import com.abe.bud_jet.premium.PremiumManager
+import com.abe.bud_jet.ui.common.PromptBottomSheet
 import com.abe.bud_jet.premium.PremiumOfferBottomSheet
 import com.abe.bud_jet.premium.PremiumPromoPolicy
 import com.abe.bud_jet.premium.SavingsOffer
@@ -34,16 +35,20 @@ import com.abe.bud_jet.ui.operations.AddTransactionBottomSheet
 import com.abe.bud_jet.notifications.NotificationReminderScheduler
 import com.abe.bud_jet.utils.VibrationManager
 import com.abe.bud_jet.utils.collectWithLifecycle
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.chip.Chip
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.abe.bud_jet.ui.profile.CurrentBalanceBottomSheet
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.launch
+import androidx.lifecycle.lifecycleScope
 
 class DashboardFragment : Fragment() {
     companion object {
         const val KEY_PROMPT_NOTIFICATIONS_AFTER_ONBOARDING = "prompt_notifications_after_onboarding"
         private const val MAX_RECURRING_ROWS = 5
+        private const val AUTO_CAPTURE_OFFER_AFTER = 3
+        private const val REQUEST_NOTIFICATIONS_PROMPT = "prompt_notifications"
+        private const val REQUEST_CAPTURE_OFFER = "prompt_capture_offer"
     }
 
     private var _binding: FragmentDashboardBinding? = null
@@ -107,8 +112,7 @@ class DashboardFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        // Notification access is granted in system settings; refresh when coming back.
-        renderCapturePromo()
+        maybeOfferAutoCapture()
     }
 
     private fun observeAutoCapture() {
@@ -122,8 +126,8 @@ class DashboardFragment : Fragment() {
                 )
             }
         binding.cardCapturePending.setOnClickListener { openAutoCapture() }
-        binding.btnCapturePromoEnable.setOnClickListener {
-            vibrator.tap()
+        PromptBottomSheet.listen(this, REQUEST_CAPTURE_OFFER) { accepted ->
+            if (!accepted) return@listen
             if (PremiumManager.isPremium.value) {
                 openAutoCapture()
             } else {
@@ -131,16 +135,7 @@ class DashboardFragment : Fragment() {
                     .show(parentFragmentManager, "premium_offer")
             }
         }
-        binding.btnCapturePromoDismiss.setOnClickListener {
-            preferenceManager.setCapturePromoDismissed(true)
-            binding.cardCapturePromo.visibility = View.GONE
-        }
-    }
-
-    private fun renderCapturePromo() {
-        val show = !preferenceManager.isCapturePromoDismissed() &&
-            !CaptureAccess.isAccessGranted(requireContext())
-        binding.cardCapturePromo.visibility = if (show) View.VISIBLE else View.GONE
+        PromptBottomSheet.listen(this, REQUEST_NOTIFICATIONS_PROMPT, ::onNotificationsPromptAnswered)
     }
 
     private fun openAutoCapture() {
@@ -232,28 +227,52 @@ class DashboardFragment : Fragment() {
         if (!shouldPrompt) return
         if (preferenceManager.isNotificationPermissionRequested()) return
 
-        val dialog = MaterialAlertDialogBuilder(requireContext())
-            .setTitle(getString(R.string.notifications_reminder_title))
-            .setMessage(getString(R.string.notifications_opt_in_message))
-            .setNegativeButton(getString(R.string.notifications_opt_in_later)) { _, _ ->
-                preferenceManager.setNotificationPermissionRequested(true)
-                preferenceManager.setNotificationsEnabled(false)
-            }
-            .setPositiveButton(getString(R.string.notifications_opt_in_enable)) { _, _ ->
-                if (hasNotificationPermission()) {
-                    preferenceManager.setNotificationPermissionRequested(true)
-                    preferenceManager.setNotificationsEnabled(true)
-                    NotificationReminderScheduler.scheduleDailyExpenseReminder(requireContext())
-                } else {
-                    requestNotificationsPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                }
-            }
-            .show()
+        PromptBottomSheet.show(
+            fragmentManager = parentFragmentManager,
+            requestKey = REQUEST_NOTIFICATIONS_PROMPT,
+            icon = R.drawable.ic_notifications_black_24dp,
+            title = R.string.notifications_reminder_title,
+            message = R.string.notifications_opt_in_message,
+            positive = R.string.notifications_opt_in_enable,
+            negative = R.string.notifications_opt_in_later
+        )
+    }
 
-        dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE)
-            ?.setTextColor(requireContext().getColor(R.color.brand_primary))
-        dialog.getButton(android.app.AlertDialog.BUTTON_NEGATIVE)
-            ?.setTextColor(requireContext().getColor(R.color.text_secondary))
+    private fun onNotificationsPromptAnswered(accepted: Boolean) {
+        if (!accepted) {
+            preferenceManager.setNotificationPermissionRequested(true)
+            preferenceManager.setNotificationsEnabled(false)
+        } else if (hasNotificationPermission()) {
+            preferenceManager.setNotificationPermissionRequested(true)
+            preferenceManager.setNotificationsEnabled(true)
+            NotificationReminderScheduler.scheduleDailyExpenseReminder(requireContext())
+        } else {
+            requestNotificationsPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }
+
+    /**
+     * Offers automatic tracking once, after the user has entered a few expenses by hand
+     * (so the benefit is obvious), instead of a permanent card on the dashboard.
+     */
+    private fun maybeOfferAutoCapture() {
+        if (preferenceManager.isCapturePromoDismissed()) return
+        if (preferenceManager.getIsFirstInit()) return
+        if (CaptureAccess.isAccessGranted(requireContext())) return
+        viewLifecycleOwner.lifecycleScope.launch {
+            if (repository.getTransactionsCount() < AUTO_CAPTURE_OFFER_AFTER) return@launch
+            if (parentFragmentManager.findFragmentByTag(REQUEST_NOTIFICATIONS_PROMPT) != null) return@launch
+            preferenceManager.setCapturePromoDismissed(true)
+            PromptBottomSheet.show(
+                fragmentManager = parentFragmentManager,
+                requestKey = REQUEST_CAPTURE_OFFER,
+                icon = R.drawable.ic_operations,
+                title = R.string.capture_promo_title,
+                message = R.string.capture_promo_body,
+                positive = R.string.capture_promo_try,
+                negative = R.string.capture_rationale_not_now
+            )
+        }
     }
 
     private fun hasNotificationPermission(): Boolean {

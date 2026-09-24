@@ -372,7 +372,7 @@ and get smart financial insights.</string>
     <string name="capture_source_tracked">Payments are added automatically</string>
     <string name="capture_privacy_note">Notifications are processed only on this device. Bud-Jet does not send their text anywhere. For apps you did not turn on, only the app name is remembered.</string>
     <string name="capture_rationale_title">Allow notification access?</string>
-    <string name="capture_rationale_message">To add expenses automatically, Bud-Jet reads payment notifications from the bank and payment apps you choose.\n\n• Everything is processed on this device; the text is not sent anywhere.\n• Only apps you turn on are read.\n• You can turn access off at any time.\n\nAndroid will open its settings: find Bud-Jet there and turn access on.</string>
+    <string name="capture_rationale_message">Bud-Jet will read payment notifications from the banks you choose and record expenses for you.</string>
     <string name="capture_rationale_not_now">Not now</string>
     <string name="capture_rationale_open_settings">Open settings</string>
     <string name="capture_confirm_title">Confirm payment</string>
@@ -382,8 +382,8 @@ and get smart financial insights.</string>
     <string name="hello3_privacy">Notifications are read only on your device and never sent anywhere. You can turn this on later in Profile.</string>
     <string name="hello3_enable">Try for free</string>
     <string name="hello3_manual">Continue for free — I will add expenses manually</string>
-    <string name="capture_promo_title">Count expenses automatically</string>
-    <string name="capture_promo_body">Let Bud-Jet add purchases from your bank notifications. Everything stays on this device.</string>
+    <string name="capture_promo_title">Count expenses automatically?</string>
+    <string name="capture_promo_body">Bud-Jet can record purchases from your bank notifications, so you do not have to type them in. First month of Premium is free.</string>
     <string name="recurring_title">Regular payments</string>
     <string name="recurring_next_charge">Next charge: %1$s</string>
     <string name="transaction_auto_captured_suffix">%1$s · auto</string>
@@ -447,4 +447,13 @@ and get smart financial insights.</string>
     <string name="premium_debug_off">Test Premium off</string>
     <string name="profile_premium_active">Premium is active</string>
     <string name="profile_premium_active_subtitle">Automatic tracking • AI assistant • Manage subscription</string>
+
+    <!-- Theme and prompts -->
+    <string name="theme_label">Theme</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_picker_title">App theme</string>
+    <string name="capture_rationale_note">Everything is processed on your phone and never sent anywhere. Android will open its settings: turn on Bud-Jet there.</string>
+    <string name="capture_promo_try">Try it</string>
 </resources>

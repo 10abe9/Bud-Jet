@@ -31,6 +31,16 @@ abstract class BaseBottomSheetDialogFragment : BottomSheetDialogFragment() {
         configureBottomSheet(bottomSheet)
 
         (view?.parent as? ViewGroup)?.setBackgroundColor(Color.TRANSPARENT)
+
+        // Floating card: the same gap below the sheet as on the sides. The sheet container is
+        // transparent, so a bottom margin on the content leaves visible space.
+        val gap = (16 * resources.displayMetrics.density).toInt()
+        (view?.layoutParams as? ViewGroup.MarginLayoutParams)?.let { lp ->
+            if (lp.bottomMargin != gap) {
+                lp.bottomMargin = gap
+                view?.layoutParams = lp
+            }
+        }
     }
 
     protected open fun configureBottomSheet(bottomSheet: FrameLayout?) {

@@ -16,6 +16,7 @@
         android:padding="20dp">
 
         <TextView
+            android:id="@+id/tvPickerTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/profile_select_language_title"
