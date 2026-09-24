@@ -19,7 +19,7 @@ object MerchantCategorizer {
             "burger king", "wendy", "taco bell", "chipotle", "chick-fil-a", "subway", "domino",
             "papa john", "panera", "kfc", "popeyes", "whole foods", "trader joe", "kroger",
             "safeway", "publix", "albertsons", "costco", "aldi", "wegmans", "h-e-b", "food lion",
-            "giant eagle", "sprouts", "walmart grocery", "7-eleven"
+            "giant eagle", "sprouts", "walmart", "7-eleven"
         ),
         "transport" to listOf(
             // No bare "metro"/"mobil"/"arco": they match MetroPCS, T-Mobile and "Marcos".

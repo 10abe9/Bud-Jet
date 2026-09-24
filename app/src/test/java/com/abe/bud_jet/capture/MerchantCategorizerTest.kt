@@ -12,6 +12,7 @@ class MerchantCategorizerTest {
         assertEquals("transport", MerchantCategorizer.guessDefaultKey("SHELL OIL 57442"))
         assertEquals("food", MerchantCategorizer.guessDefaultKey("WHOLE FOODS MKT #10234"))
         assertEquals("food", MerchantCategorizer.guessDefaultKey("STARBUCKS STORE 0412"))
+        assertEquals("food", MerchantCategorizer.guessDefaultKey("WALMART"))
         assertEquals("health", MerchantCategorizer.guessDefaultKey("CVS/PHARMACY #1234"))
         assertNull(MerchantCategorizer.guessDefaultKey("Netflix.com"))
     }
