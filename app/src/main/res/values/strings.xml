@@ -373,7 +373,7 @@ and get smart financial insights.</string>
     <string name="capture_confirm_title">Confirm payment</string>
     <string name="hello3_title">Stop typing in every expense</string>
     <string name="hello3_body">With Bud-Jet Premium, purchases are recorded automatically from your bank notifications: amount, store and date.</string>
-    <string name="hello3_example">🔔 “Purchase 450 ₽ PYATEROCHKA”\n→ Food · −450 ₽, added automatically</string>
+    <string name="hello3_example">🔔 “Purchase 45 $ WALMART”\n→ Food · −45 $, added automatically</string>
     <string name="hello3_privacy">Notifications are read only on your device and never sent anywhere. You can turn this on later in Profile.</string>
     <string name="hello3_enable">Try for free</string>
     <string name="hello3_manual">Continue for free — I will add expenses manually</string>
