@@ -9,10 +9,10 @@ package com.abe.bud_jet.premium
  */
 enum class Plan(val productId: String, val tier: Tier) {
     /** Automatic tracking from notifications, CSV export. No AI. */
-    BASIC("budjet_basic", Tier.BASIC),
+    BASIC("bud_jet_base", Tier.BASIC),
 
     /** Everything in Basic plus the AI assistant. */
-    PRO("budjet_premium", Tier.PRO);
+    PRO("bud_jet_premium", Tier.PRO);
 
     companion object {
         fun forProduct(productId: String): Plan? = entries.firstOrNull { it.productId == productId }

@@ -16,15 +16,15 @@ class PlanTest {
 
     @Test
     fun productsMapToTiers() {
-        assertEquals(Tier.BASIC, Tier.fromProducts(listOf("budjet_basic")))
+        assertEquals(Tier.BASIC, Tier.fromProducts(listOf("bud_jet_base")))
         // The original Premium product is Pro: early subscribers keep the AI assistant.
-        assertEquals(Tier.PRO, Tier.fromProducts(listOf("budjet_premium")))
+        assertEquals(Tier.PRO, Tier.fromProducts(listOf("bud_jet_premium")))
     }
 
     @Test
     fun highestTierWins() {
         // Briefly both are active while Play replaces Basic with Pro.
-        assertEquals(Tier.PRO, Tier.fromProducts(listOf("budjet_basic", "budjet_premium")))
+        assertEquals(Tier.PRO, Tier.fromProducts(listOf("bud_jet_base", "bud_jet_premium")))
     }
 
     @Test
