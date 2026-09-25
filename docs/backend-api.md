@@ -47,13 +47,13 @@ budjet.apiBaseUrl=http://203.0.113.10:8080
 
 ## `POST /v1/subscription/verify`
 
-Приложение сообщает о покупке тарифа: `budjet_basic` («Базовый») или `budjet_premium` (Pro). Сервер проверяет токен в Google Play Developer API (`purchases.subscriptionsv2.get`) и запоминает подписку.
+Приложение сообщает о покупке тарифа: `bud_jet_base` («Базовый») или `bud_jet_premium` (Pro). Сервер проверяет токен в Google Play Developer API (`purchases.subscriptionsv2.get`) и запоминает подписку.
 
 Запрос:
 ```json
 {
   "packageName": "com.abe.bud_jet",
-  "productId": "budjet_premium",
+  "productId": "bud_jet_premium",
   "purchaseToken": "…"
 }
 ```
@@ -136,7 +136,7 @@ budjet.apiBaseUrl=http://203.0.113.10:8080
 ## Что сервер должен делать
 
 1. **Хранить ключ Ollama у себя.** В приложении ключа нет и не будет.
-2. **Пускать к `/v1/ai/*` только Pro.** Проверять `X-Purchase-Token` через Google Play Developer API (`purchases.subscriptionsv2.get`): активна подписка **`budjet_premium`**. Тариф `budjet_basic` ИИ не включает → `403`. Результат проверки можно кэшировать на несколько часов. Нужен сервисный аккаунт с доступом в Play Console.
+2. **Пускать к `/v1/ai/*` только Pro.** Проверять `X-Purchase-Token` через Google Play Developer API (`purchases.subscriptionsv2.get`): активна подписка **`bud_jet_premium`**. Тариф `bud_jet_base` ИИ не включает → `403`. Результат проверки можно кэшировать на несколько часов. Нужен сервисный аккаунт с доступом в Play Console.
 3. **Ограничивать частоту** по токену покупки (и `X-Install-Id`): например, 30 вопросов и 5 запросов советов в сутки → `429`. Так расходы на модель предсказуемы, и чат нельзя использовать как бесплатный ИИ общего назначения.
 4. **Не хранить сводки и вопросы** дольше, чем нужно для ответа. Это обещано пользователю в окне согласия и в политике конфиденциальности. В логах — только время, код ответа, число токенов.
 5. **Ограничивать ответ:** `max_tokens` ~ 400 для чата, ~ 600 для советов.

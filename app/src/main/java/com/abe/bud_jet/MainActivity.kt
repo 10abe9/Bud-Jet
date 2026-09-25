@@ -1,6 +1,7 @@
 package com.abe.bud_jet
 
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import com.abe.bud_jet.capture.CaptureAccess
 import com.abe.bud_jet.capture.CaptureNotifier
@@ -52,6 +53,7 @@ class MainActivity : AppCompatActivity() {
         // the layout is identical everywhere. Insets are applied in applySystemBarInsets().
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        applyOrientationPolicy()
 
         registerVibrationManager()   // ← ПЕРЕНЕСТИ СЮДА
         PremiumManager.init(applicationContext)
@@ -107,6 +109,20 @@ class MainActivity : AppCompatActivity() {
         if (silentFor > 60 * 60 * 1000L) CaptureAccess.requestRebind(applicationContext)
         // Used by notification reminders to check whether the user opened the app today.
         preferenceManager.setLastDashboardVisitTime(System.currentTimeMillis())
+    }
+
+    /**
+     * Phones stay in portrait, as the layouts are designed for it. Tablets and unfolded
+     * foldables (smallest width 600dp+) rotate freely: Android 16 ignores orientation locks
+     * there anyway, and Play asks apps not to lock them in the manifest.
+     * Runs again after unfolding/folding, since that recreates the activity.
+     */
+    private fun applyOrientationPolicy() {
+        requestedOrientation = if (resources.configuration.smallestScreenWidthDp < LARGE_SCREEN_MIN_WIDTH_DP) {
+            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        } else {
+            ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        }
     }
 
     /**
@@ -221,5 +237,10 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private companion object {
+        /** Android's large-screen threshold (tablets, unfolded foldables). */
+        const val LARGE_SCREEN_MIN_WIDTH_DP = 600
     }
 }

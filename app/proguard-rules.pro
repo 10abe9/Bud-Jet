@@ -1,21 +1,25 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# Bud-Jet R8 rules. Libraries (Room, Billing, AndroidX, Material) ship their own rules;
+# only what the app itself relies on by name is listed here.
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Readable crash stack traces in Play Console (the R8 mapping file goes into the AAB).
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Enum names are persisted: TransactionType in the database (AppTypeConverters),
+# Tier/Plan in preferences, ThemeManager modes etc. Renaming them would make existing
+# data unreadable after an update.
+-keepclassmembers enum com.abe.bud_jet.** {
+    <fields>;
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Fragments are created by class name from the navigation graph and on process restore.
+-keep class com.abe.bud_jet.** extends androidx.fragment.app.Fragment {
+    public <init>();
+}
+
+# ViewModels created by the default factory (AndroidViewModel(Application) constructor).
+-keep class com.abe.bud_jet.** extends androidx.lifecycle.AndroidViewModel {
+    public <init>(android.app.Application);
+}

@@ -4,8 +4,7 @@ package com.abe.bud_jet.premium
  * Subscription plans. Each plan is its own Google Play subscription product, because a
  * purchase tells the app which product was bought but not which base plan.
  *
- * [PRO] keeps the original "budjet_premium" product id, so people who subscribed before the
- * two plans existed keep everything they paid for.
+ * The ids must match the subscriptions created in Play Console exactly.
  */
 enum class Plan(val productId: String, val tier: Tier) {
     /** Automatic tracking from notifications, CSV export. No AI. */
