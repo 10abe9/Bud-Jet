@@ -483,4 +483,7 @@
     <!-- Used while the Pro plan (AI) is not on sale yet -->
     <string name="profile_premium_subtitle_basic">Automatic tracking • CSV export • First month free</string>
     <string name="premium_sheet_generic_body_basic">Bud-Jet records expenses and income for you from bank notifications, so you do not have to type them in.</string>
+    <string name="ai_tips_updated">Updated %1$s</string>
+    <string name="ai_card_turn_on">Tap to turn on: tips and answers about your budget</string>
+    <string name="ai_card_subtitle">Tips for your budget and answers to your questions</string>
 </resources>

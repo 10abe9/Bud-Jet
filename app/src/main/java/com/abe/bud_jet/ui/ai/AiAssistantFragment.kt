@@ -1,6 +1,7 @@
 package com.abe.bud_jet.ui.ai
 
 import android.os.Bundle
+import android.text.format.DateUtils
 import android.view.Gravity
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -102,6 +103,17 @@ class AiAssistantFragment : Fragment(R.layout.fragment_ai_assistant) {
         binding.btnGetTips.visibility = if (state.tipsLoaded || state.loadingTips) View.GONE else View.VISIBLE
         binding.btnRefreshTips.visibility = if (state.tipsLoaded && !state.loadingTips) View.VISIBLE else View.GONE
         binding.tvTipsEmpty.visibility = if (state.tipsLoaded) View.GONE else View.VISIBLE
+        binding.tvTipsUpdated.visibility = if (state.tipsUpdatedAt > 0) View.VISIBLE else View.GONE
+        if (state.tipsUpdatedAt > 0) {
+            binding.tvTipsUpdated.text = getString(
+                R.string.ai_tips_updated,
+                DateUtils.getRelativeTimeSpanString(
+                    state.tipsUpdatedAt,
+                    System.currentTimeMillis(),
+                    DateUtils.MINUTE_IN_MILLIS
+                )
+            )
+        }
         if (state.tips != renderedTips) {
             renderedTips = state.tips
             binding.layoutTips.removeAllViews()

@@ -106,9 +106,10 @@ object PremiumManager : PurchasesUpdatedListener {
     /**
      * Plans on sale. Pro is sold only while the AI backend is configured: selling an assistant
      * that cannot answer would mislead buyers. Existing Pro subscribers keep their tier.
+     * Debug builds always show Pro, so the whole flow can be tested before the server exists.
      */
     val availablePlans: List<Plan>
-        get() = Plan.entries.filter { it != Plan.PRO || BudJetApi.isConfigured }
+        get() = Plan.entries.filter { it != Plan.PRO || BudJetApi.isConfigured || isDebugBuild() }
 
     /**
      * Opens Google Play's purchase sheet for [plan]. When the user already has the other plan,

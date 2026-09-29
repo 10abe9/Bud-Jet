@@ -28,12 +28,11 @@ import com.abe.bud_jet.database.entities.TransactionType
 import com.abe.bud_jet.database.preferences.PreferenceManager
 import com.abe.bud_jet.databinding.FragmentProfileBinding
 import com.abe.bud_jet.capture.CaptureAccess
-import com.abe.bud_jet.api.BudJetApi
 import com.abe.bud_jet.premium.Plan
 import com.abe.bud_jet.premium.PremiumManager
 import com.abe.bud_jet.premium.PremiumOfferBottomSheet
 import com.abe.bud_jet.premium.Tier
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.abe.bud_jet.ui.ai.AiConsent
 import com.abe.bud_jet.premium.SavingsOfferSource
 import com.abe.bud_jet.utils.AmountParser
 import com.abe.bud_jet.utils.DateRanges
@@ -345,7 +344,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                     renderPremium()
                 }
                 // Until the AI backend is live the assistant cannot answer: nothing to turn on yet.
-                !BudJetApi.isConfigured -> {
+                Plan.PRO !in PremiumManager.availablePlans -> {
                     switch.isChecked = false
                     Toast.makeText(requireContext(), R.string.ai_assistant_coming_soon, Toast.LENGTH_SHORT).show()
                 }
@@ -359,19 +358,13 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         }
     }
 
-    /** Explicit consent before any spending data may be sent for AI analysis. */
     private fun showAiConsent() {
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle(R.string.ai_assistant_consent_title)
-            .setMessage(R.string.ai_assistant_consent_message)
-            .setNegativeButton(R.string.common_cancel) { _, _ -> renderPremium() }
-            .setPositiveButton(R.string.ai_assistant_consent_accept) { _, _ ->
-                preferenceManager.setAiAssistantEnabled(true)
-                renderPremium()
-                if (isAdded) findNavController().navigate(R.id.navigation_ai_assistant)
-            }
-            .setOnCancelListener { renderPremium() }
-            .show()
+        AiConsent.show(requireContext()) { accepted ->
+            if (accepted) preferenceManager.setAiAssistantEnabled(true)
+            if (view == null) return@show
+            renderPremium()
+            if (accepted) findNavController().navigate(R.id.navigation_ai_assistant)
+        }
     }
 
     private fun renderPremium() {
@@ -398,7 +391,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         renderingPremium = false
         binding.tvAiAssistantSubtitle.text = getString(
             when {
-                !BudJetApi.isConfigured -> R.string.ai_assistant_coming_soon
+                Plan.PRO !in PremiumManager.availablePlans -> R.string.ai_assistant_coming_soon
                 !tier.hasAiAssistant -> R.string.ai_assistant_subtitle_premium
                 aiActive -> R.string.ai_assistant_subtitle_on
                 else -> R.string.ai_assistant_subtitle_off

@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-/** Tips and chat state; survives rotation. Nothing is stored after the screen is closed. */
+/** Tips and chat state; survives rotation. Tips are cached on the device, the chat is not. */
 class AiAssistantViewModel(application: Application) : AndroidViewModel(application) {
 
     /** Why the last request did not produce an answer. */
@@ -23,6 +23,8 @@ class AiAssistantViewModel(application: Application) : AndroidViewModel(applicat
     data class UiState(
         val tips: List<BudJetApi.AiInsight> = emptyList(),
         val tipsLoaded: Boolean = false,
+        /** When the shown tips were received (they are cached between visits), 0 = never. */
+        val tipsUpdatedAt: Long = 0L,
         val loadingTips: Boolean = false,
         val messages: List<ChatTurn> = emptyList(),
         val sending: Boolean = false,
@@ -31,7 +33,11 @@ class AiAssistantViewModel(application: Application) : AndroidViewModel(applicat
 
     private val repository = AiAssistantRepository(application)
 
-    private val _state = MutableStateFlow(UiState())
+    private val _state = MutableStateFlow(
+        repository.cachedTips()?.let { (tips, savedAt) ->
+            UiState(tips = tips, tipsLoaded = true, tipsUpdatedAt = savedAt)
+        } ?: UiState()
+    )
     val state: StateFlow<UiState> = _state.asStateFlow()
 
     fun loadTips() {
@@ -41,7 +47,12 @@ class AiAssistantViewModel(application: Application) : AndroidViewModel(applicat
             val outcome = repository.insights()
             _state.update { current ->
                 when (outcome) {
-                    is Outcome.Success -> current.copy(tips = outcome.value, tipsLoaded = true, loadingTips = false)
+                    is Outcome.Success -> current.copy(
+                        tips = outcome.value,
+                        tipsLoaded = true,
+                        tipsUpdatedAt = System.currentTimeMillis(),
+                        loadingTips = false
+                    )
                     else -> current.copy(loadingTips = false, problem = problemOf(outcome))
                 }
             }

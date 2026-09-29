@@ -41,6 +41,8 @@ class PreferenceManager private constructor(context: Context) {
         private const val KEY_PURCHASE_TOKEN = "purchase_token"
         private const val KEY_DEBUG_TIER = "debug_tier"
         private const val KEY_PLAN_TIER = "plan_tier"
+        private const val KEY_AI_TIPS_JSON = "ai_tips_json"
+        private const val KEY_AI_TIPS_AT = "ai_tips_at"
         private const val KEY_CAPTURE_LISTENER_ALIVE_AT = "capture_listener_alive_at"
         private const val KEY_CAPTURE_LAST_CAPTURED_AT = "capture_last_captured_at"
         private const val KEY_CAPTURE_PROMO_DISMISSED = "capture_promo_dismissed"
@@ -200,7 +202,27 @@ class PreferenceManager private constructor(context: Context) {
     fun isAiAssistantEnabled(): Boolean = preferences.getBoolean(KEY_AI_ASSISTANT_ENABLED, false)
 
     fun setAiAssistantEnabled(enabled: Boolean) {
-        preferences.edit { putBoolean(KEY_AI_ASSISTANT_ENABLED, enabled) }
+        preferences.edit {
+            putBoolean(KEY_AI_ASSISTANT_ENABLED, enabled)
+            // Turning the assistant off forgets its answers too.
+            if (!enabled) {
+                remove(KEY_AI_TIPS_JSON)
+                remove(KEY_AI_TIPS_AT)
+            }
+        }
+    }
+
+    /** Last AI tips (JSON, see AiAssistantRepository), kept so reopening the screen costs nothing. */
+    fun getAiTipsCache(): Pair<String, Long>? {
+        val json = preferences.getString(KEY_AI_TIPS_JSON, null) ?: return null
+        return json to preferences.getLong(KEY_AI_TIPS_AT, 0L)
+    }
+
+    fun setAiTipsCache(json: String, savedAt: Long) {
+        preferences.edit {
+            putString(KEY_AI_TIPS_JSON, json)
+            putLong(KEY_AI_TIPS_AT, savedAt)
+        }
     }
 
     /** The assistant may send data only when the user enabled it and the Pro plan is active. */
@@ -295,6 +317,8 @@ class PreferenceManager private constructor(context: Context) {
         // Premium is tied to the purchase, not to local data, so it survives a data reset.
         editor.remove(KEY_ONBOARDING_GOALS)
         editor.remove(KEY_AI_ASSISTANT_ENABLED)
+        editor.remove(KEY_AI_TIPS_JSON)
+        editor.remove(KEY_AI_TIPS_AT)
         editor.remove(KEY_CAPTURE_LAST_CAPTURED_AT)
         editor.remove(KEY_CAPTURE_PROMO_DISMISSED)
         // Show onboarding again after data deletion.

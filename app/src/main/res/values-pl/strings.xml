@@ -473,5 +473,8 @@
     <!-- Used while the Pro plan (AI) is not on sale yet -->
     <string name="profile_premium_subtitle_basic">Automatyczne śledzenie • Eksport CSV • Pierwszy miesiąc za darmo</string>
     <string name="premium_sheet_generic_body_basic">Bud-Jet sam zapisuje wydatki i wpływy z powiadomień banku — nie musisz ich wpisywać.</string>
+    <string name="ai_tips_updated">Zaktualizowano %1$s</string>
+    <string name="ai_card_turn_on">Dotknij, aby włączyć: porady i odpowiedzi o budżecie</string>
+    <string name="ai_card_subtitle">Porady dla budżetu i odpowiedzi na Twoje pytania</string>
 </resources>
 

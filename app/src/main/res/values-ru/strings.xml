@@ -472,4 +472,7 @@
     <!-- Used while the Pro plan (AI) is not on sale yet -->
     <string name="profile_premium_subtitle_basic">Автоучёт трат • Экспорт CSV • Первый месяц бесплатно</string>
     <string name="premium_sheet_generic_body_basic">Bud-Jet сам записывает траты и поступления из уведомлений банка — вводить их вручную не нужно.</string>
+    <string name="ai_tips_updated">Обновлено %1$s</string>
+    <string name="ai_card_turn_on">Нажмите, чтобы включить: советы и ответы о бюджете</string>
+    <string name="ai_card_subtitle">Советы по бюджету и ответы на ваши вопросы</string>
 </resources>

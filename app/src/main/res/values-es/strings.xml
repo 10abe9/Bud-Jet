@@ -466,5 +466,8 @@
     <!-- Used while the Pro plan (AI) is not on sale yet -->
     <string name="profile_premium_subtitle_basic">Registro automático • Exportar CSV • Primer mes gratis</string>
     <string name="premium_sheet_generic_body_basic">Bud-Jet registra tus gastos e ingresos a partir de las notificaciones del banco, sin que tengas que escribirlos.</string>
+    <string name="ai_tips_updated">Actualizado %1$s</string>
+    <string name="ai_card_turn_on">Toca para activarlo: consejos y respuestas sobre tu presupuesto</string>
+    <string name="ai_card_subtitle">Consejos para tu presupuesto y respuestas a tus preguntas</string>
 </resources>
 

@@ -5,8 +5,11 @@ import com.abe.bud_jet.R
 import com.abe.bud_jet.database.FinanceRepositoryProvider
 import com.abe.bud_jet.database.entities.TransactionType
 import com.abe.bud_jet.database.preferences.PreferenceManager
+import com.abe.bud_jet.premium.PremiumManager
 import com.abe.bud_jet.utils.DateRanges
 import kotlinx.coroutines.flow.first
+import org.json.JSONArray
+import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -35,7 +38,29 @@ class AiAssistantRepository(private val context: Context) {
 
     suspend fun insights(): Outcome<List<BudJetApi.AiInsight>> {
         if (!preferences.isAiAssistantActive()) return Outcome.Disabled
-        return BudJetApi.aiInsights(caller(), buildSummary()).toOutcome()
+        val outcome = BudJetApi.aiInsights(caller(), buildSummary()).toOutcome()
+        if (outcome is Outcome.Success) saveTips(outcome.value)
+        return outcome
+    }
+
+    /** Tips from the last successful request and when they were received, or null. */
+    fun cachedTips(): Pair<List<BudJetApi.AiInsight>, Long>? {
+        if (!preferences.isAiAssistantActive()) return null
+        val (json, savedAt) = preferences.getAiTipsCache() ?: return null
+        val tips = runCatching {
+            val array = JSONArray(json)
+            (0 until array.length()).map { i ->
+                val item = array.getJSONObject(i)
+                BudJetApi.AiInsight(item.optString("title"), item.optString("text"))
+            }
+        }.getOrNull() ?: return null
+        return tips to savedAt
+    }
+
+    private fun saveTips(tips: List<BudJetApi.AiInsight>) {
+        val array = JSONArray()
+        tips.forEach { array.put(JSONObject().put("title", it.title).put("text", it.text)) }
+        preferences.setAiTipsCache(array.toString(), System.currentTimeMillis())
     }
 
     /** [question] must already pass [AiChatPolicy.normalize]; [history] is trimmed here. */
@@ -97,7 +122,11 @@ class AiAssistantRepository(private val context: Context) {
         is BudJetApi.ApiResult.Success -> Outcome.Success(value)
         BudJetApi.ApiResult.NotConfigured -> Outcome.NotConfigured
         is BudJetApi.ApiResult.HttpError -> when (code) {
-            402, 403 -> Outcome.NotEntitled
+            402, 403 -> {
+                // The server sees no Pro subscription: re-read purchases from Google Play.
+                PremiumManager.refresh()
+                Outcome.NotEntitled
+            }
             429 -> Outcome.RateLimited
             else -> Outcome.Failed("HTTP $code: $message")
         }

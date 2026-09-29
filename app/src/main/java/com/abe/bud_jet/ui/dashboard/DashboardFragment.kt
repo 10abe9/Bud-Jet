@@ -24,7 +24,10 @@ import com.abe.bud_jet.R
 import com.abe.bud_jet.capture.CaptureAccess
 import com.abe.bud_jet.capture.RecurringDetector
 import com.abe.bud_jet.databinding.ItemRecurringPaymentBinding
+import com.abe.bud_jet.api.AiAssistantRepository
+import com.abe.bud_jet.premium.Plan
 import com.abe.bud_jet.premium.PremiumManager
+import com.abe.bud_jet.ui.ai.AiConsent
 import com.abe.bud_jet.ui.common.PromptBottomSheet
 import com.abe.bud_jet.premium.PremiumOfferBottomSheet
 import com.abe.bud_jet.premium.PremiumPromoPolicy
@@ -108,11 +111,50 @@ class DashboardFragment : Fragment() {
         observePremiumOffer()
         observeAutoCapture()
         observeRecurringPayments()
+        observeAiAssistant()
     }
 
     override fun onResume() {
         super.onResume()
         maybeOfferAutoCapture()
+        // The assistant can be turned on or off in Profile; tips change after a visit.
+        renderAiAssistantCard()
+    }
+
+    private fun observeAiAssistant() {
+        PremiumManager.tier.collectWithLifecycle(viewLifecycleOwner) { renderAiAssistantCard() }
+        binding.cardAiAssistant.setOnClickListener {
+            vibrator.tap()
+            if (preferenceManager.isAiAssistantActive()) {
+                openAiAssistant()
+            } else {
+                AiConsent.show(requireContext()) { accepted ->
+                    if (!accepted) return@show
+                    preferenceManager.setAiAssistantEnabled(true)
+                    if (view != null) openAiAssistant()
+                }
+            }
+        }
+    }
+
+    /** Shown to Pro users: the latest tip when there is one, otherwise what the assistant does. */
+    private fun renderAiAssistantCard() {
+        val binding = _binding ?: return
+        val visible = PremiumManager.tier.value.hasAiAssistant && Plan.PRO in PremiumManager.availablePlans
+        binding.cardAiAssistant.visibility = if (visible) View.VISIBLE else View.GONE
+        if (!visible) return
+        val latestTip = AiAssistantRepository(requireContext()).cachedTips()?.first?.firstOrNull()
+        binding.tvAiAssistantSubtitle.text = when {
+            !preferenceManager.isAiAssistantEnabled() -> getString(R.string.ai_card_turn_on)
+            latestTip != null && latestTip.title.isNotBlank() -> latestTip.title
+            else -> getString(R.string.ai_card_subtitle)
+        }
+    }
+
+    private fun openAiAssistant() {
+        if (findNavController().currentDestination?.id == R.id.navigation_dashboard) {
+            findNavController().navigate(R.id.navigation_ai_assistant)
+        }
     }
 
     private fun observeAutoCapture() {
