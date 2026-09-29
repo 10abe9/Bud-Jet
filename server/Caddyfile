@@ -1,0 +1,10 @@
+# HTTPS certificate from Let's Encrypt is obtained automatically for $DOMAIN.
+# No access log on purpose: Caddy's access log includes request headers, and
+# X-Purchase-Token must not end up in logs.
+{$DOMAIN} {
+	encode gzip
+	request_body {
+		max_size 64KB
+	}
+	reverse_proxy api:8000
+}
