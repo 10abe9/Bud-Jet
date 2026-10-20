@@ -14,7 +14,9 @@ services:
       - "8000"
 
   caddy:
-    image: caddy:2
+    # Pinned: newer Caddy builds (Go 1.25+) crashed at startup on some VPS kernels
+    # ("panic on system stack" while reading container CPU limits). Upgrade deliberately.
+    image: caddy:2.9.1
     restart: unless-stopped
     ports:
       - "80:80"
@@ -22,6 +24,8 @@ services:
       - "443:443/udp"
     environment:
       DOMAIN: ${DOMAIN:?set DOMAIN in .env}
+      # Go 1.25+ only (ignored by older builds): skip reading cgroup CPU limits at startup.
+      GODEBUG: containermaxprocs=0,updatemaxprocs=0
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data

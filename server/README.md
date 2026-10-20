@@ -103,6 +103,15 @@ python -m scripts.try_prompt --insights --show-prompt                    # по�
 
 Резервные копии не нужны: в базе только счётчики и кэш, всё восстанавливается само.
 
+## Если что-то не работает
+
+| Симптом | Что делать |
+|---|---|
+| `curl: (35) ... tlsv1 alert internal error` | У Caddy нет сертификата. Смотрите `docker compose logs caddy`. |
+| В логах Caddy `panic on system stack` / `runtime.boundsError` | Caddy падает при запуске. В `docker-compose.yml` уже закреплена версия `caddy:2.9.1` с обходом; выполните `docker compose pull caddy && docker compose up -d --force-recreate caddy`. |
+| В логах Caddy ошибки `acme` / `challenge` | Проверьте: `DOMAIN` в `.env` без `https://`, порты 80 и 443 открыты (`ufw` и файрвол хостинга), A-запись указывает на сервер, нет чужой AAAA-записи, в Cloudflare «DNS only». |
+| ИИ отвечает `503 play_unavailable` | Нет `service-account.json` или у сервисного аккаунта ещё нет прав в Play Console. Смотрите `docker compose logs api`. |
+
 ## Настройки (`.env`)
 
 | Переменная | По умолчанию | Что это |
