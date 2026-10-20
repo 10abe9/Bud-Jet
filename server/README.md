@@ -63,6 +63,28 @@ curl https://api.ваш-домен/v1/health
 # {"ok":true}
 ```
 
+### Порты 80 и 443 заняты (nginx, VPN и т. п.)
+
+Проверить: `ss -ltnp | grep -E ':80 |:443 '`. Если там чужие программы (например, nginx на 80 и Xray на 443), не останавливайте их. Сервер Bud-Jet можно запустить рядом:
+- API будет на порту **8443**: `https://ДОМЕН:8443`;
+- nginx будет пересылать в Caddy только проверку Let's Encrypt для вашего домена. Остальные сайты nginx работают как раньше.
+
+1. В `.env` добавьте:
+   ```
+   HTTP_BIND=127.0.0.1:8080
+   CADDY_HTTP_PORT=8080
+   HTTPS_BIND=8443
+   CADDY_HTTPS_PORT=8443
+   ```
+2. Настройте nginx (поменяйте домен в файле, если он другой):
+   ```bash
+   cp deploy/nginx-acme-proxy.conf /etc/nginx/conf.d/budjet-api.conf
+   nginx -t && systemctl reload nginx
+   ```
+3. Откройте порт 8443: `ufw allow 8443/tcp` и в файрволе хостинга, если он есть.
+4. `docker compose up -d --force-recreate caddy`, затем `docker compose logs -f caddy` — ждите `certificate obtained successfully`.
+5. Проверка: `curl https://ДОМЕН:8443/v1/health`. В приложении: `budjet.apiBaseUrl=https://ДОМЕН:8443`.
+
 ## Шаг 4. Подключить приложение
 
 В `gradle.properties` приложения:
@@ -107,7 +129,8 @@ python -m scripts.try_prompt --insights --show-prompt                    # по�
 
 | Симптом | Что делать |
 |---|---|
-| `curl: (35) ... tlsv1 alert internal error` | У Caddy нет сертификата. Смотрите `docker compose logs caddy`. |
+| `curl: (35) ... tlsv1 alert internal error` | На 443 отвечает не Caddy (например, VPN) или у Caddy нет сертификата. Смотрите `ss -ltnp` и `docker compose logs caddy`. |
+| `failed to bind host port ... address already in use` | Порт 80 или 443 занят другой программой — раздел «Порты 80 и 443 заняты». |
 | В логах Caddy `panic on system stack` / `runtime.boundsError` | Caddy падает при запуске. В `docker-compose.yml` уже закреплена версия `caddy:2.9.1` с обходом; выполните `docker compose pull caddy && docker compose up -d --force-recreate caddy`. |
 | В логах Caddy ошибки `acme` / `challenge` | Проверьте: `DOMAIN` в `.env` без `https://`, порты 80 и 443 открыты (`ufw` и файрвол хостинга), A-запись указывает на сервер, нет чужой AAAA-записи, в Cloudflare «DNS only». |
 | ИИ отвечает `503 play_unavailable` | Нет `service-account.json` или у сервисного аккаунта ещё нет прав в Play Console. Смотрите `docker compose logs api`. |

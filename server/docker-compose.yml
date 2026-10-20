@@ -18,12 +18,15 @@ services:
     # ("panic on system stack" while reading container CPU limits). Upgrade deliberately.
     image: caddy:2.9.1
     restart: unless-stopped
+    # Default: Caddy takes ports 80 and 443. When they are busy, see README ("Порты заняты"):
+    # HTTP_BIND=127.0.0.1:8080, CADDY_HTTP_PORT=8080, HTTPS_BIND=8443, CADDY_HTTPS_PORT=8443.
     ports:
-      - "80:80"
-      - "443:443"
-      - "443:443/udp"
+      - "${HTTP_BIND:-80}:${CADDY_HTTP_PORT:-80}"
+      - "${HTTPS_BIND:-443}:${CADDY_HTTPS_PORT:-443}"
     environment:
       DOMAIN: ${DOMAIN:?set DOMAIN in .env}
+      CADDY_HTTP_PORT: ${CADDY_HTTP_PORT:-80}
+      CADDY_HTTPS_PORT: ${CADDY_HTTPS_PORT:-443}
       # Go 1.25+ only (ignored by older builds): skip reading cgroup CPU limits at startup.
       GODEBUG: containermaxprocs=0,updatemaxprocs=0
     volumes:

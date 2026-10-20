@@ -1,7 +1,24 @@
 # HTTPS certificate from Let's Encrypt is obtained automatically for $DOMAIN.
+#
+# Ports: 80/443 by default. On a server where they are taken (e.g. nginx on 80 and a VPN
+# on 443), set CADDY_HTTP_PORT / CADDY_HTTPS_PORT in .env and let nginx forward the ACME
+# check on port 80 to Caddy (deploy/nginx-acme-proxy.conf). See README, "Порты заняты".
+#
 # No access log on purpose: Caddy's access log includes request headers, and
 # X-Purchase-Token must not end up in logs.
+{
+	http_port {$CADDY_HTTP_PORT:80}
+	https_port {$CADDY_HTTPS_PORT:443}
+}
+
 {$DOMAIN} {
+	tls {
+		# Only the HTTP check on port 80: the TLS-ALPN check needs port 443 itself,
+		# which may belong to another service.
+		issuer acme {
+			disable_tlsalpn_challenge
+		}
+	}
 	encode gzip
 	request_body {
 		max_size 64KB
