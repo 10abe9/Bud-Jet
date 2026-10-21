@@ -46,21 +46,29 @@ class Database:
                 self._conn.execute("PRAGMA journal_mode=WAL")
             self._conn.executescript(SCHEMA)
 
-    def hit(self, key: str, period: str, limit: int) -> bool:
-        """Counts one request; returns False (and does not count) when the limit is reached."""
+    def hit(self, key: str, period: str, limit: int) -> int | None:
+        """Counts one request and returns the new count, or None (not counted) at the limit."""
         with self._lock:
             row = self._conn.execute(
                 "SELECT count FROM rate_counters WHERE key = ? AND period = ?", (key, period)
             ).fetchone()
             count = row[0] if row else 0
             if count >= limit:
-                return False
+                return None
             self._conn.execute(
                 "INSERT INTO rate_counters (key, period, count) VALUES (?, ?, 1) "
                 "ON CONFLICT (key, period) DO UPDATE SET count = count + 1",
                 (key, period),
             )
-            return True
+            return count + 1
+
+    def refund(self, key: str, period: str) -> None:
+        """Gives back one counted request (the model failed, the user got nothing)."""
+        with self._lock:
+            self._conn.execute(
+                "UPDATE rate_counters SET count = count - 1 WHERE key = ? AND period = ? AND count > 0",
+                (key, period),
+            )
 
     def delete_periods_before(self, oldest_period_to_keep: str) -> None:
         """Periods are "YYYY-MM-DD" or "YYYY-MM-DDTHH", so string order is time order."""

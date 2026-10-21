@@ -51,6 +51,10 @@ class AiAssistantFragment : Fragment(R.layout.fragment_ai_assistant) {
         binding.btnGetTips.setOnClickListener { viewModel.loadTips() }
         binding.btnRefreshTips.setOnClickListener { viewModel.loadTips() }
         binding.btnSend.setOnClickListener { sendInput() }
+        binding.btnNewChat.setOnClickListener {
+            VibrationManager.get().tap()
+            viewModel.newConversation()
+        }
         binding.etMessage.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEND) {
                 sendInput()
@@ -103,17 +107,17 @@ class AiAssistantFragment : Fragment(R.layout.fragment_ai_assistant) {
         binding.btnGetTips.visibility = if (state.tipsLoaded || state.loadingTips) View.GONE else View.VISIBLE
         binding.btnRefreshTips.visibility = if (state.tipsLoaded && !state.loadingTips) View.VISIBLE else View.GONE
         binding.tvTipsEmpty.visibility = if (state.tipsLoaded) View.GONE else View.VISIBLE
-        binding.tvTipsUpdated.visibility = if (state.tipsUpdatedAt > 0) View.VISIBLE else View.GONE
-        if (state.tipsUpdatedAt > 0) {
-            binding.tvTipsUpdated.text = getString(
-                R.string.ai_tips_updated,
-                DateUtils.getRelativeTimeSpanString(
-                    state.tipsUpdatedAt,
-                    System.currentTimeMillis(),
-                    DateUtils.MINUTE_IN_MILLIS
+        val tipsInfo = listOfNotNull(
+            state.tipsUpdatedAt.takeIf { it > 0 }?.let {
+                getString(
+                    R.string.ai_tips_updated,
+                    DateUtils.getRelativeTimeSpanString(it, System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS)
                 )
-            )
-        }
+            },
+            state.tipsRemaining?.let { resources.getQuantityString(R.plurals.ai_tips_remaining, it, it) }
+        ).joinToString(" · ")
+        binding.tvTipsUpdated.visibility = if (tipsInfo.isEmpty()) View.GONE else View.VISIBLE
+        binding.tvTipsUpdated.text = tipsInfo
         if (state.tips != renderedTips) {
             renderedTips = state.tips
             binding.layoutTips.removeAllViews()
@@ -123,8 +127,9 @@ class AiAssistantFragment : Fragment(R.layout.fragment_ai_assistant) {
             state.tips.forEach { binding.layoutTips.addView(tipView(it.title, it.text)) }
         }
 
-        // Chat: messages only grow, so append the new ones.
-        if (renderedMessages < 0) {
+        // Chat: usually only grows, so append the new messages; rebuild when it shrank
+        // (new conversation, or a question taken back after a failed request).
+        if (renderedMessages < 0 || state.messages.size < renderedMessages) {
             binding.layoutMessages.removeAllViews()
             renderedMessages = 0
         }
@@ -134,6 +139,18 @@ class AiAssistantFragment : Fragment(R.layout.fragment_ai_assistant) {
             binding.scroll.post { _binding?.scroll?.fullScroll(View.FOCUS_DOWN) }
         }
         binding.tvChatHint.visibility = if (state.messages.isEmpty()) View.VISIBLE else View.GONE
+        binding.btnNewChat.visibility = if (state.messages.isNotEmpty() && !state.sending) View.VISIBLE else View.GONE
+        binding.tvChatRemaining.visibility = if (state.chatRemaining != null) View.VISIBLE else View.GONE
+        state.chatRemaining?.let {
+            binding.tvChatRemaining.text = resources.getQuantityString(R.plurals.ai_chat_remaining, it, it)
+        }
+        state.unsentMessage?.let { unsent ->
+            if (binding.etMessage.text.isNullOrBlank()) {
+                binding.etMessage.setText(unsent)
+                binding.etMessage.setSelection(unsent.length)
+            }
+            viewModel.unsentMessageShown()
+        }
         binding.tvTyping.visibility = if (state.sending) View.VISIBLE else View.GONE
         binding.btnSend.isEnabled = !state.sending
         binding.chipSuggestions.isEnabled = !state.sending

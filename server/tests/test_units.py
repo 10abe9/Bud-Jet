@@ -1,3 +1,4 @@
+import json
 from datetime import date
 
 from app.facts import build_facts
@@ -153,3 +154,103 @@ def test_ollama_error_detail_is_reported():
 
     message = asyncio.run(run())
     assert message == "http 404: model 'nope' not found"
+
+
+
+# ---- facts v2: active months, counts, suggested limits, weeks ----
+
+def test_leading_empty_months_do_not_lower_averages():
+    empty = [{"month": m, "income": 0, "expense": 0, "expenseByCategory": {}} for m in ("2026-04", "2026-05", "2026-06")]
+    facts = build_facts(summary(months=empty + SUMMARY["months"]), TODAY)
+    assert facts["full_previous_months"] == 2
+    assert facts["avg_expense_previous_months"] == 1975.2
+
+
+def test_categories_with_counts_and_suggested_limit():
+    months = json.loads(json.dumps(SUMMARY["months"]))
+    months[-1]["expenseCountByCategory"] = {"Food": 20, "Transport": 5}
+    months[0]["expenseCountByCategory"] = {"Food": 18}
+    months[1]["expenseCountByCategory"] = {"Food": 22}
+    facts = build_facts(summary(months=months), TODAY)
+    food = facts["categories"][0]
+    assert food["operations_so_far"] == 20
+    assert food["avg_operation"] == 30.5
+    assert food["avg_operations_previous_months"] == 20.0
+    assert food["has_limit"] is True
+    assert food["suggested_limit"] == 760.0  # 850.25 * 0.9 = 765.2 -> 760
+    transport = next(c for c in facts["categories"] if c["category"] == "Transport")
+    assert transport["has_limit"] is False
+    assert transport["suggested_limit"] == 270.0  # 300 * 0.9
+
+
+def test_category_only_in_previous_months_is_listed():
+    months = json.loads(json.dumps(SUMMARY["months"]))
+    months[0]["expenseByCategory"]["Travel"] = 900.0
+    facts = build_facts(summary(months=months), TODAY)
+    travel = next(c for c in facts["categories"] if c["category"] == "Travel")
+    assert travel["spent_so_far"] == 0.0
+    assert travel["avg_previous_months"] == 450.0
+
+
+def test_income_categories():
+    months = json.loads(json.dumps(SUMMARY["months"]))
+    for m in months:
+        m["incomeByCategory"] = {"Salary": 3000.0}
+    months[-1]["incomeByCategory"]["Freelance"] = 200.0
+    facts = build_facts(summary(months=months), TODAY)
+    assert facts["income_categories"][0] == {"category": "Salary", "received_so_far": 3000.0, "avg_previous_months": 3000.0}
+    assert facts["income_categories"][1]["category"] == "Freelance"
+
+
+def test_weeks_facts():
+    weeks = [
+        {"weekStart": "2026-08-10", "expense": 0},
+        {"weekStart": "2026-08-17", "expense": 0},
+        {"weekStart": "2026-08-24", "expense": 400.0},
+        {"weekStart": "2026-08-31", "expense": 500.0},
+        {"weekStart": "2026-09-07", "expense": 600.0},
+        {"weekStart": "2026-09-14", "expense": 300.0},  # Monday; TODAY is Tuesday the 15th
+    ]
+    facts = build_facts(summary(weeks=weeks), TODAY)["weeks"]
+    assert facts["current_week_day"] == 2
+    assert facts["full_weeks"] == 3  # leading empty weeks dropped
+    assert facts["avg_full_week_expense"] == 500.0
+    assert facts["last_full_week_expense"] == 600.0
+    assert facts["current_week_projected"] == 1050.0
+    assert facts["current_week_vs_avg_percent"] == 110
+
+
+def test_no_weeks_from_old_app():
+    assert build_facts(summary(), TODAY)["weeks"] is None
+
+
+def test_goal_pace():
+    goal = build_facts(summary(), TODAY)["saving_goal"]
+    # 3800 left, ~1025 saved per month before -> 4 months.
+    assert goal["months_needed_at_current_pace"] == 4
+
+
+def test_friendly_round_down():
+    from app.facts import friendly_round_down
+
+    assert friendly_round_down(765.2) == 760.0
+    assert friendly_round_down(12345) == 12000.0
+    assert friendly_round_down(48.7) == 48.0
+    assert friendly_round_down(0) is None
+
+
+def test_prompts_match_the_documentation():
+    """docs/backend-prompt.md section 4 shows the prompts; keep it identical to the code."""
+    import re
+    from pathlib import Path
+
+    import pytest
+
+    from app import prompts
+
+    doc = Path(__file__).resolve().parents[2] / "docs" / "backend-prompt.md"
+    if not doc.exists():
+        pytest.skip("docs/ is not deployed with the server")
+    blocks = re.findall(r"```text\n(.*?)```", doc.read_text(encoding="utf-8"), re.S)
+    assert blocks[1].rstrip("\n") == prompts.CHAT_SYSTEM_PROMPT.template.rstrip("\n")
+    assert blocks[2].rstrip("\n") == prompts.INSIGHTS_SYSTEM_PROMPT.template.rstrip("\n")

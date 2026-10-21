@@ -202,7 +202,7 @@ def test_chat_builds_the_prompt(client, backends):
     assert backends.model_headers[0]["authorization"] == "Bearer test-key"
     assert sent["model"] == "gpt-oss:20b"
     assert sent["stream"] is False
-    assert sent["options"] == {"temperature": 0.3, "num_predict": 400}
+    assert sent["options"] == {"temperature": 0.3, "num_predict": 500}
     messages = sent["messages"]
     assert messages[0]["role"] == "system"
     system = messages[0]["content"]
@@ -278,7 +278,8 @@ def test_insights_retry_once_then_empty(client, backends):
     backends.model_replies = ["not json", "still not json"]
     response = client.post("/v1/ai/insights", json={"summary": SUMMARY}, headers=headers())
     assert response.status_code == 200
-    assert response.json() == {"insights": []}
+    # Nothing useful came back, so the request is not counted: 10 of 10 left.
+    assert response.json() == {"insights": [], "remaining": 10}
     assert len(backends.model_requests) == 2
 
 
@@ -286,7 +287,7 @@ def test_insights_retry_succeeds(client, backends):
     pro(backends)
     backends.model_replies = ["oops", 'Sure! {"insights": [{"title": "T", "text": "X"}]}']
     response = client.post("/v1/ai/insights", json={"summary": SUMMARY}, headers=headers())
-    assert response.json() == {"insights": [{"title": "T", "text": "X"}]}
+    assert response.json() == {"insights": [{"title": "T", "text": "X"}], "remaining": 9}
 
 
 # ---- privacy ----
@@ -314,3 +315,61 @@ def test_tokens_are_stored_hashed(client, backends, tmp_path):
     dump = "\n".join(conn.iterdump())
     assert "RAW-TOKEN" not in dump
     assert FUTURE not in dump
+
+
+# ---- remaining requests and refunds ----
+
+def test_remaining_counts_down_to_zero(make_client, backends):
+    client = make_client(chat_daily_limit=3)
+    pro(backends)
+    remaining = [
+        client.post("/v1/ai/chat", json={"summary": SUMMARY, "message": "hi"}, headers=headers()).json().get("remaining")
+        for _ in range(3)
+    ]
+    assert remaining == [2, 1, 0]
+    # The last allowed request (0 left) worked; the next one is refused.
+    assert client.post("/v1/ai/chat", json={"summary": SUMMARY, "message": "hi"}, headers=headers()).status_code == 429
+
+
+def test_model_failure_gives_the_request_back(make_client, backends):
+    client = make_client(chat_daily_limit=1)
+    pro(backends)
+    backends.model_replies = [httpx.ReadTimeout("slow"), httpx.ConnectError("down"), "<think>x</think>", "OK"]
+    codes = [
+        client.post("/v1/ai/chat", json={"summary": SUMMARY, "message": "hi"}, headers=headers()).status_code
+        for _ in range(4)
+    ]
+    # Timeout, model error and empty answer are not counted; the 4th request still fits the limit of 1.
+    assert codes == [504, 502, 502, 200]
+
+
+def test_subscription_limit_does_not_eat_install_limit(make_client, backends):
+    client = make_client(chat_daily_limit=1, install_daily_ai_limit=2)
+    pro(backends, "a")
+    pro(backends, "b")
+    assert client.post("/v1/ai/chat", json={"summary": SUMMARY, "message": "hi"}, headers=headers("a")).status_code == 200
+    # Refused by the per-subscription limit: must not use up the install's allowance.
+    assert client.post("/v1/ai/chat", json={"summary": SUMMARY, "message": "hi"}, headers=headers("a")).status_code == 429
+    assert client.post("/v1/ai/chat", json={"summary": SUMMARY, "message": "hi"}, headers=headers("b")).status_code == 200
+
+
+def test_new_summary_fields_are_accepted_and_reach_the_prompt(client, backends):
+    pro(backends)
+    summary = json.loads(json.dumps(SUMMARY))
+    summary["months"][-1]["expenseCountByCategory"] = {"Food": 20, "Transport": 4}
+    summary["months"][-1]["incomeByCategory"] = {"Salary": 3000.0}
+    summary["weeks"] = [{"weekStart": "2026-09-07", "expense": 300.0}, {"weekStart": "2026-09-14", "expense": 120.0}]
+    response = client.post("/v1/ai/chat", json={"summary": summary, "message": "hi"}, headers=headers())
+    assert response.status_code == 200
+    system = backends.model_requests[0]["messages"][0]["content"]
+    assert '"avg_operation": 30.5' in system
+    assert '"suggested_limit"' in system
+    assert '"current_week_expense_so_far": 120.0' in system
+    assert '"Salary"' in system
+
+
+def test_old_app_summary_still_works(client, backends):
+    # Version 11 of the app sends no counts, income categories or weeks.
+    pro(backends)
+    response = client.post("/v1/ai/chat", json={"summary": SUMMARY, "message": "hi"}, headers=headers())
+    assert response.status_code == 200

@@ -73,7 +73,7 @@
     <string name="profile_restore_confirm_title">Restore backup file?</string>
     <string name="profile_restore_confirm_message">This will replace your current local transactions, categories, and goals.</string>
     <string name="profile_privacy_title">Privacy and data</string>
-    <string name="profile_privacy_message">Bud-Jet stores your finance records locally on this device.\n\nIf you turn on automatic tracking, Bud-Jet reads payment notifications from the apps you choose. They are processed only on this device; their text is not sent anywhere.\n\nWhen you export or backup data, files are created only in the location you choose.\n\nBud-Jet does not send your transactions, notes, goals, or categories to a remote server.\n\nThe only exception is the AI assistant (Pro plan). It is off by default. Only after you turn it on and agree, the app sends a summary to our AI service when you ask for tips or a question: totals by category and month, limits and your savings goal, plus your question. Never sent: notes, notification texts, store names, bank or card details. The summary is used only to answer and is not stored. Turn the assistant off in Profile and nothing is sent again.\n\nPayments are handled by Google Play; Bud-Jet never sees your card.</string>
+    <string name="profile_privacy_message">Bud-Jet stores your finance records locally on this device.\n\nIf you turn on automatic tracking, Bud-Jet reads payment notifications from the apps you choose. They are processed only on this device; their text is not sent anywhere.\n\nWhen you export or backup data, files are created only in the location you choose.\n\nBud-Jet does not send your transactions, notes, goals, or categories to a remote server.\n\nThe only exception is the AI assistant (Pro plan). It is off by default. Only after you turn it on and agree, the app sends a summary to our AI service when you ask for tips or a question: totals and number of operations by category for up to six months, weekly totals, limits and your savings goal, plus your question and a few previous messages. Never sent: individual transactions, notes, notification texts, store names, bank or card details. The summary is used only to answer and is not stored. The conversation and the latest tips are kept only on this phone until you start a new conversation or turn the assistant off. Turn the assistant off in Profile and nothing is sent again.\n\nPayments are handled by Google Play; Bud-Jet never sees your card.</string>
 
     <!-- Notifications -->
     <string name="notifications_reminder_channel_name">Spending reminder</string>
@@ -415,7 +415,7 @@
     <string name="ai_assistant_subtitle_off">Off · your data stays on this device</string>
     <string name="ai_assistant_premium_only">The AI assistant is part of the Pro plan</string>
     <string name="ai_assistant_consent_title">Turn on the AI assistant?</string>
-    <string name="ai_assistant_consent_message">Only when you ask for tips or a question, the assistant sends our AI service a summary of your spending (totals by category and month, limits and goals) and your question.\n\nNever sent: individual transactions, notes, notification texts, store names, bank or card details.\n\nYou can turn it off at any time — then nothing is sent.</string>
+    <string name="ai_assistant_consent_message">Only when you ask for tips or a question, the assistant sends our AI service a summary of your spending (totals and number of operations by category for up to six months, weekly totals, limits and goals) and your question with a few previous messages of the conversation.\n\nNever sent: individual transactions, notes, notification texts, store names, bank or card details.\n\nYou can turn it off at any time — then nothing is sent.</string>
     <string name="ai_assistant_consent_accept">Turn on</string>
     <string name="ai_assistant_disabled_toast">OK, your data stays only on this device — we will not send it for AI analysis.</string>
     <string name="capture_premium_required">Automatic tracking is included in both plans. The first month is free.</string>
@@ -486,4 +486,13 @@
     <string name="ai_tips_updated">Updated %1$s</string>
     <string name="ai_card_turn_on">Tap to turn on: tips and answers about your budget</string>
     <string name="ai_card_subtitle">Tips for your budget and answers to your questions</string>
+    <string name="ai_chat_new">New conversation</string>
+    <plurals name="ai_tips_remaining">
+        <item quantity="one">%d tip refresh left today</item>
+        <item quantity="other">%d tip refreshes left today</item>
+    </plurals>
+    <plurals name="ai_chat_remaining">
+        <item quantity="one">%d question left today</item>
+        <item quantity="other">%d questions left today</item>
+    </plurals>
 </resources>

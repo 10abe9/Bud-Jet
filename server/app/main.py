@@ -25,7 +25,7 @@ from .entitlement import Entitlements, token_hash
 from .facts import build_facts
 from .google_play import GooglePlayClient, GooglePlayUnavailable, service_account_token_provider
 from .ollama_client import ModelError, ModelTimeout, OllamaClient
-from .ratelimit import RateLimiter
+from .ratelimit import Charge, RateLimiter
 from .schemas import (
     MAX_MESSAGE_CHARS,
     ChatRequest,
@@ -157,7 +157,7 @@ def create_app(
         return code if code in prompts.LANGUAGE_NAMES else "en"
 
     def check_ip(svc: Services, request: Request, now: datetime) -> None:
-        if not svc.limiter.allow_hourly(f"ip:{client_ip(request)}", svc.settings.ip_hourly_limit, now):
+        if svc.limiter.allow_hourly(f"ip:{client_ip(request)}", svc.settings.ip_hourly_limit, now) is None:
             raise ApiError(429, "rate_limited", "too many requests")
 
     async def active_products(svc: Services, token: str, now: datetime) -> dict[str, int]:
@@ -167,8 +167,14 @@ def create_app(
             log.error("subscription check failed: %s", error)
             raise ApiError(503, "play_unavailable", "could not check the subscription, try later")
 
-    async def authorize_ai(svc: Services, request: Request, kind: str, daily_limit: int, now: datetime) -> None:
-        """Pro subscription plus per-install and per-subscription daily limits."""
+    async def authorize_ai(
+        svc: Services, request: Request, kind: str, daily_limit: int, now: datetime
+    ) -> tuple[Charge, int]:
+        """Pro subscription plus per-install and per-subscription daily limits.
+
+        Returns what was counted (to give back if the model fails) and how many requests of
+        this kind the subscription has left today.
+        """
         if not svc.settings.ollama_api_key:
             raise ApiError(503, "ai_not_configured", "the AI service is not configured")
         check_ip(svc, request, now)
@@ -180,18 +186,27 @@ def create_app(
         products = await active_products(svc, token, now)
         if svc.settings.pro_product_id not in products:
             raise ApiError(403, "pro_required", "a Pro subscription is required")
-        if not svc.limiter.allow_daily(f"ai-install:{install_id(request)}", svc.settings.install_daily_ai_limit, now):
+        charge = Charge()
+        if svc.limiter.allow_daily(
+            f"ai-install:{install_id(request)}", svc.settings.install_daily_ai_limit, now, charge
+        ) is None:
             raise ApiError(429, "rate_limited", "daily limit reached")
-        if not svc.limiter.allow_daily(f"{kind}:{token_hash(token)}", daily_limit, now):
+        remaining = svc.limiter.allow_daily(f"{kind}:{token_hash(token)}", daily_limit, now, charge)
+        if remaining is None:
+            svc.limiter.refund(charge)
             raise ApiError(429, "rate_limited", "daily limit reached")
+        return charge, remaining
 
-    async def ask_model(svc: Services, messages, **kwargs) -> str:
+    async def ask_model(svc: Services, charge: Charge, messages, **kwargs) -> str:
+        """Calls the model; a failed call gives the counted request back."""
         try:
             return await svc.ollama.chat(messages, **kwargs)
         except ModelTimeout:
+            svc.limiter.refund(charge)
             raise ApiError(504, "model_timeout", "the AI took too long, try again")
         except ModelError as error:
             log.warning("model error: %s", error)
+            svc.limiter.refund(charge)
             raise ApiError(502, "model_error", "the AI service failed, try again")
 
     # ---- Routes ----
@@ -207,9 +222,9 @@ def create_app(
         if body.packageName != svc.settings.package_name or body.productId not in svc.settings.product_ids:
             raise ApiError(400, "invalid_product", "unknown package or product")
         check_ip(svc, request, now)
-        if not svc.limiter.allow_hourly(
+        if svc.limiter.allow_hourly(
             f"verify:{install_id(request)}", svc.settings.verify_hourly_limit_per_install, now
-        ):
+        ) is None:
             raise ApiError(429, "rate_limited", "too many requests")
         products = await active_products(svc, body.purchaseToken, now)
         expiry = products.get(body.productId)
@@ -219,7 +234,7 @@ def create_app(
     async def insights(body: InsightsRequest, request: Request):
         svc = services(request)
         now = svc.clock()
-        await authorize_ai(svc, request, "insights", svc.settings.insights_daily_limit, now)
+        charge, remaining = await authorize_ai(svc, request, "insights", svc.settings.insights_daily_limit, now)
         today = now.date()
         system = prompts.render(
             prompts.INSIGHTS_SYSTEM_PROMPT,
@@ -235,12 +250,15 @@ def create_app(
         ]
         # Structured output is reliable but not guaranteed: one retry, then no tips.
         for _ in range(2):
-            raw = await ask_model(svc, messages, temperature=0.2, num_predict=700, json_schema=INSIGHTS_JSON_SCHEMA)
+            raw = await ask_model(
+                svc, charge, messages, temperature=0.2, num_predict=900, json_schema=INSIGHTS_JSON_SCHEMA
+            )
             tips = parse_insights(raw)
             if tips is not None:
-                return {"insights": tips}
+                return {"insights": tips, "remaining": remaining}
         log.warning("insights: model returned unusable JSON twice")
-        return {"insights": []}
+        svc.limiter.refund(charge)
+        return {"insights": [], "remaining": remaining + 1}
 
     @app.post("/v1/ai/chat", response_model=ChatResponse)
     async def chat(body: ChatRequest, request: Request):
@@ -249,7 +267,7 @@ def create_app(
         message = normalize_message(body.message)
         if not message or len(message) > MAX_MESSAGE_CHARS:
             raise ApiError(400, "invalid_message", f"the question must be 1-{MAX_MESSAGE_CHARS} characters")
-        await authorize_ai(svc, request, "chat", svc.settings.chat_daily_limit, now)
+        charge, remaining = await authorize_ai(svc, request, "chat", svc.settings.chat_daily_limit, now)
         today = now.date()
         system = prompts.render(
             prompts.CHAT_SYSTEM_PROMPT,
@@ -262,10 +280,11 @@ def create_app(
         messages = [{"role": "system", "content": system}]
         messages += [{"role": turn.role, "content": turn.text} for turn in body.history]
         messages.append({"role": "user", "content": message})
-        reply = clean_reply(await ask_model(svc, messages, temperature=0.3, num_predict=400))
+        reply = clean_reply(await ask_model(svc, charge, messages, temperature=0.3, num_predict=500))
         if not reply:
+            svc.limiter.refund(charge)
             raise ApiError(502, "model_error", "the AI returned an empty answer, try again")
-        return {"reply": reply}
+        return {"reply": reply, "remaining": remaining}
 
     return app
 

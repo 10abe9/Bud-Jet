@@ -68,7 +68,7 @@
     <string name="profile_restore_confirm_title">Przywrócić kopię zapasową?</string>
     <string name="profile_restore_confirm_message">To zastąpi bieżące lokalne transakcje, kategorie i cele.</string>
     <string name="profile_privacy_title">Prywatność i dane</string>
-    <string name="profile_privacy_message">Bud-Jet przechowuje Twoje dane finansowe tylko na tym urządzeniu.\n\nJeśli włączysz automatyczne śledzenie, Bud-Jet będzie czytać powiadomienia o płatnościach z wybranych aplikacji. Są one przetwarzane tylko na tym urządzeniu, ich treść nie jest nigdzie wysyłana.\n\nPrzy eksporcie lub kopii zapasowej pliki są tworzone tylko tam, gdzie wskażesz.\n\nBud-Jet nie wysyła Twoich transakcji, notatek, celów ani kategorii na zdalny serwer.\n\nJedynym wyjątkiem jest asystent AI (plan Pro). Domyślnie jest wyłączony. Dopiero gdy go włączysz i wyrazisz zgodę, przy prośbie o porady lub pytaniu aplikacja wysyła do naszej usługi AI podsumowanie: sumy według kategorii i miesięcy, limity i cel oszczędności oraz Twoje pytanie. Nigdy nie są wysyłane: notatki, treść powiadomień, nazwy sklepów, dane banku i kart. Podsumowanie służy tylko do odpowiedzi i nie jest przechowywane. Wyłącz asystenta w profilu, a nic więcej nie zostanie wysłane.\n\nPłatności obsługuje Google Play; Bud-Jet nigdy nie widzi Twojej karty.</string>
+    <string name="profile_privacy_message">Bud-Jet przechowuje Twoje dane finansowe tylko na tym urządzeniu.\n\nJeśli włączysz automatyczne śledzenie, Bud-Jet będzie czytać powiadomienia o płatnościach z wybranych aplikacji. Są one przetwarzane tylko na tym urządzeniu, ich treść nie jest nigdzie wysyłana.\n\nPrzy eksporcie lub kopii zapasowej pliki są tworzone tylko tam, gdzie wskażesz.\n\nBud-Jet nie wysyła Twoich transakcji, notatek, celów ani kategorii na zdalny serwer.\n\nJedynym wyjątkiem jest asystent AI (plan Pro). Domyślnie jest wyłączony. Dopiero gdy go włączysz i wyrazisz zgodę, przy prośbie o porady lub pytaniu aplikacja wysyła do naszej usługi AI podsumowanie: sumy i liczbę operacji według kategorii z ostatnich sześciu miesięcy, sumy tygodniowe, limity i cel oszczędności oraz Twoje pytanie i kilka poprzednich wiadomości. Nigdy nie są wysyłane: pojedyncze transakcje, notatki, treść powiadomień, nazwy sklepów, dane banku i kart. Podsumowanie służy tylko do odpowiedzi i nie jest przechowywane. Rozmowa i ostatnie porady są przechowywane tylko na tym telefonie, dopóki nie zaczniesz nowej rozmowy lub nie wyłączysz asystenta. Wyłącz asystenta w profilu, a nic więcej nie zostanie wysłane.\n\nPłatności obsługuje Google Play; Bud-Jet nigdy nie widzi Twojej karty.</string>
 
     <!-- Notifications -->
     <string name="notifications_reminder_channel_name">Przypomnienie o wydatkach</string>
@@ -405,7 +405,7 @@
     <string name="ai_assistant_subtitle_off">Wyłączony · dane zostają na urządzeniu</string>
     <string name="ai_assistant_premium_only">Asystent AI jest częścią planu Pro</string>
     <string name="ai_assistant_consent_title">Włączyć asystenta AI?</string>
-    <string name="ai_assistant_consent_message">Tylko gdy prosisz o porady lub zadajesz pytanie, asystent wysyła do naszej usługi AI podsumowanie wydatków (sumy według kategorii i miesięcy, limity i cele) oraz Twoje pytanie.\n\nNigdy nie są wysyłane: pojedyncze transakcje, notatki, treści powiadomień, nazwy sklepów, dane banku i kart.\n\nMożesz go wyłączyć w każdej chwili — wtedy nic nie jest wysyłane.</string>
+    <string name="ai_assistant_consent_message">Tylko gdy prosisz o porady lub zadajesz pytanie, asystent wysyła do naszej usługi AI podsumowanie wydatków (sumy i liczbę operacji według kategorii z ostatnich sześciu miesięcy, sumy tygodniowe, limity i cele) oraz Twoje pytanie z kilkoma poprzednimi wiadomościami rozmowy.\n\nNigdy nie są wysyłane: pojedyncze transakcje, notatki, treści powiadomień, nazwy sklepów, dane banku i kart.\n\nMożesz go wyłączyć w każdej chwili — wtedy nic nie jest wysyłane.</string>
     <string name="ai_assistant_consent_accept">Włącz</string>
     <string name="ai_assistant_disabled_toast">Dobrze, dane zostają tylko na urządzeniu — nie będziemy ich wysyłać do analizy AI.</string>
     <string name="capture_premium_required">Automatyczne śledzenie jest w obu planach. Pierwszy miesiąc za darmo.</string>
@@ -476,5 +476,18 @@
     <string name="ai_tips_updated">Zaktualizowano %1$s</string>
     <string name="ai_card_turn_on">Dotknij, aby włączyć: porady i odpowiedzi o budżecie</string>
     <string name="ai_card_subtitle">Porady dla budżetu i odpowiedzi na Twoje pytania</string>
+    <string name="ai_chat_new">Nowa rozmowa</string>
+    <plurals name="ai_tips_remaining">
+        <item quantity="one">Dziś zostało %d odświeżenie porad</item>
+        <item quantity="few">Dziś zostały %d odświeżenia porad</item>
+        <item quantity="many">Dziś zostało %d odświeżeń porad</item>
+        <item quantity="other">Dziś zostało %d odświeżenia porad</item>
+    </plurals>
+    <plurals name="ai_chat_remaining">
+        <item quantity="one">Dziś zostało %d pytanie</item>
+        <item quantity="few">Dziś zostały %d pytania</item>
+        <item quantity="many">Dziś zostało %d pytań</item>
+        <item quantity="other">Dziś zostało %d pytania</item>
+    </plurals>
 </resources>
 

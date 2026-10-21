@@ -15,6 +15,9 @@ object AiChatPolicy {
     /** Recent messages sent as context: enough for follow-ups, bounded in size and cost. */
     const val MAX_HISTORY_TURNS = 6
 
+    /** Messages kept on the device so the conversation survives closing the screen. */
+    const val MAX_SAVED_TURNS = 40
+
     /** Trimmed question with collapsed whitespace, or null when empty or too long. */
     fun normalize(message: String): String? {
         val text = message.trim().replace(Regex("""\s+"""), " ")

@@ -10,16 +10,29 @@ MAX_HISTORY_TEXT_CHARS = 1200
 MAX_CATEGORY_CHARS = 60
 
 
+def _trim_keys(value: dict) -> dict:
+    return {name.strip()[:MAX_CATEGORY_CHARS]: amount for name, amount in value.items()}
+
+
 class MonthSummary(BaseModel):
     month: str = Field(pattern=r"^\d{4}-\d{2}$")
     income: float = 0.0
     expense: float = 0.0
     expenseByCategory: dict[str, float] = Field(default_factory=dict, max_length=100)
+    # Since app version 12; older apps do not send these.
+    expenseCountByCategory: dict[str, int] = Field(default_factory=dict, max_length=100)
+    incomeByCategory: dict[str, float] = Field(default_factory=dict, max_length=100)
 
-    @field_validator("expenseByCategory")
+    @field_validator("expenseByCategory", "expenseCountByCategory", "incomeByCategory")
     @classmethod
-    def _trim_names(cls, value: dict[str, float]) -> dict[str, float]:
-        return {name.strip()[:MAX_CATEGORY_CHARS]: amount for name, amount in value.items()}
+    def _trim_names(cls, value: dict) -> dict:
+        return _trim_keys(value)
+
+
+class WeekSummary(BaseModel):
+    # Monday of the week.
+    weekStart: str = Field(pattern=r"^\d{4}-\d{2}-\d{2}$")
+    expense: float = 0.0
 
 
 class LimitSummary(BaseModel):
@@ -42,6 +55,8 @@ class SavingGoalSummary(BaseModel):
 class BudgetSummary(BaseModel):
     currency: str = Field(min_length=1, max_length=8)
     months: list[MonthSummary] = Field(default_factory=list, max_length=12)
+    # Since app version 12: expense per week, oldest first, the last one is the current week.
+    weeks: list[WeekSummary] = Field(default_factory=list, max_length=12)
     limits: list[LimitSummary] = Field(default_factory=list, max_length=50)
     savingGoal: SavingGoalSummary | None = None
 
@@ -90,7 +105,11 @@ class Insight(BaseModel):
 
 class InsightsResponse(BaseModel):
     insights: list[Insight]
+    # Tip requests left today for this subscription.
+    remaining: int | None = None
 
 
 class ChatResponse(BaseModel):
     reply: str
+    # Questions left today for this subscription.
+    remaining: int | None = None

@@ -43,6 +43,7 @@ class PreferenceManager private constructor(context: Context) {
         private const val KEY_PLAN_TIER = "plan_tier"
         private const val KEY_AI_TIPS_JSON = "ai_tips_json"
         private const val KEY_AI_TIPS_AT = "ai_tips_at"
+        private const val KEY_AI_CHAT_JSON = "ai_chat_json"
         private const val KEY_CAPTURE_LISTENER_ALIVE_AT = "capture_listener_alive_at"
         private const val KEY_CAPTURE_LAST_CAPTURED_AT = "capture_last_captured_at"
         private const val KEY_CAPTURE_PROMO_DISMISSED = "capture_promo_dismissed"
@@ -208,6 +209,7 @@ class PreferenceManager private constructor(context: Context) {
             if (!enabled) {
                 remove(KEY_AI_TIPS_JSON)
                 remove(KEY_AI_TIPS_AT)
+                remove(KEY_AI_CHAT_JSON)
             }
         }
     }
@@ -216,6 +218,13 @@ class PreferenceManager private constructor(context: Context) {
     fun getAiTipsCache(): Pair<String, Long>? {
         val json = preferences.getString(KEY_AI_TIPS_JSON, null) ?: return null
         return json to preferences.getLong(KEY_AI_TIPS_AT, 0L)
+    }
+
+    /** The conversation with the assistant (JSON, see AiAssistantRepository); device only. */
+    fun getAiChatJson(): String? = preferences.getString(KEY_AI_CHAT_JSON, null)
+
+    fun setAiChatJson(json: String?) {
+        preferences.edit { if (json == null) remove(KEY_AI_CHAT_JSON) else putString(KEY_AI_CHAT_JSON, json) }
     }
 
     fun setAiTipsCache(json: String, savedAt: Long) {
@@ -319,6 +328,7 @@ class PreferenceManager private constructor(context: Context) {
         editor.remove(KEY_AI_ASSISTANT_ENABLED)
         editor.remove(KEY_AI_TIPS_JSON)
         editor.remove(KEY_AI_TIPS_AT)
+        editor.remove(KEY_AI_CHAT_JSON)
         editor.remove(KEY_CAPTURE_LAST_CAPTURED_AT)
         editor.remove(KEY_CAPTURE_PROMO_DISMISSED)
         // Show onboarding again after data deletion.

@@ -14,7 +14,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-/** Tips and chat state; survives rotation. Tips are cached on the device, the chat is not. */
+/**
+ * Tips and chat state; survives rotation. Tips and the conversation are saved on the device
+ * (until "New conversation" or turning the assistant off), never on the server.
+ */
 class AiAssistantViewModel(application: Application) : AndroidViewModel(application) {
 
     /** Why the last request did not produce an answer. */
@@ -28,15 +31,20 @@ class AiAssistantViewModel(application: Application) : AndroidViewModel(applicat
         val loadingTips: Boolean = false,
         val messages: List<ChatTurn> = emptyList(),
         val sending: Boolean = false,
-        val problem: Problem? = null
+        val problem: Problem? = null,
+        /** Requests left today as reported by the server; null until the first answer. */
+        val tipsRemaining: Int? = null,
+        val chatRemaining: Int? = null,
+        /** A question that got no answer, to put back into the input once. */
+        val unsentMessage: String? = null
     )
 
     private val repository = AiAssistantRepository(application)
 
     private val _state = MutableStateFlow(
-        repository.cachedTips()?.let { (tips, savedAt) ->
+        (repository.cachedTips()?.let { (tips, savedAt) ->
             UiState(tips = tips, tipsLoaded = true, tipsUpdatedAt = savedAt)
-        } ?: UiState()
+        } ?: UiState()).copy(messages = repository.savedChat())
     )
     val state: StateFlow<UiState> = _state.asStateFlow()
 
@@ -48,10 +56,16 @@ class AiAssistantViewModel(application: Application) : AndroidViewModel(applicat
             _state.update { current ->
                 when (outcome) {
                     is Outcome.Success -> current.copy(
-                        tips = outcome.value,
+                        tips = outcome.value.insights,
                         tipsLoaded = true,
                         tipsUpdatedAt = System.currentTimeMillis(),
-                        loadingTips = false
+                        loadingTips = false,
+                        tipsRemaining = outcome.value.remaining ?: current.tipsRemaining
+                    )
+                    Outcome.RateLimited -> current.copy(
+                        loadingTips = false,
+                        problem = Problem.RATE_LIMITED,
+                        tipsRemaining = 0
                     )
                     else -> current.copy(loadingTips = false, problem = problemOf(outcome))
                 }
@@ -65,21 +79,45 @@ class AiAssistantViewModel(application: Application) : AndroidViewModel(applicat
         if (_state.value.sending) return false
         val history = _state.value.messages
         _state.update {
-            it.copy(messages = it.messages + ChatTurn(fromUser = true, text = message), sending = true, problem = null)
+            it.copy(
+                messages = history + ChatTurn(fromUser = true, text = message),
+                sending = true,
+                problem = null,
+                unsentMessage = null
+            )
         }
         viewModelScope.launch {
             val outcome = repository.ask(message, history)
             _state.update { current ->
                 when (outcome) {
                     is Outcome.Success -> current.copy(
-                        messages = current.messages + ChatTurn(fromUser = false, text = outcome.value),
-                        sending = false
+                        messages = current.messages + ChatTurn(fromUser = false, text = outcome.value.reply),
+                        sending = false,
+                        chatRemaining = outcome.value.remaining ?: current.chatRemaining
                     )
-                    else -> current.copy(sending = false, problem = problemOf(outcome))
+                    // No answer: take the question back out of the chat and return it to the input.
+                    else -> current.copy(
+                        messages = history,
+                        sending = false,
+                        problem = problemOf(outcome),
+                        unsentMessage = message,
+                        chatRemaining = if (outcome == Outcome.RateLimited) 0 else current.chatRemaining
+                    )
                 }
             }
+            repository.saveChat(_state.value.messages)
         }
         return true
+    }
+
+    fun newConversation() {
+        if (_state.value.sending) return
+        _state.update { it.copy(messages = emptyList(), problem = null) }
+        repository.saveChat(emptyList())
+    }
+
+    fun unsentMessageShown() {
+        _state.update { it.copy(unsentMessage = null) }
     }
 
     private fun problemOf(outcome: Outcome<*>): Problem = when (outcome) {

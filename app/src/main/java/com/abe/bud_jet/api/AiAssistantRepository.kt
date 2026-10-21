@@ -36,10 +36,10 @@ class AiAssistantRepository(private val context: Context) {
     private val preferences = PreferenceManager.getInstance(context)
     private val repository = FinanceRepositoryProvider.get(context)
 
-    suspend fun insights(): Outcome<List<BudJetApi.AiInsight>> {
+    suspend fun insights(): Outcome<BudJetApi.InsightsResult> {
         if (!preferences.isAiAssistantActive()) return Outcome.Disabled
         val outcome = BudJetApi.aiInsights(caller(), buildSummary()).toOutcome()
-        if (outcome is Outcome.Success) saveTips(outcome.value)
+        if (outcome is Outcome.Success) saveTips(outcome.value.insights)
         return outcome
     }
 
@@ -57,6 +57,32 @@ class AiAssistantRepository(private val context: Context) {
         return tips to savedAt
     }
 
+    /** The saved conversation, oldest first; empty when there is none or the assistant is off. */
+    fun savedChat(): List<ChatTurn> {
+        if (!preferences.isAiAssistantActive()) return emptyList()
+        val json = preferences.getAiChatJson() ?: return emptyList()
+        return runCatching {
+            val array = JSONArray(json)
+            (0 until array.length()).map { i ->
+                val item = array.getJSONObject(i)
+                ChatTurn(fromUser = item.optBoolean("user"), text = item.optString("text"))
+            }.filter { it.text.isNotBlank() }
+        }.getOrDefault(emptyList())
+    }
+
+    /** Keeps the last [AiChatPolicy.MAX_SAVED_TURNS] messages on the device only. */
+    fun saveChat(turns: List<ChatTurn>) {
+        if (turns.isEmpty()) {
+            preferences.setAiChatJson(null)
+            return
+        }
+        val array = JSONArray()
+        turns.takeLast(AiChatPolicy.MAX_SAVED_TURNS).forEach {
+            array.put(JSONObject().put("user", it.fromUser).put("text", it.text))
+        }
+        preferences.setAiChatJson(array.toString())
+    }
+
     private fun saveTips(tips: List<BudJetApi.AiInsight>) {
         val array = JSONArray()
         tips.forEach { array.put(JSONObject().put("title", it.title).put("text", it.text)) }
@@ -64,7 +90,7 @@ class AiAssistantRepository(private val context: Context) {
     }
 
     /** [question] must already pass [AiChatPolicy.normalize]; [history] is trimmed here. */
-    suspend fun ask(question: String, history: List<ChatTurn>): Outcome<String> {
+    suspend fun ask(question: String, history: List<ChatTurn>): Outcome<BudJetApi.ChatResult> {
         if (!preferences.isAiAssistantActive()) return Outcome.Disabled
         return BudJetApi.aiChat(caller(), buildSummary(), question, AiChatPolicy.trimHistory(history)).toOutcome()
     }
@@ -75,10 +101,11 @@ class AiAssistantRepository(private val context: Context) {
         language = preferences.getAppLanguage()
     )
 
-    /** Last three months of totals, limits and the saving goal; see [BudgetSummary]. */
+    /** Last six months and six weeks of totals, limits and the saving goal; see [BudgetSummary]. */
     suspend fun buildSummary(): BudgetSummary {
         val now = System.currentTimeMillis()
-        val from = now - 100L * 24 * 60 * 60 * 1000
+        // Six calendar months back from today's month start fit within 190 days.
+        val from = now - 190L * 24 * 60 * 60 * 1000
         val categories = repository.observeCategories().first().associateBy { it.id }
         val transactions = repository.observeTransactionsInPeriod(from, now).first()
         val entries = transactions.map { tx ->

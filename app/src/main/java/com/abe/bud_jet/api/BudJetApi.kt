@@ -28,6 +28,12 @@ object BudJetApi {
 
     data class AiInsight(val title: String, val text: String)
 
+    /** Tips plus how many tip requests are left today (null when the server does not say). */
+    data class InsightsResult(val insights: List<AiInsight>, val remaining: Int?)
+
+    /** The assistant's answer plus how many questions are left today (null when unknown). */
+    data class ChatResult(val reply: String, val remaining: Int?)
+
     /** Who is calling: sent as headers with every request. */
     data class Caller(
         /** Random per-install id (no personal data), for rate limiting on the server. */
@@ -65,14 +71,15 @@ object BudJetApi {
     }
 
     /** POST /v1/ai/insights: personal tips for the spending summary. */
-    suspend fun aiInsights(caller: Caller, summary: BudgetSummary): ApiResult<List<AiInsight>> {
+    suspend fun aiInsights(caller: Caller, summary: BudgetSummary): ApiResult<InsightsResult> {
         val body = JSONObject().put("summary", summary.toJson())
         return request("POST", "/v1/ai/insights", caller, body, readTimeoutMs = AI_TIMEOUT_MS) { json ->
             val items = json.optJSONArray("insights") ?: JSONArray()
-            (0 until items.length()).mapNotNull { i ->
+            val insights = (0 until items.length()).mapNotNull { i ->
                 val item = items.optJSONObject(i) ?: return@mapNotNull null
                 AiInsight(item.optString("title"), item.optString("text"))
             }
+            InsightsResult(insights, json.remaining())
         }
     }
 
@@ -85,7 +92,7 @@ object BudJetApi {
         summary: BudgetSummary,
         message: String,
         history: List<ChatTurn>
-    ): ApiResult<String> {
+    ): ApiResult<ChatResult> {
         val body = JSONObject()
             .put("summary", summary.toJson())
             .put("message", message)
@@ -95,9 +102,13 @@ object BudJetApi {
                 }
             })
         return request("POST", "/v1/ai/chat", caller, body, readTimeoutMs = AI_TIMEOUT_MS) { json ->
-            json.optString("reply")
+            ChatResult(json.optString("reply"), json.remaining())
         }
     }
+
+    /** "remaining": requests left today; older servers do not send it. */
+    private fun JSONObject.remaining(): Int? =
+        if (has("remaining") && !isNull("remaining")) optInt("remaining").coerceAtLeast(0) else null
 
     private suspend fun <T> request(
         method: String,
@@ -154,7 +165,18 @@ fun BudgetSummary.toJson(): JSONObject = JSONObject()
                 .put("expense", month.expense)
                 .put("expenseByCategory", JSONObject().apply {
                     month.expenseByCategory.forEach { (name, amount) -> put(name, amount) }
+                })
+                .put("expenseCountByCategory", JSONObject().apply {
+                    month.expenseCountByCategory.forEach { (name, count) -> put(name, count) }
+                })
+                .put("incomeByCategory", JSONObject().apply {
+                    month.incomeByCategory.forEach { (name, amount) -> put(name, amount) }
                 }))
+        }
+    })
+    .put("weeks", JSONArray().apply {
+        weeks.forEach { week ->
+            put(JSONObject().put("weekStart", week.weekStart).put("expense", week.expense))
         }
     })
     .put("limits", JSONArray().apply {

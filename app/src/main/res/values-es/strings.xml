@@ -68,7 +68,7 @@
     <string name="profile_restore_confirm_title">¿Restaurar copia de seguridad?</string>
     <string name="profile_restore_confirm_message">Esto reemplazará tus transacciones, categorías y objetivos locales actuales.</string>
     <string name="profile_privacy_title">Privacidad y datos</string>
-    <string name="profile_privacy_message">Bud-Jet guarda tus registros financieros solo en este dispositivo.\n\nSi activas el registro automático, Bud-Jet lee las notificaciones de pago de las apps que elijas. Se procesan solo en este dispositivo; su texto no se envía a ningún sitio.\n\nAl exportar o hacer copia de seguridad, los archivos se crean solo donde tú elijas.\n\nBud-Jet no envía tus transacciones, notas, metas ni categorías a ningún servidor.\n\nLa única excepción es el asistente de IA (plan Pro). Está desactivado por defecto. Solo después de que lo actives y aceptes, al pedir consejos o hacer una pregunta la app envía a nuestro servicio de IA un resumen: totales por categoría y mes, límites y tu meta de ahorro, junto con tu pregunta. Nunca se envían: notas, textos de notificaciones, nombres de tiendas ni datos bancarios o de tarjetas. El resumen se usa solo para responder y no se guarda. Desactiva el asistente en el Perfil y no se enviará nada más.\n\nLos pagos los gestiona Google Play; Bud-Jet nunca ve tu tarjeta.</string>
+    <string name="profile_privacy_message">Bud-Jet guarda tus registros financieros solo en este dispositivo.\n\nSi activas el registro automático, Bud-Jet lee las notificaciones de pago de las apps que elijas. Se procesan solo en este dispositivo; su texto no se envía a ningún sitio.\n\nAl exportar o hacer copia de seguridad, los archivos se crean solo donde tú elijas.\n\nBud-Jet no envía tus transacciones, notas, metas ni categorías a ningún servidor.\n\nLa única excepción es el asistente de IA (plan Pro). Está desactivado por defecto. Solo después de que lo actives y aceptes, al pedir consejos o hacer una pregunta la app envía a nuestro servicio de IA un resumen: totales y número de operaciones por categoría de los últimos seis meses, totales por semana, límites y tu meta de ahorro, junto con tu pregunta y algunos mensajes anteriores. Nunca se envían: transacciones individuales, notas, textos de notificaciones, nombres de tiendas ni datos bancarios o de tarjetas. El resumen se usa solo para responder y no se guarda. La conversación y los últimos consejos se guardan solo en este teléfono hasta que empieces una conversación nueva o desactives el asistente. Desactiva el asistente en el Perfil y no se enviará nada más.\n\nLos pagos los gestiona Google Play; Bud-Jet nunca ve tu tarjeta.</string>
 
     <!-- Notifications -->
     <string name="notifications_reminder_channel_name">Recordatorio de gastos</string>
@@ -398,7 +398,7 @@
     <string name="ai_assistant_subtitle_off">Desactivado · tus datos se quedan en el dispositivo</string>
     <string name="ai_assistant_premium_only">El asistente de IA forma parte del plan Pro</string>
     <string name="ai_assistant_consent_title">¿Activar el asistente de IA?</string>
-    <string name="ai_assistant_consent_message">Solo cuando pides consejos o haces una pregunta, el asistente envía a nuestro servicio de IA un resumen de tus gastos (totales por categoría y mes, límites y metas) y tu pregunta.\n\nNunca se envían: transacciones individuales, notas, textos de notificaciones, nombres de tiendas ni datos bancarios o de tarjetas.\n\nPuedes desactivarlo cuando quieras; entonces no se envía nada.</string>
+    <string name="ai_assistant_consent_message">Solo cuando pides consejos o haces una pregunta, el asistente envía a nuestro servicio de IA un resumen de tus gastos (totales y número de operaciones por categoría de los últimos seis meses, totales por semana, límites y metas) y tu pregunta con algunos mensajes anteriores de la conversación.\n\nNunca se envían: transacciones individuales, notas, textos de notificaciones, nombres de tiendas ni datos bancarios o de tarjetas.\n\nPuedes desactivarlo cuando quieras; entonces no se envía nada.</string>
     <string name="ai_assistant_consent_accept">Activar</string>
     <string name="ai_assistant_disabled_toast">De acuerdo: tus datos se quedan solo en este dispositivo y no los enviaremos para análisis con IA.</string>
     <string name="capture_premium_required">El registro automático está incluido en ambos planes. El primer mes es gratis.</string>
@@ -469,5 +469,16 @@
     <string name="ai_tips_updated">Actualizado %1$s</string>
     <string name="ai_card_turn_on">Toca para activarlo: consejos y respuestas sobre tu presupuesto</string>
     <string name="ai_card_subtitle">Consejos para tu presupuesto y respuestas a tus preguntas</string>
+    <string name="ai_chat_new">Nueva conversación</string>
+    <plurals name="ai_tips_remaining">
+        <item quantity="one">Te queda %d actualización de consejos hoy</item>
+        <item quantity="many">Te quedan %d actualizaciones de consejos hoy</item>
+        <item quantity="other">Te quedan %d actualizaciones de consejos hoy</item>
+    </plurals>
+    <plurals name="ai_chat_remaining">
+        <item quantity="one">Te queda %d pregunta hoy</item>
+        <item quantity="many">Te quedan %d preguntas hoy</item>
+        <item quantity="other">Te quedan %d preguntas hoy</item>
+    </plurals>
 </resources>
 
