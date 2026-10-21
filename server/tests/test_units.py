@@ -126,3 +126,30 @@ def test_parse_insights_variants():
     assert parse_insights('{"tips": []}') is None
     assert parse_insights('```json\n{"insights": [{"title": "**A**", "text": "b"}]}\n```') == [{"title": "A", "text": "b"}]
     assert parse_insights('{"insights": ["x", {"title": "t"}]}') == []
+
+
+# ---- Ollama errors ----
+
+def test_ollama_error_detail_is_reported():
+    import asyncio
+
+    import httpx
+
+    from app.ollama_client import ModelError, OllamaClient
+
+    def handler(request):
+        if request.url.path == "/api/tags":
+            return httpx.Response(200, json={"models": [{"name": "gpt-oss:120b"}, {"model": "qwen3:8b"}]})
+        return httpx.Response(404, json={"error": "model 'nope' not found"})
+
+    async def run():
+        async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as http:
+            client = OllamaClient(http, "https://ollama.com/", "key", "nope")
+            assert await client.list_models() == ["gpt-oss:120b", "qwen3:8b"]
+            try:
+                await client.chat([{"role": "user", "content": "SECRET"}], temperature=0, num_predict=1)
+            except ModelError as error:
+                return str(error)
+
+    message = asyncio.run(run())
+    assert message == "http 404: model 'nope' not found"

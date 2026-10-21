@@ -3,6 +3,7 @@
     python -m scripts.try_prompt "How can I spend less?" --lang ru
     python -m scripts.try_prompt --insights --lang en
     python -m scripts.try_prompt "Write me a poem" --summary my_summary.json
+    python -m scripts.try_prompt --models        # models your key can use
 
 Reads OLLAMA_API_KEY / OLLAMA_MODEL / OLLAMA_THINK from the environment or .env.
 """
@@ -43,11 +44,18 @@ async def main() -> None:
     parser.add_argument("--lang", default="en", choices=sorted(prompts.LANGUAGE_NAMES))
     parser.add_argument("--summary", help="JSON file with a summary in the app's format")
     parser.add_argument("--show-prompt", action="store_true")
+    parser.add_argument("--models", action="store_true", help="list models available to the key")
     args = parser.parse_args()
 
     settings = Settings()
     if not settings.ollama_api_key:
         raise SystemExit("Set OLLAMA_API_KEY (environment or .env)")
+    print(f"model={settings.ollama_model} url={settings.ollama_base_url.rstrip('/')}/api/chat")
+    if args.models:
+        async with httpx.AsyncClient() as http:
+            ollama = OllamaClient(http, settings.ollama_base_url, settings.ollama_api_key, settings.ollama_model)
+            print("\n".join(await ollama.list_models()) or "(no models)")
+        return
     data = json.load(open(args.summary, encoding="utf-8")) if args.summary else SAMPLE
     summary = BudgetSummary.model_validate(data)
     today = datetime.now(timezone.utc).date()

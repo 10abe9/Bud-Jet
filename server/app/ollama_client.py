@@ -19,6 +19,17 @@ class ModelError(Exception):
     pass
 
 
+def _error_detail(response: httpx.Response) -> str:
+    """Ollama's short error text (e.g. "model 'x' not found"); never the request or reply."""
+    try:
+        error = response.json().get("error")
+    except (ValueError, AttributeError):
+        return ""
+    if not isinstance(error, str) or not error:
+        return ""
+    return ": " + error.replace("\n", " ")[:200]
+
+
 class OllamaClient:
     def __init__(
         self,
@@ -35,6 +46,14 @@ class OllamaClient:
         self._model = model
         self._think = think
         self._timeout = timeout_seconds
+
+    async def list_models(self) -> list[str]:
+        """Model names this API key can use (GET {base}/api/tags)."""
+        url = self._url.removesuffix("/api/chat") + "/api/tags"
+        response = await self._http.get(url, headers={"Authorization": f"Bearer {self._api_key}"}, timeout=20.0)
+        if response.status_code != 200:
+            raise ModelError(f"http {response.status_code}{_error_detail(response)}")
+        return sorted(m.get("name") or m.get("model", "") for m in response.json().get("models", []))
 
     async def chat(
         self,
@@ -68,8 +87,7 @@ class OllamaClient:
             raise ModelError(type(error).__name__) from error
 
         if response.status_code != 200:
-            # The body may echo the prompt, so only the status is logged.
-            raise ModelError(f"http {response.status_code}")
+            raise ModelError(f"http {response.status_code}{_error_detail(response)}")
         try:
             data = response.json()
             content = data["message"]["content"]
