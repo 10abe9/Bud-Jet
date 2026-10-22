@@ -97,6 +97,7 @@ class CaptureRepository(
         notification: CapturedNotification,
         result: ParseResult.Recognized
     ): Outcome {
+        if (isCapturedByOtherApp(notification, result.amount, result.isIncome)) return Outcome.DUPLICATE
         val inserted = transactionsDao.insertIgnoringDuplicate(
             TransactionEntity(
                 amount = result.amount,
@@ -119,6 +120,9 @@ class CaptureRepository(
     ): Outcome {
         // The same notification may be re-posted after the user already confirmed it.
         if (transactionsDao.countByExternalId(notification.externalId) > 0) return Outcome.DUPLICATE
+        if (result.isIncome != null && isCapturedByOtherApp(notification, result.amount, result.isIncome)) {
+            return Outcome.DUPLICATE
+        }
         val inserted = captureDao.insertPending(
             PendingCaptureEntity(
                 externalId = notification.externalId,
@@ -134,6 +138,22 @@ class CaptureRepository(
         )
         return if (inserted == -1L) Outcome.DUPLICATE else Outcome.NEEDS_CONFIRMATION
     }
+
+    /**
+     * One card payment often produces two notifications: the wallet app (Google Wallet, Samsung
+     * Wallet) and the bank, or a P2P app (Venmo, Cash App) and the bank card that funded it.
+     */
+    private suspend fun isCapturedByOtherApp(
+        notification: CapturedNotification,
+        amount: Double,
+        isIncome: Boolean
+    ): Boolean = transactionsDao.countCapturedFromOtherApps(
+        sourceApp = notification.packageName,
+        type = if (isIncome) TransactionType.INCOME else TransactionType.EXPENSE,
+        amount = amount,
+        from = notification.postedAt - CROSS_APP_DUPLICATE_WINDOW_MILLIS,
+        to = notification.postedAt + CROSS_APP_DUPLICATE_WINDOW_MILLIS
+    ) > 0
 
     suspend fun getPending(id: Long): PendingCaptureEntity? = withContext(ioDispatcher) {
         captureDao.getPending(id)
@@ -200,5 +220,6 @@ class CaptureRepository(
 
     companion object {
         private const val PENDING_TTL_MILLIS = 30L * 24 * 60 * 60 * 1000
+        private const val CROSS_APP_DUPLICATE_WINDOW_MILLIS = 10L * 60 * 1000
     }
 }
