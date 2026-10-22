@@ -25,6 +25,19 @@ interface TransactionsDao {
     @Query("SELECT COUNT(*) FROM transactions WHERE external_id = :externalId")
     suspend fun countByExternalId(externalId: String): Int
 
+    /** Same payment captured from another app's notification (e.g. Google Wallet and the bank). */
+    @Query(
+        "SELECT COUNT(*) FROM transactions WHERE source = 'notification' AND source_app != :sourceApp " +
+            "AND type = :type AND ABS(amount - :amount) < 0.005 AND timestamp BETWEEN :from AND :to"
+    )
+    suspend fun countCapturedFromOtherApps(
+        sourceApp: String,
+        type: TransactionType,
+        amount: Double,
+        from: Long,
+        to: Long
+    ): Int
+
     @Query("SELECT * FROM transactions WHERE id = :id LIMIT 1")
     suspend fun getById(id: Long): TransactionEntity?
 
